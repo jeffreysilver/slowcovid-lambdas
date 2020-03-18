@@ -14,3 +14,10 @@ functions:
           path: typeform-response
           method: post
           cors: true
+  healthcheck:
+    handler: healthcheck.healthcheck
+    events:
+      - http:
+          path: /healthcheck
+          method: get
+          cors: true
