@@ -5,6 +5,20 @@ org: jeffreysilver
 provider:
   name: aws
   runtime: python3.7
+  stage: ${opt:stage, 'dev'}
+  region: us-east-1
+  profile: esl
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - lambda:InvokeFunction
+      Resource: "*"
+  vpc:
+    securityGroupIds:
+      - sg-048538fdc275a286f
+    subnetIds:
+      - subnet-07fb30e724091f148
+      - subnet-0534a0b05872cac2b
 
 functions:
   typeform_response:
@@ -21,3 +35,21 @@ functions:
           path: /healthcheck
           method: get
           cors: true
+
+resources:
+  Resources:
+    AWSLambdaVPCAccessExecutionRole:
+      Type: AWS::IAM::ManagedPolicy
+      Properties:
+        Description: Creating policy for vpc and lambda.
+        Roles:
+          - { "Ref": "IamRoleLambdaExecution" }
+        PolicyDocument:
+          Version: "2012-10-17"
+          Statement:
+            - Effect: Allow
+              Action:
+                - ec2:CreateNetworkInterface
+                - ec2:DescribeNetworkInterfaces
+                - ec2:DeleteNetworkInterface
+              Resource: "*"
