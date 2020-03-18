@@ -1,0 +1,16 @@
+service: slowcovid
+app: slowcovid
+org: jeffreysilver
+
+provider:
+  name: aws
+  runtime: python3.7
+
+functions:
+  typeform_response:
+    handler: typeform.handle_registration
+    events:
+      - http:
+          path: typeform-response
+          method: post
+          cors: true
