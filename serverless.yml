@@ -18,11 +18,11 @@ provider:
       - subnet-0534a0b05872cac2b
 
 functions:
-  typeform_response:
-    handler: typeform.handle_registration
+  registration:
+    handler: registration.handle_registration
     events:
       - http:
-          path: typeform-response
+          path: register
           method: post
           cors: true
   healthcheck:

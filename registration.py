@@ -2,6 +2,7 @@ import json
 from serverless_sdk import tag_event
 
 def extract_registration_data(form):
+
     company_name = form.pop(0)["text"]
     owner_first_name = form.pop(0)["text"]
     owner_last_name = form.pop(0)["text"]
@@ -39,12 +40,14 @@ def extract_registration_data(form):
 
 
 def handle_registration(event, context):
+    tag_event('registration', 'event', event)
 
-    payload = extract_registration_data(event["form_response"]["answers"])
+    # form_data = json.loads(event["body"])
+    # payload = extract_registration_data(form_data["form_response"]["answers"])
 
     # hit esl works api
 
     return {
         "statusCode": 200,
-        "body": payload
+        "body": "hello"
     }
