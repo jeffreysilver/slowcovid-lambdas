@@ -61,3 +61,8 @@ resources:
 plugins:
   - serverless-python-requirements
   - serverless-dotenv-plugin
+  - serverless-plugin-datadog
+custom:
+  datadog:
+    flushMetricsToLogs: true
+    apiKey: ${env:DATADOG_API_KEY}
