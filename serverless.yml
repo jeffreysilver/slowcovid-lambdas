@@ -22,7 +22,7 @@ functions:
     handler: registration.handle_registration
     events:
       - http:
-          path: register
+          path: registration
           method: post
           cors: true
   healthcheck:
