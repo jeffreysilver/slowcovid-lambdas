@@ -15,9 +15,13 @@ provider:
   vpc:
     subnetIds:
       - subnet-07fb30e724091f148
-      - subnet-0534a0b05872cac2b
+  environment:
+    AUTH_USERNAME: ${file(.config.yml):AUTH_USERNAME}
+    AUTH_PASSWORD: ${file(.config.yml):AUTH_PASSWORD}
+   
 
 functions:
+  
   registration:
     handler: registration.handle_registration
     events:
@@ -25,6 +29,7 @@ functions:
           path: registration
           method: post
           cors: true
+
   healthcheck:
     handler: healthcheck.healthcheck
     events:
@@ -32,6 +37,7 @@ functions:
           path: /healthcheck
           method: get
           cors: true
+
 
 resources:
   Resources:
@@ -50,3 +56,8 @@ resources:
                 - ec2:DescribeNetworkInterfaces
                 - ec2:DeleteNetworkInterface
               Resource: "*"
+plugins:
+  - serverless-python-requirements
+custom:
+  pythonRequirements:
+    dockerizePip: true

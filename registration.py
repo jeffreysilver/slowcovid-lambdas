@@ -1,6 +1,8 @@
 import json
 from serverless_sdk import tag_event
 
+from clients import eslworks
+
 def build_registration_payload(data):
 
     company_name = data["company-name"]
@@ -37,9 +39,8 @@ def handle_registration(event, context):
 
     tag_event("registration", "computed_payload", payload)
 
-    # hit esl works api
+    eslworks.register(payload)
 
     return {
         "statusCode": 200,
-        "body": json.dumps(payload)
     }
