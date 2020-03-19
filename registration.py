@@ -1,37 +1,27 @@
 import json
 from serverless_sdk import tag_event
 
-def extract_registration_data(form):
+def build_registration_payload(data):
 
-    company_name = form.pop(0)["text"]
-    owner_first_name = form.pop(0)["text"]
-    owner_last_name = form.pop(0)["text"]
-    owner_phone = form.pop(0)["phone_number"]
-    owner_email = form.pop(0)["email"]
-
+    company_name = data["company-name"]
     owner = {
-        "first_name": owner_first_name,
-        "last_name": owner_last_name,
-        "phone": owner_phone,
-        "email": owner_email,
+        "first_name": data["first-name"],
+        "last_name": data["last-name"],
+        "email": data["email"],
+        "phone": data["phone"]
     }
 
-
-    team = []
-    while form:
-        team.append(
-            {
-                "first_name": form.pop(0)["text"],
-                "last_name":form.pop(0)["text"],
-                "unit": form.pop(0)["text"],
-                "phone": form.pop(0)["phone_number"],
-            }
-        )
-
-        # Remove the yes / no question from each team member form. The last team member question doesnt have it
-        if len(form):
-            form.pop(0)
-
+    # reconstruct the member ordering from the form
+    members = [value for key, value in sorted(data["members"].items(), key=lambda item: int(item[0]))]
+    team = [
+        {
+            "first_name": member["first"],
+            "last_name": member["first"],
+            "phone": member["phone"],
+            "label": member["label"]
+        } for member in members
+    ]
+    
     return {
         "company_name": company_name,
         "owner": owner,
@@ -40,14 +30,16 @@ def extract_registration_data(form):
 
 
 def handle_registration(event, context):
-    tag_event('registration', 'event', event)
+    tag_event('registration', 'raw_event', event)
 
-    # form_data = json.loads(event["body"])
-    # payload = extract_registration_data(form_data["form_response"]["answers"])
+    form_data = json.loads(event["body"])
+    payload = build_registration_payload(form_data["data"])
+
+    tag_event("registration", "computed_payload", payload)
 
     # hit esl works api
 
     return {
         "statusCode": 200,
-        "body": "hello"
+        "body": payload
     }
