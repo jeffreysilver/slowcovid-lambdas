@@ -16,10 +16,10 @@ def build_registration_payload(data):
     team = [
         {
             "first_name": member["first"],
-            "last_name": member["first"],
+            "last_name": member["last"],
             "phone": member["phone"],
             "label": member["label"]
-        } for member in members
+        } for member in members if member["first"]
     ]
     
     return {
