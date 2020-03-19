@@ -24,7 +24,7 @@ def build_registration_payload(data):
         {
             "first_name": member["first"],
             "last_name": member["last"],
-            "phone": member["phone"],
+            "phone": format_phone_number(member["phone"]),
             "unit": member["label"]
         } for member in members if member["first"]
     ]
