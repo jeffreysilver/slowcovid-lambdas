@@ -41,5 +41,5 @@ def handle_registration(event, context):
 
     return {
         "statusCode": 200,
-        "body": payload
+        "body": json.dumps(payload)
     }
