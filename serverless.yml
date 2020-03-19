@@ -58,6 +58,3 @@ resources:
               Resource: "*"
 plugins:
   - serverless-python-requirements
-custom:
-  pythonRequirements:
-    dockerizePip: true
