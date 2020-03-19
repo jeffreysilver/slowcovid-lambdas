@@ -3,4 +3,4 @@ __pycache__
 event.json
 payload.json
 node_modules
-.config.yml
+.env
