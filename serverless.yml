@@ -21,9 +21,18 @@ provider:
     AUTH_USERNAME: ${env:AUTH_USERNAME}
     AUTH_PASSWORD: ${env:AUTH_PASSWORD}
    
+plugins:
+  - serverless-plugin-datadog
+  - serverless-python-requirements
+  - serverless-dotenv-plugin
+
+custom:
+  datadog:
+    addLayers: true
+    flushMetricsToLogs: false
+    apiKey: ${env:DATADOG_API_KEY}
 
 functions:
-  
   registration:
     handler: registration.handle_registration
     events:
@@ -58,11 +67,3 @@ resources:
                 - ec2:DescribeNetworkInterfaces
                 - ec2:DeleteNetworkInterface
               Resource: "*"
-plugins:
-  - serverless-python-requirements
-  - serverless-dotenv-plugin
-  - serverless-plugin-datadog
-custom:
-  datadog:
-    flushMetricsToLogs: true
-    apiKey: ${env:DATADOG_API_KEY}

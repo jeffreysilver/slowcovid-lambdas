@@ -12,10 +12,7 @@ def build_registration_payload(data):
 
     company_name = data["company-name"]
     owner = {
-        "first_name": data["first-name"],
-        "last_name": data["last-name"],
         "email": data["email"],
-        "phone": format_phone_number(data["phone"])
     }
 
     # reconstruct the member ordering from the form
