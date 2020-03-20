@@ -17,13 +17,14 @@ def build_registration_payload(data):
 
     # reconstruct the member ordering from the form
     members = [value for key, value in sorted(data["members"].items(), key=lambda item: int(item[0]))]
+
     team = [
         {
             "first_name": member["first"],
             "last_name": member["last"],
             "phone": format_phone_number(member["phone"]),
             "unit": member["label"]
-        } for member in members if member["first"]
+        } for member in members if member["phone"]
     ]
     
     return {
