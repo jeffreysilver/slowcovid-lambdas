@@ -10,27 +10,25 @@ def format_phone_number(phone):
 
 def build_registration_payload(data):
 
-    company_name = data["company-name"]
     owner = {
         "email": data["email"],
+        "first_name": data["first-name"],
+        "last_name": data["last-name"],
+        "title": data["title"],
     }
 
-    # reconstruct the member ordering from the form
-    members = [value for key, value in sorted(data["members"].items(), key=lambda item: int(item[0]))]
+    company = {
+        "name": data["company-name"],
+        "country": data["country"],
+        "num_employees": data["employee-count"],
+        "zip_code": data["postal-code"]
+    }
 
-    team = [
-        {
-            "first_name": member["first"],
-            "last_name": member["last"],
-            "phone": format_phone_number(member["phone"]),
-            "unit": member["label"]
-        } for member in members if member["phone"]
-    ]
     
     return {
-        "company_name": company_name,
+        "company": company,
         "owner": owner,
-        "team": team,
+        "labels": [],
     }
 
 
