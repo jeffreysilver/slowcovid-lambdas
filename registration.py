@@ -49,7 +49,7 @@ def handle_registration(event, context):
 
     tag_event("registration", "computed_payload", payload)
 
-    # eslworks.register(payload)
+    eslworks.register(payload)
 
     return {
         "statusCode": 200,
