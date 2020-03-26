@@ -12,6 +12,9 @@ provider:
     - Effect: Allow
       Action:
         - lambda:InvokeFunction
+        - kinesis:*
+        - rds-data:ExecuteStatement
+        - secretsmanager:GetSecretValue
       Resource: "*"
   vpc:
     subnetIds:
@@ -21,17 +24,10 @@ provider:
   environment:
     AUTH_USERNAME: ${env:AUTH_USERNAME}
     AUTH_PASSWORD: ${env:AUTH_PASSWORD}
-   
+    
 plugins:
-  - serverless-plugin-datadog
   - serverless-python-requirements
   - serverless-dotenv-plugin
-
-custom:
-  datadog:
-    addLayers: true
-    flushMetricsToLogs: false
-    apiKey: ${env:DATADOG_API_KEY}
 
 functions:
   registration:
@@ -41,6 +37,9 @@ functions:
           path: registration
           method: post
           cors: true
+
+  storeInboundSMS:
+    handler: inbound_sms.store_inbound_sms
 
   healthcheck:
     handler: healthcheck.healthcheck
@@ -68,3 +67,45 @@ resources:
                 - ec2:DescribeNetworkInterfaces
                 - ec2:DeleteNetworkInterface
               Resource: "*"
+
+    InboundSMSStream:
+      Type: AWS::Kinesis::Stream
+      Properties:
+        Name: inbound-sms-${self:provider.stage}
+        ShardCount: 4
+
+    StoreInboundSMSEvent:
+      Type: AWS::Lambda::EventSourceMapping
+      Properties:
+        BatchSize: 3
+        MaximumBatchingWindowInSeconds: 1
+        MaximumRetryAttempts: 5
+        EventSourceArn:
+          Fn::GetAtt:
+            - InboundSMSStream
+            - Arn
+        FunctionName:
+          Fn::GetAtt:
+            - StoreInboundSMSLambdaFunction
+            - Arn
+        StartingPosition: LATEST
+
+    AuroraCluster:
+      Type: AWS::RDS::DBCluster
+      Properties:
+        Engine: aurora-postgresql
+        EngineMode: serverless
+        BackupRetentionPeriod: 7
+        DatabaseName: postgres
+        DBClusterIdentifier: ${self:provider.stage}
+        DeletionProtection: true
+        EnableHttpEndpoint: true
+        EngineVersion: 10.7
+        MasterUsername: postgres
+        MasterUserPassword: ${env:DB_PASSWORD}
+        StorageEncrypted: true
+        ScalingConfiguration:
+            AutoPause: true
+            MaxCapacity: 4
+            MinCapacity: 2
+            SecondsUntilAutoPause: 300
