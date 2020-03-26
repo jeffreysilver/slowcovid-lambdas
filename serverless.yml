@@ -39,7 +39,10 @@ functions:
           cors: true
 
   storeInboundSMS:
-    handler: inbound_sms.store_inbound_sms
+    handler: inbound_sms.store_message
+
+  routeInboundSMS:
+    handler: inbound_sms.route_message
 
   healthcheck:
     handler: healthcheck.healthcheck
@@ -87,6 +90,22 @@ resources:
         FunctionName:
           Fn::GetAtt:
             - StoreInboundSMSLambdaFunction
+            - Arn
+        StartingPosition: LATEST
+    
+    RouteInboundSMSEvent:
+      Type: AWS::Lambda::EventSourceMapping
+      Properties:
+        BatchSize: 3
+        MaximumBatchingWindowInSeconds: 1
+        MaximumRetryAttempts: 5
+        EventSourceArn:
+          Fn::GetAtt:
+            - InboundSMSStream
+            - Arn
+        FunctionName:
+          Fn::GetAtt:
+            - RouteInboundSMSLambdaFunction
             - Arn
         StartingPosition: LATEST
 
