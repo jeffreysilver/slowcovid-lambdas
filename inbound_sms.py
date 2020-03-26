@@ -25,7 +25,7 @@ def store_message(event, context):
         kinesis_payload = record["kinesis"]
         sms = _get_twilio_payload_from_record(record)
         tag_event("store_message", "message_payload", sms)
-        rds_response = rds.insert_message(sms["MessageSid"], sms["Body"], sms["From"], sms["To"], kinesis_payload["approximateArrivalTimestamp"], kinesis_payload["sequenceNumber"])
+        rds_response = rds.insert_message(sms["MessageSid"], sms["Body"], sms["From"], sms["To"], sms["SmsStatus"], kinesis_payload["approximateArrivalTimestamp"], kinesis_payload["sequenceNumber"])
         tag_event("store_message", "rds_response", rds_response)
 
     return {
