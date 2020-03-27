@@ -24,6 +24,7 @@ provider:
   environment:
     AUTH_USERNAME: ${env:AUTH_USERNAME}
     AUTH_PASSWORD: ${env:AUTH_PASSWORD}
+    STAGE: ${self:provider.stage}
     
 plugins:
   - serverless-python-requirements
@@ -43,6 +44,9 @@ functions:
 
   routeInboundSMS:
     handler: inbound_sms.route_message
+
+  sendOutboundSMS:
+    handler: outbound_sms.send_message
 
   healthcheck:
     handler: healthcheck.healthcheck
@@ -71,11 +75,12 @@ resources:
                 - ec2:DeleteNetworkInterface
               Resource: "*"
 
+    # INBOUND SMS
     InboundSMSStream:
       Type: AWS::Kinesis::Stream
       Properties:
         Name: inbound-sms-${self:provider.stage}
-        ShardCount: 4
+        ShardCount: 2
 
     StoreInboundSMSEvent:
       Type: AWS::Lambda::EventSourceMapping
@@ -109,6 +114,30 @@ resources:
             - Arn
         StartingPosition: LATEST
 
+    # OUTBOUND SMS
+    OutboundSMSStream:
+      Type: AWS::Kinesis::Stream
+      Properties:
+        Name: outbound-sms-${self:provider.stage}
+        ShardCount: 2
+
+    SendOutboundSMSEvent:
+      Type: AWS::Lambda::EventSourceMapping
+      Properties:
+        BatchSize: 3
+        MaximumBatchingWindowInSeconds: 1
+        MaximumRetryAttempts: 5
+        EventSourceArn:
+          Fn::GetAtt:
+            - OutboundSMSStream
+            - Arn
+        FunctionName:
+          Fn::GetAtt:
+            - SendOutboundSMSLambdaFunction
+            - Arn
+        StartingPosition: LATEST
+
+    # DB CLUSTER
     AuroraCluster:
       Type: AWS::RDS::DBCluster
       Properties:
