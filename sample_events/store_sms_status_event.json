@@ -1,0 +1,36 @@
+{
+    "Records": [
+      {
+        "kinesis": {
+          "kinesisSchemaVersion": "1.0",
+          "partitionKey": "+14802865415",
+          "sequenceNumber": "49605521614215178193206717134447108911972492843050598418",
+          "data": "eyJNZXNzYWdlU3RhdHVzIjoic2VudCIsIk1lc3NhZ2luZ1NlcnZpY2VTaWQiOiJNRzU4MmE1NjEyOTY5MTQ0ODgzOWZjOTQzOTQyNWI3ZGI1IiwiQXBpVmVyc2lvbiI6IjIwMTAtMDQtMDEiLCJTbXNTaWQiOiJTTThhMmU3MWU5NWMxNzQwYWI5MDY2MGQwZWEwODAyZTI0IiwiU21zU3RhdHVzIjoic2VudCIsIlRvIjoiKzE0ODAyODY1NDE1IiwiRnJvbSI6IisxNDcwNzE5MDY0OSIsIk1lc3NhZ2VTaWQiOiJTTThhMmU3MWU5NWMxNzQwYWI5MDY2MGQwZWEwODAyZTI0IiwiQWNjb3VudFNpZCI6IkFDYTRmOWZiNTk2ZjQ1NGI5MDgwYTMyODAzNTFlYTNkY2MifQ==",
+          "approximateArrivalTimestamp": 1585329407.683
+        },
+        "eventSource": "aws:kinesis",
+        "eventVersion": "1.0",
+        "eventID": "shardId-000000000001:49605521614215178193206717134447108911972492843050598418",
+        "eventName": "aws:kinesis:record",
+        "invokeIdentityArn": "arn:aws:iam::696991354966:role/slowcovid-dev-us-east-1-lambdaRole",
+        "awsRegion": "us-east-1",
+        "eventSourceARN": "arn:aws:kinesis:us-east-1:696991354966:stream/sms-status-dev"
+      },
+      {
+        "kinesis": {
+          "kinesisSchemaVersion": "1.0",
+          "partitionKey": "+14802865415",
+          "sequenceNumber": "49605521614215178193206717134448317837792107472225304594",
+          "data": "eyJNZXNzYWdlU3RhdHVzIjoiZGVsaXZlcmVkIiwiTWVzc2FnaW5nU2VydmljZVNpZCI6Ik1HNTgyYTU2MTI5NjkxNDQ4ODM5ZmM5NDM5NDI1YjdkYjUiLCJBcGlWZXJzaW9uIjoiMjAxMC0wNC0wMSIsIlNtc1NpZCI6IlNNOGEyZTcxZTk1YzE3NDBhYjkwNjYwZDBlYTA4MDJlMjQiLCJTbXNTdGF0dXMiOiJkZWxpdmVyZWQiLCJUbyI6IisxNDgwMjg2NTQxNSIsIkZyb20iOiIrMTQ3MDcxOTA2NDkiLCJNZXNzYWdlU2lkIjoiU004YTJlNzFlOTVjMTc0MGFiOTA2NjBkMGVhMDgwMmUyNCIsIkFjY291bnRTaWQiOiJBQ2E0ZjlmYjU5NmY0NTRiOTA4MGEzMjgwMzUxZWEzZGNjIn0=",
+          "approximateArrivalTimestamp": 1585329408.034
+        },
+        "eventSource": "aws:kinesis",
+        "eventVersion": "1.0",
+        "eventID": "shardId-000000000001:49605521614215178193206717134448317837792107472225304594",
+        "eventName": "aws:kinesis:record",
+        "invokeIdentityArn": "arn:aws:iam::696991354966:role/slowcovid-dev-us-east-1-lambdaRole",
+        "awsRegion": "us-east-1",
+        "eventSourceARN": "arn:aws:kinesis:us-east-1:696991354966:stream/sms-status-dev"
+      }
+    ]
+  }

@@ -48,6 +48,12 @@ functions:
   sendOutboundSMS:
     handler: outbound_sms.send_message
 
+  storeOutboundSMS:
+    handler: outbound_sms.store_message
+
+  storeSMSStatus:
+    handler: outbound_sms.store_status
+
   healthcheck:
     handler: healthcheck.healthcheck
     events:
@@ -134,6 +140,28 @@ resources:
         FunctionName:
           Fn::GetAtt:
             - SendOutboundSMSLambdaFunction
+            - Arn
+        StartingPosition: LATEST
+
+    SMSStatusStream:
+      Type: AWS::Kinesis::Stream
+      Properties:
+        Name: sms-status-${self:provider.stage}
+        ShardCount: 2
+
+    StoresSMSStatusEvent:
+      Type: AWS::Lambda::EventSourceMapping
+      Properties:
+        BatchSize: 3
+        MaximumBatchingWindowInSeconds: 1
+        MaximumRetryAttempts: 5
+        EventSourceArn:
+          Fn::GetAtt:
+            - SMSStatusStream
+            - Arn
+        FunctionName:
+          Fn::GetAtt:
+            - StoreSMSStatusLambdaFunction
             - Arn
         StartingPosition: LATEST
 
