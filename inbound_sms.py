@@ -1,7 +1,11 @@
 from serverless_sdk import tag_event
 
-from clients import rds, twilio, kinesis
-from utils.kinesis import get_payload_from_kinesis_record, get_payloads_from_kinesis_payload
+from clients import rds, kinesis
+from utils.kinesis import (
+    get_payload_from_kinesis_record,
+    get_payloads_from_kinesis_payload,
+)
+
 
 def store_message(event, context):
     tag_event("store_message", "raw_event", event)

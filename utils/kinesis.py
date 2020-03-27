@@ -1,6 +1,6 @@
-
 import ast
 from base64 import b64decode
+
 
 def get_payload_from_kinesis_record(record):
     payload_bytes = b64decode(record["kinesis"]["data"])

@@ -4,7 +4,7 @@ import os
 
 def send_message(to, body):
     client = Client(os.environ["TWILIO_ACCOUNT_SID"], os.environ["TWILIO_AUTH_TOKEN"])
-    emoji_escaped_body = body.encode('utf-16','surrogatepass').decode('utf-16')
+    emoji_escaped_body = body.encode("utf-16", "surrogatepass").decode("utf-16")
     res = client.messages.create(
         to=to,
         body=emoji_escaped_body,
