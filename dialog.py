@@ -66,7 +66,7 @@ class DialogStateSchema(Schema):
     # drills that are in flight
     current_drill = fields.Nested(drills.DrillSchema, allow_none=True)
     current_prompt_state = fields.Nested(PromptStateSchema, allow_none=True)
-    completed_drills = fields.List(fields.UUID(), allow_none=True)
+    completed_drills = fields.List(fields.Nested(drills.DrillSchema), allow_none=True)
 
     @post_load
     def make_dialog_state(self, data, **kwargs):
@@ -79,7 +79,7 @@ class DialogState:
                  user_profile: Optional[UserProfile] = None,
                  current_drill: Optional[drills.Drill] = None,
                  current_prompt_state: Optional[PromptState] = None,
-                 completed_drills: List[uuid.UUID] = None):
+                 completed_drills: List[drills.Drill] = None):
         self.phone_number = phone_number
         self.user_profile = user_profile or UserProfile(validated=False)
         self.current_drill = current_drill
@@ -102,7 +102,8 @@ class DialogEventType(enum.Enum):
     USER_CREATION_FAILED = "USER_CREATION_FAILED"
     COMPLETED_PROMPT = "COMPLETED_PROMPT"
     FAILED_PROMPT = "FAILED_PROMPT"
-    BEGAN_PROMPT = "BEGAN_PROMPT"
+    ADVANCED_TO_NEXT_PROMPT = "ADVANCED_TO_NEXT_PROMPT"
+    DRILL_COMPLETED = "DRILL_COMPLETED"
 
 
 class DialogEvent(ABC):
@@ -220,8 +221,10 @@ class ProcessSMSMessage(Command):
 
         if should_advance:
             next_prompt = dialog_state.get_next_prompt()
-            if next_prompt is not None:
-                events.append(BeganPrompt(self.phone_number, next_prompt))
+            if next_prompt is None:
+                events.append(DrillCompleted(self.phone_number, dialog_state.current_drill))
+            else:
+                events.append(AdvancedToNextPrompt(self.phone_number, next_prompt))
         return events
 
 
@@ -266,13 +269,23 @@ class FailedPrompt(DialogEvent):
             dialog_state.current_prompt_state.failures += 1
 
 
-class BeganPrompt(DialogEvent):
+class AdvancedToNextPrompt(DialogEvent):
     def __init__(self, phone_number: str, prompt: drills.Prompt):
-        super().__init__(DialogEventType.BEGAN_PROMPT, phone_number)
+        super().__init__(DialogEventType.ADVANCED_TO_NEXT_PROMPT, phone_number)
         self.prompt = prompt
 
     def apply_to(self, dialog_state: DialogState):
         dialog_state.current_prompt_state = PromptState(self.prompt.slug, start_time=self.datetime)
+
+
+class DrillCompleted(DialogEvent):
+    def __init__(self, phone_number: str, drill: drills.Drill):
+        super().__init__(DialogEventType.DRILL_COMPLETED, phone_number)
+        self.drill = drill
+
+    def apply_to(self, dialog_state: DialogState):
+        dialog_state.completed_drills.append(dialog_state.current_drill)
+        dialog_state.current_drill = None
 
 
 class DynamoDBDialogRepository(DialogRepository):

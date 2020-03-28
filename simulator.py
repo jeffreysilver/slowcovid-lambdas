@@ -116,11 +116,12 @@ DRILL = Drill(
 )
 
 
-def fake_sms(phone_number: str, messages: List[str]):
+def fake_sms(phone_number: str, messages: List[str], with_initial_pause=False):
     first = True
     for message in messages:
-        if not first:
+        if with_initial_pause or not first:
             sleep(3)
+        first = False
         print(f"  -> {phone_number}: {message}")
         first = False
 
@@ -138,13 +139,10 @@ class InMemoryRepository(DialogRepository):
     def persist_dialog_state(self, events: List[DialogEvent], dialog_state: DialogState):
         self.repo[dialog_state.phone_number] = DialogStateSchema().dumps(dialog_state)
 
-        if not events:
-            print("(press crtl-D to exit)")
-
         should_start_drill = False
         for event in events:
-            if event.event_type == DialogEventType.BEGAN_PROMPT:
-                fake_sms(event.phone_number, event.prompt.messages)
+            if event.event_type == DialogEventType.ADVANCED_TO_NEXT_PROMPT:
+                fake_sms(event.phone_number, event.prompt.messages, with_initial_pause=True)
             elif event.event_type == DialogEventType.FAILED_PROMPT:
                 if not event.abandoned:
                     fake_sms(event.phone_number, [TRY_AGAIN])
@@ -164,6 +162,8 @@ class InMemoryRepository(DialogRepository):
                 print("(try DRILL0)")
             elif event.event_type == DialogEventType.DRILL_STARTED:
                 fake_sms(event.phone_number, event.prompt.messages)
+            elif event.event_type == DialogEventType.DRILL_COMPLETED:
+                print("(The drill is complete. Type crtl-D to exit.)")
         if should_start_drill:
             process_command(StartDrill(PHONE_NUMBER, DRILL), repo=self)
 
