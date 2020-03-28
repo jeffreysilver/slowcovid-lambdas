@@ -13,6 +13,8 @@ def handle_command(raw_event, context):
 
     for event in events:
         response = get_response(event)
+
+        # eventually: write to dynamodb dialog log
         lambdas.invoke_send_message(response)
 
     return {"statusCode": 200}
