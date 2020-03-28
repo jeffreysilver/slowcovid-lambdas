@@ -5,3 +5,4 @@ payload.json
 node_modules
 .env*
 env
+.idea
