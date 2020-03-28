@@ -94,6 +94,9 @@ class DialogState:
     def get_next_prompt(self) -> Optional[drills.Prompt]:
         return self.current_drill.get_next_prompt(self.current_prompt_state.slug)
 
+    def is_next_prompt_last(self) -> bool:
+        return self.current_drill.prompts[-1].slug == self.get_next_prompt().slug
+
 
 class DialogEventType(enum.Enum):
     DRILL_STARTED = "DRILL_STARTED"
@@ -221,10 +224,11 @@ class ProcessSMSMessage(Command):
 
         if should_advance:
             next_prompt = dialog_state.get_next_prompt()
-            if next_prompt is None:
-                events.append(DrillCompleted(self.phone_number, dialog_state.current_drill))
-            else:
+            if next_prompt is not None:
                 events.append(AdvancedToNextPrompt(self.phone_number, next_prompt))
+                if dialog_state.is_next_prompt_last():
+                    # assume the last prompt doesn't wait for an answer
+                    events.append(DrillCompleted(self.phone_number, dialog_state.current_drill))
         return events
 
 

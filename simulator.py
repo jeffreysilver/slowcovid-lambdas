@@ -120,7 +120,7 @@ def fake_sms(phone_number: str, messages: List[str], with_initial_pause=False):
     first = True
     for message in messages:
         if with_initial_pause or not first:
-            sleep(3)
+            sleep(2)
         first = False
         print(f"  -> {phone_number}: {message}")
         first = False
