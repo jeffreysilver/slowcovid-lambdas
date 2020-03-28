@@ -1,13 +1,16 @@
 import uuid
-from typing import Optional
+from typing import Optional, List
 
 from marshmallow import Schema, fields, post_load
 
 
 class PromptSchema(Schema):
     slug = fields.String(required=True)
-    should_store_response = fields.Boolean()
-    response_user_profile_key = fields.String()
+    messages = fields.List(fields.String(), required=True)
+    should_store_response = fields.Boolean(allow_none=True)
+    response_user_profile_key = fields.String(allow_none=True)
+    correct_option = fields.String(allow_none=True)
+    correct_option_code = fields.String(allow_none=True)
 
     @post_load
     def make_prompt(self, data, **kwargs):
@@ -17,15 +20,33 @@ class PromptSchema(Schema):
 class Prompt:
     def __init__(self,
                  slug: str,
-                 should_store_response: bool = False,
-                 response_user_profile_key: Optional[str] = None):
+                 messages: List[str],
+                 response_user_profile_key: Optional[str] = None,
+                 correct_option: Optional[str] = None,
+                 correct_option_code: Optional[str] = None,
+                 ):
         self.slug = slug
-        self.should_store_response = should_store_response
+        self.messages = messages
         self.response_user_profile_key = response_user_profile_key
+        self.correct_option = correct_option
+        self.correct_option_code = correct_option_code
+        self.max_failures = 1
+
+    def should_advance_with_answer(self, answer: str) -> bool:
+        if not self.is_graded():
+            return True
+        return self.correct_option_code.lower() == answer.lower()
+
+    def is_graded(self) -> bool:
+        return self.correct_option_code is not None
+
+    def stores_answer(self) -> bool:
+        return self.response_user_profile_key is not None
 
 
 class DrillSchema(Schema):
     drill_id = fields.UUID(required=True)
+    prompts = fields.List(fields.Nested(PromptSchema), required=True)
 
     @post_load
     def make_drill(self, data, **kwargs):
@@ -33,11 +54,24 @@ class DrillSchema(Schema):
 
 
 class Drill:
-    def __init__(self, drill_id: uuid.UUID):
+    def __init__(self, drill_id: uuid.UUID, prompts: List[Prompt]):
         self.drill_id = drill_id
+        self.prompts = prompts
+
+    def first_prompt(self) -> Prompt:
+        return self.prompts[0]
 
     def get_prompt(self, slug: str) -> Optional[Prompt]:
-        pass
+        for p in self.prompts:
+            if p.slug == slug:
+                return p
+        raise ValueError(f"unknown prompt {slug}")
 
     def get_next_prompt(self, slug: str) -> Optional[Prompt]:
-        pass
+        return_next = False
+        for p in self.prompts:
+            if return_next:
+                return p
+            if p.slug == slug:
+                return_next = True
+        return None
