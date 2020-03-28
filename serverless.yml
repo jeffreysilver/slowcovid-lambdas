@@ -39,20 +39,11 @@ functions:
           method: post
           cors: true
 
-  storeInboundSMS:
-    handler: inbound_sms.store_message
-
-  routeInboundSMS:
-    handler: inbound_sms.route_message
-
-  sendOutboundSMS:
+  sendMessage:
     handler: outbound_sms.send_message
 
-  storeOutboundSMS:
-    handler: outbound_sms.store_message
-
-  storeSMSStatus:
-    handler: outbound_sms.store_status
+  handleCommand:
+    handler: command_stream.handle_command
 
   healthcheck:
     handler: healthcheck.healthcheck
@@ -81,89 +72,29 @@ resources:
                 - ec2:DeleteNetworkInterface
               Resource: "*"
 
-    # INBOUND SMS
-    InboundSMSStream:
+    # COMMAND STREAM
+    CommandStream:
       Type: AWS::Kinesis::Stream
       Properties:
-        Name: inbound-sms-${self:provider.stage}
+        Name: command-stream-${self:provider.stage}
         ShardCount: 2
 
-    StoreInboundSMSEvent:
+    HandleCommand:
       Type: AWS::Lambda::EventSourceMapping
       Properties:
         BatchSize: 3
         MaximumBatchingWindowInSeconds: 1
-        MaximumRetryAttempts: 5
+        MaximumRetryAttempts: 3
         EventSourceArn:
           Fn::GetAtt:
-            - InboundSMSStream
+            - CommandStream
             - Arn
         FunctionName:
           Fn::GetAtt:
-            - StoreInboundSMSLambdaFunction
-            - Arn
-        StartingPosition: LATEST
-    
-    RouteInboundSMSEvent:
-      Type: AWS::Lambda::EventSourceMapping
-      Properties:
-        BatchSize: 3
-        MaximumBatchingWindowInSeconds: 1
-        MaximumRetryAttempts: 5
-        EventSourceArn:
-          Fn::GetAtt:
-            - InboundSMSStream
-            - Arn
-        FunctionName:
-          Fn::GetAtt:
-            - RouteInboundSMSLambdaFunction
+            - HandleCommandLambdaFunction
             - Arn
         StartingPosition: LATEST
 
-    # OUTBOUND SMS
-    OutboundSMSStream:
-      Type: AWS::Kinesis::Stream
-      Properties:
-        Name: outbound-sms-${self:provider.stage}
-        ShardCount: 2
-
-    SendOutboundSMSEvent:
-      Type: AWS::Lambda::EventSourceMapping
-      Properties:
-        BatchSize: 3
-        MaximumBatchingWindowInSeconds: 1
-        MaximumRetryAttempts: 5
-        EventSourceArn:
-          Fn::GetAtt:
-            - OutboundSMSStream
-            - Arn
-        FunctionName:
-          Fn::GetAtt:
-            - SendOutboundSMSLambdaFunction
-            - Arn
-        StartingPosition: LATEST
-
-    SMSStatusStream:
-      Type: AWS::Kinesis::Stream
-      Properties:
-        Name: sms-status-${self:provider.stage}
-        ShardCount: 2
-
-    StoresSMSStatusEvent:
-      Type: AWS::Lambda::EventSourceMapping
-      Properties:
-        BatchSize: 3
-        MaximumBatchingWindowInSeconds: 1
-        MaximumRetryAttempts: 5
-        EventSourceArn:
-          Fn::GetAtt:
-            - SMSStatusStream
-            - Arn
-        FunctionName:
-          Fn::GetAtt:
-            - StoreSMSStatusLambdaFunction
-            - Arn
-        StartingPosition: LATEST
 
     # DB CLUSTER
     AuroraCluster:
