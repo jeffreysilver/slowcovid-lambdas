@@ -45,6 +45,9 @@ functions:
   handleCommand:
     handler: command_stream.handle_command
 
+  logMessage:
+    handler: message_log.log_message
+
   healthcheck:
     handler: healthcheck.healthcheck
     events:
@@ -77,7 +80,7 @@ resources:
       Type: AWS::Kinesis::Stream
       Properties:
         Name: command-stream-${self:provider.stage}
-        ShardCount: 2
+        ShardCount: 1
 
     HandleCommand:
       Type: AWS::Lambda::EventSourceMapping
@@ -95,6 +98,28 @@ resources:
             - Arn
         StartingPosition: LATEST
 
+    # MESSAGE LOG STREAM
+    MessageLogStream:
+      Type: AWS::Kinesis::Stream
+      Properties:
+        Name: message-log-${self:provider.stage}
+        ShardCount: 1
+
+    WriteMessageEvent:
+      Type: AWS::Lambda::EventSourceMapping
+      Properties:
+        BatchSize: 3
+        MaximumBatchingWindowInSeconds: 1
+        MaximumRetryAttempts: 3
+        EventSourceArn:
+          Fn::GetAtt:
+            - MessageLogStream
+            - Arn
+        FunctionName:
+          Fn::GetAtt:
+            - LogMessageLambdaFunction
+            - Arn
+        StartingPosition: LATEST
 
     # DB CLUSTER
     AuroraCluster:
