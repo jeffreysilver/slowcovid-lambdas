@@ -72,7 +72,9 @@ class ProcessSMSMessage(types.Command):
             should_advance = True
         else:
             should_advance = dialog_state.current_prompt_state.failures >= prompt.max_failures
-            events.append(FailedPrompt(self.phone_number, prompt, abandoned=should_advance))
+            events.append(FailedPrompt(
+                self.phone_number, prompt, self.content, abandoned=should_advance
+            ))
 
         if should_advance:
             next_prompt = dialog_state.get_next_prompt()
@@ -89,7 +91,7 @@ class DrillStartedSchema(types.DialogEventSchema):
 
     @post_load
     def make_drill_started(self, data, **kwargs):
-        return DrillStarted(**data)
+        return DrillStarted(**{k: v for k, v in data.items() if k != "event_type"})
 
 
 class DrillStarted(types.DialogEvent):
@@ -114,7 +116,7 @@ class DrillStarted(types.DialogEvent):
 class ReminderTriggeredSchema(types.DialogEventSchema):
     @post_load
     def make_reminder_triggered(self, data, **kwargs):
-        return ReminderTriggered(**data)
+        return ReminderTriggered(**{k: v for k, v in data.items() if k != "event_type"})
 
 
 class ReminderTriggered(types.DialogEvent):
@@ -133,7 +135,7 @@ class ReminderTriggered(types.DialogEvent):
 class UserCreatedSchema(types.DialogEventSchema):
     @post_load
     def make_user_created(self, data, **kwargs):
-        return UserCreated(**data)
+        return UserCreated(**{k: v for k, v in data.items() if k != "event_type"})
 
 
 class UserCreated(types.DialogEvent):
@@ -152,7 +154,7 @@ class UserCreated(types.DialogEvent):
 class UserCreationFailedSchema(types.DialogEventSchema):
     @post_load
     def make_user_creation_failed(self, data, **kwargs):
-        return UserCreationFailed(**data)
+        return UserCreationFailed(**{k: v for k, v in data.items() if k != "event_type"})
 
 
 class UserCreationFailed(types.DialogEvent):
@@ -174,7 +176,7 @@ class CompletedPromptSchema(types.DialogEventSchema):
 
     @post_load
     def make_completed_prompt(self, data, **kwargs):
-        return CompletedPrompt(**data)
+        return CompletedPrompt(**{k: v for k, v in data.items() if k != "event_type"})
 
 
 class CompletedPrompt(types.DialogEvent):
@@ -197,14 +199,17 @@ class CompletedPrompt(types.DialogEvent):
 class FailedPromptSchema(types.DialogEventSchema):
     prompt = fields.Nested(drills.PromptSchema, required=True)
     abandoned = fields.Boolean(required=True)
+    response = fields.String(required=True)
 
     @post_load
     def make_failed_prompt(self, data, **kwargs):
-        return FailedPrompt(**data)
+        return FailedPrompt(**{k: v for k, v in data.items() if k != "event_type"})
 
 
 class FailedPrompt(types.DialogEvent):
-    def __init__(self, phone_number: str, prompt: drills.Prompt, abandoned: bool, **kwargs):
+    def __init__(
+            self, phone_number: str, prompt: drills.Prompt, response: str, abandoned: bool, **kwargs
+    ):
         super().__init__(
             FailedPromptSchema(),
             types.DialogEventType.FAILED_PROMPT,
@@ -213,6 +218,7 @@ class FailedPrompt(types.DialogEvent):
         )
         self.prompt = prompt
         self.abandoned = abandoned
+        self.response = response
 
     def apply_to(self, dialog_state: types.DialogState):
         if self.abandoned:
@@ -226,7 +232,7 @@ class AdvancedToNextPromptSchema(types.DialogEventSchema):
 
     @post_load
     def make_advanced_to_next_prompt(self, data, **kwargs):
-        return AdvancedToNextPrompt(**data)
+        return AdvancedToNextPrompt(**{k: v for k, v in data.items() if k != "event_type"})
 
 
 class AdvancedToNextPrompt(types.DialogEvent):
@@ -251,7 +257,7 @@ class DrillCompletedSchema(types.DialogEventSchema):
 
     @post_load
     def make_drill_completed(self, data, **kwargs):
-        return DrillCompleted(**data)
+        return DrillCompleted(**{k: v for k, v in data.items() if k != "event_type"})
 
 
 class DrillCompleted(types.DialogEvent):
@@ -269,7 +275,7 @@ class DrillCompleted(types.DialogEvent):
         dialog_state.current_drill = None
 
 
-def to_event(event_dict: Dict[str, Any]) -> types.DialogEvent:
+def event_from_dict(event_dict: Dict[str, Any]) -> types.DialogEvent:
     event_type = types.DialogEventType[event_dict['event_type']]
     if event_type == types.DialogEventType.ADVANCED_TO_NEXT_PROMPT:
         return AdvancedToNextPromptSchema().load(event_dict)

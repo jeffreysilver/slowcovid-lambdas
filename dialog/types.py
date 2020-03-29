@@ -109,11 +109,23 @@ class DialogEventType(enum.Enum):
     DRILL_COMPLETED = "DRILL_COMPLETED"
 
 
+class EventTypeField(fields.Field):
+    """Field that serializes to a title case string and deserializes
+    to a lower case string.
+    """
+
+    def _serialize(self, value, attr, obj, **kwargs):
+        return value.name
+
+    def _deserialize(self, value, attr, data, **kwargs):
+        return DialogEventType[value]
+
+
 class DialogEventSchema(Schema):
     phone_number = fields.String(required=True)
     created_time = fields.DateTime(required=True)
     event_id = fields.UUID(required=True)
-    event_type = fields.String(required=True)
+    event_type = EventTypeField(required=True)
 
 
 class DialogEvent(ABC):
