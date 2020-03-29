@@ -1,12 +1,12 @@
 from serverless_sdk import tag_event
 from clients import twilio, kinesis
-from utils.sqs import get_payloads_from_sqs_payload
+from utils.sqs import get_payloads_from_sqs_event
 
 
 def send_message(event, context):
     tag_event("send_message", "raw_event", event)
 
-    messages = get_payloads_from_sqs_payload(event)
+    messages = get_payloads_from_sqs_event(event)
     for message in messages:
         response = twilio.send_message(message["To"], message["Body"])
         kinesis.publish_log_outbound_message(

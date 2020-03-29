@@ -3,11 +3,12 @@ import os
 import json
 import uuid
 
+SQS = boto3.resource("sqs")
 
-def publish_outbound_messages(payloads):
-    sqs = boto3.resource("sqs")
+
+def publish_outbound_sms_messages(payloads):
     queue_name = f"outbound-sms-{os.getenv('STAGE')}"
-    queue = sqs.get_queue_by_name(QueueName=queue_name)
+    queue = SQS.get_queue_by_name(QueueName=queue_name)
     entries = [
         {"MessageBody": json.dumps(payload), "Id": str(uuid.uuid4())}
         for payload in payloads
