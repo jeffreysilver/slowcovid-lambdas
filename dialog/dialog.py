@@ -6,7 +6,7 @@ from typing import List, Optional
 
 from marshmallow import Schema, fields, post_load
 
-import drills
+from drills import drills
 
 VALID_OPT_IN_CODES = {"drill0"}
 

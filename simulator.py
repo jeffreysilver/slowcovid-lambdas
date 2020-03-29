@@ -4,12 +4,12 @@ import uuid
 from time import sleep
 from typing import List
 
-from dialog import (
+from dialog.dialog import (
     DialogEvent, DialogState, DialogRepository, DialogStateSchema, DialogEventType,
     process_command, StartDrill,
     ProcessSMSMessage
 )
-from drills import Drill, Prompt
+from drills.drills import Drill, Prompt
 
 TRY_AGAIN = "Sorry, not correct.\n\n*Try again one more time!*"
 PHONE_NUMBER = "123456789"
