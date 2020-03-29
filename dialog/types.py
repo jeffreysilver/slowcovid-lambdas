@@ -1,4 +1,5 @@
 import enum
+import uuid
 from abc import abstractmethod, ABC
 import datetime
 from typing import Optional, List
@@ -108,7 +109,12 @@ class DialogEventType(enum.Enum):
 class DialogEvent(ABC):
     def __init__(self, event_type: DialogEventType, phone_number: str):
         self.phone_number = phone_number
-        self.datetime = datetime.datetime.utcnow()
+
+        # relying on created time to determine ordering. We should be fine and it's simpler than
+        # sequence numbers. Events are processed in order by phone number and are relatively
+        # infrequent. And the lambda environment has some clock guarantees.
+        self.created_time = datetime.datetime.utcnow()
+        self.event_id = uuid.uuid4()
         self.event_type = event_type
 
     @abstractmethod
