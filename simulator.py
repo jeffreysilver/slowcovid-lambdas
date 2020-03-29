@@ -1,14 +1,12 @@
 # -*- coding: utf-8 -*-
-import sys
 import uuid
 from time import sleep
 from typing import List
 
 from dialog.dialog import (
-    DialogEvent, DialogState, DialogRepository, DialogStateSchema, DialogEventType,
-    process_command, StartDrill,
-    ProcessSMSMessage
+    DialogEvent, DialogState, DialogRepository, process_command, StartDrill, ProcessSMSMessage
 )
+from dialog.types import DialogStateSchema, DialogEventType
 from drills.drills import Drill, Prompt
 
 TRY_AGAIN = "Sorry, not correct.\n\n*Try again one more time!*"
