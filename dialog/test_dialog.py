@@ -4,10 +4,6 @@ from drills.drills import Prompt, Drill
 from .dialog import *
 from .types import DialogEvent
 
-"""
-    DRILL_COMPLETED = "DRILL_COMPLETED"
-"""
-
 
 class TestSerialization(unittest.TestCase):
     def setUp(self) -> None:
