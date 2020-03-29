@@ -1,6 +1,6 @@
 import unittest
 
-from response_check import is_correct_response
+from .response_check import is_correct_response
 
 SAMPLES = [
     ["a) si", "b) no", False],

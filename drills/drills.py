@@ -3,7 +3,7 @@ from typing import Optional, List
 
 from marshmallow import Schema, fields, post_load
 
-from response_check import is_correct_response
+from .response_check import is_correct_response
 
 
 class PromptSchema(Schema):
