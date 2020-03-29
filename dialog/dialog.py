@@ -35,7 +35,10 @@ class DrillStarted(DialogEvent):
 
     def apply_to(self, dialog_state: DialogState):
         dialog_state.current_drill = self.drill
-        dialog_state.current_prompt_state = PromptState(self.prompt.slug, start_time=self.datetime)
+        dialog_state.current_prompt_state = PromptState(
+            self.prompt.slug,
+            start_time=self.created_time
+        )
 
 
 class TriggerReminder(Command):
@@ -148,7 +151,10 @@ class AdvancedToNextPrompt(DialogEvent):
         self.prompt = prompt
 
     def apply_to(self, dialog_state: DialogState):
-        dialog_state.current_prompt_state = PromptState(self.prompt.slug, start_time=self.datetime)
+        dialog_state.current_prompt_state = PromptState(
+            self.prompt.slug,
+            start_time=self.created_time
+        )
 
 
 class DrillCompleted(DialogEvent):
