@@ -3,14 +3,15 @@ from typing import Optional, List
 
 from marshmallow import Schema, fields, post_load
 
+from response_check import is_correct_response
+
 
 class PromptSchema(Schema):
     slug = fields.String(required=True)
     messages = fields.List(fields.String(), required=True)
     should_store_response = fields.Boolean(allow_none=True)
     response_user_profile_key = fields.String(allow_none=True)
-    correct_option = fields.String(allow_none=True)
-    correct_option_code = fields.String(allow_none=True)
+    correct_response = fields.String(allow_none=True)
 
     @post_load
     def make_prompt(self, data, **kwargs):
@@ -22,23 +23,21 @@ class Prompt:
                  slug: str,
                  messages: List[str],
                  response_user_profile_key: Optional[str] = None,
-                 correct_option: Optional[str] = None,
-                 correct_option_code: Optional[str] = None,
+                 correct_response: Optional[str] = None,
                  ):
         self.slug = slug
         self.messages = messages
         self.response_user_profile_key = response_user_profile_key
-        self.correct_option = correct_option
-        self.correct_option_code = correct_option_code
+        self.correct_response = correct_response
         self.max_failures = 1
 
     def should_advance_with_answer(self, answer: str) -> bool:
         if not self.is_graded():
             return True
-        return self.correct_option_code.lower() == answer.lower()
+        return is_correct_response(answer, self.correct_response)
 
     def is_graded(self) -> bool:
-        return self.correct_option_code is not None
+        return self.correct_response is not None
 
     def stores_answer(self) -> bool:
         return self.response_user_profile_key is not None

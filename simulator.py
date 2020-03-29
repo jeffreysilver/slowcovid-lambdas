@@ -56,8 +56,7 @@ DRILL = Drill(
             slug="q-bacteria",
             messages=["PRACTICE 1: True or false?\n\nCOVID-19 is a bacteria.\n\n"
                       "a) true\nb) false"],
-            correct_option="b) false",
-            correct_option_code="b",
+            correct_response="b) false",
         ),
         Prompt(
             slug="q-flu",
@@ -67,8 +66,7 @@ DRILL = Drill(
                       "PRACTICE 2: Fill in the blank by choosing the best answer.\n\n"
                       "COVID-19 is [---] the flu.\n\na) as contagious as\nb) less "
                       "contagious than\nc) more contagious than"],
-            correct_option="c) more contagious than",
-            correct_option_code="c"
+            correct_response="c) more contagious than",
         ),
         Prompt(
             slug="q-spread",
@@ -79,8 +77,7 @@ DRILL = Drill(
                       "person\nto person?\n\na) Contact with an infected person\nb) An "
                       "infected person coughs or sneezes\nc) Touching a surface with "
                       "COVID-19 on it, then touching your face\nd) All of the above"],
-            correct_option="d) All of the above",
-            correct_option_code="d",
+            correct_response="d) All of the above",
         ),
         Prompt(
             slug="q-symptoms",
@@ -90,8 +87,7 @@ DRILL = Drill(
                       "PRACTICE 4: Answer the question.\n\nWhat are the most common symptoms "
                       "of COVID-19?\n\na) Stomachache, nausea, diarrhea\nb) Fever, cough, "
                       "shortness of breath\nc) Itchy rash\nd) Blurred vision"],
-            correct_option="b) Fever, cough, shortness of breath",
-            correct_option_code="b"
+            correct_response="b) Fever, cough, shortness of breath",
         ),
         Prompt(
             slug="q-care",
@@ -102,8 +98,7 @@ DRILL = Drill(
                       " [---]. \n\na) stay home, except to get medical care\nb) don't take "
                       "public transportation\nc) call your doctor before you visit \nd) all "
                       "of the above"],
-            correct_option="d) all of the above",
-            correct_option_code="d"
+            correct_response="d) all of the above",
         ),
         Prompt(
             slug="conclusion",
@@ -148,7 +143,7 @@ class InMemoryRepository(DialogRepository):
                     fake_sms(event.phone_number, [TRY_AGAIN])
                 else:
                     fake_sms(event.phone_number, [
-                        f"The correct answer is *{event.prompt.correct_option}*.\n\n"
+                        f"The correct answer is *{event.prompt.correct_response}*.\n\n"
                         f"Lets move to the next one."
                     ])
             elif event.event_type == DialogEventType.COMPLETED_PROMPT:
