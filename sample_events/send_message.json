@@ -1,0 +1,20 @@
+{
+  "Records": [
+    {
+      "messageId": "ee0389f9-b0e1-4fea-8d35-56d677d41222",
+      "receiptHandle": "AQEB9/wU2JO9hkAdJOS4FKLY4Uonb673CPRS/wpQQMwvwjZk+CJ8bFsPvaDYSNgWunLhiGk5HvhIgGuYvWrPaoIUqOs+umYYxXr3kXQ7hYOMS2HjD6DXPlCu9KXcVSUk4FPp1BljbDEQrVWt3P+2+QFKSowev5tHS9y0h6VMSmO2SQwWb9/rutJzQ1XtDYSy2jVoNqpFbo7QxMRx5QIiTLOn137tvkdWHkyxKNhU7y8iO0/fkOD2ZIsyTfwFK8VWwCMO66a0nwYDhAGXWZEviamcePgDF7UaACSJuSdeFYTazCyBnNTvE7vgdVNzPlc8Mvq1IzTe5EjOQE7faSfQjRieydfZvT8oufxxI5AwJKZ6aSiPf+87+83aBP2uerlzFev+iKL9O/VYkb7WkVK2lCN2Ag==",
+      "body": "test",
+      "attributes": {
+        "ApproximateReceiveCount": "43",
+        "SentTimestamp": "1585510215061",
+        "SenderId": "AIDA2ER7MCBLI3NF2VX6H",
+        "ApproximateFirstReceiveTimestamp": "1585510215061"
+      },
+      "messageAttributes": {},
+      "md5OfBody": "098f6bcd4621d373cade4e832627b4f6",
+      "eventSource": "aws:sqs",
+      "eventSourceARN": "arn:aws:sqs:us-east-1:696991354966:outbound-sms-dev",
+      "awsRegion": "us-east-1"
+    }
+  ]
+}

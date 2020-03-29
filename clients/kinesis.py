@@ -4,7 +4,7 @@ import json
 from serverless_sdk import tag_event
 
 
-def publish_outbound_message(payload):
+def publish_log_outbound_message(payload):
     kinesis = boto3.client("kinesis")
 
     stage = os.environ.get("STAGE")

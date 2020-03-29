@@ -13,7 +13,7 @@ def log_message(raw_event, context):
 
     for event in events:
         payload = event["payload"]
-        print(payload)
+
         if event["type"] == "STATUS_UPDATE":
             rds.update_message(
                 payload["MessageSid"], payload["MessageStatus"], payload["From"]

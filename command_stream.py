@@ -1,5 +1,5 @@
 from serverless_sdk import tag_event
-from clients import lambdas
+from clients import sqs
 from utils.kinesis import get_payloads_from_kinesis_payload
 
 
@@ -11,11 +11,9 @@ def handle_command(raw_event, context):
     events = get_payloads_from_kinesis_payload(raw_event)
     tag_event("command_stream", "commands", events)
 
-    for event in events:
-        response = get_response(event)
+    responses = [get_response(event) for event in events]
 
-        # eventually: write to dynamodb dialog log
-        lambdas.invoke_send_message(response)
+    sqs.publish_outbound_messages(responses)
 
     return {"statusCode": 200}
 

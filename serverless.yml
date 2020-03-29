@@ -13,6 +13,7 @@ provider:
       Action:
         - lambda:InvokeFunction
         - kinesis:*
+        - sqs:*
         - rds-data:ExecuteStatement
         - secretsmanager:GetSecretValue
       Resource: "*"
@@ -25,11 +26,10 @@ provider:
     AUTH_USERNAME: ${env:AUTH_USERNAME}
     AUTH_PASSWORD: ${env:AUTH_PASSWORD}
     STAGE: ${self:provider.stage}
-    
+        
 plugins:
   - serverless-python-requirements
   - serverless-dotenv-plugin
-
 functions:
   registration:
     handler: registration.handle_registration
@@ -41,6 +41,12 @@ functions:
 
   sendMessage:
     handler: outbound_sms.send_message
+    events:
+      - sqs:
+          arn:
+            Fn::GetAtt:
+              - OutboundSMSQueue
+              - Arn
 
   handleCommand:
     handler: command_stream.handle_command
@@ -141,3 +147,9 @@ resources:
             MaxCapacity: 4
             MinCapacity: 2
             SecondsUntilAutoPause: 300
+
+    OutboundSMSQueue:
+      Type: AWS::SQS::Queue
+      Properties:
+        QueueName: outbound-sms-${self:provider.stage}
+
