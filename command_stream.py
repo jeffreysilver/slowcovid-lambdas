@@ -22,14 +22,14 @@ def handle_command(raw_event, context):
                 ProcessSMSMessage(
                     phone_number=payload["From"], content=payload["Body"]
                 ),
-                # sequence_number,
+                sequence_number,
             )
         elif command_type == "START_DRILL":
             process_command(
                 StartDrill(
-                    phone_number=payload["phone_number"], drill=drill_from_dict(payload)
+                    phone_number=payload["phone_number"], drill=drill_from_dict(payload["drill"])
                 ),
-                # sequence_number,
+                sequence_number,
             )
         elif command_type == "TRIGGER_REMINDER":
             process_command(
@@ -38,7 +38,7 @@ def handle_command(raw_event, context):
                     drill_id=payload["drill_id"],
                     prompt_slug=payload["prompt_slug"],
                 ),
-                # sequence_number,
+                sequence_number,
             )
         else:
             # tag_event("command_stream", "unknown command", event)

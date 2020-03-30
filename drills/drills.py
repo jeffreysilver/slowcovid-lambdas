@@ -1,15 +1,12 @@
-import uuid
 from typing import Optional, List
 
 from marshmallow import Schema, fields, post_load
 
 from .response_check import is_correct_response
 
+
 def drill_from_dict(obj):
-    return DrillSchema.loads(name=obj["name"], prompts=[
-        PromptSchema.loads(**prompt)
-        for prompt in obj["prompts"]
-    ])
+    return DrillSchema().load(obj)
 
 
 class PromptSchema(Schema):
@@ -28,11 +25,13 @@ class Prompt:
     def __init__(self,
                  slug: str,
                  messages: List[str],
+                 should_store_response: Optional[bool] = False,
                  response_user_profile_key: Optional[str] = None,
                  correct_response: Optional[str] = None,
                  ):
         self.slug = slug
         self.messages = messages
+        self.should_store_response = should_store_response
         self.response_user_profile_key = response_user_profile_key
         self.correct_response = correct_response
         self.max_failures = 1
