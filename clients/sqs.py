@@ -12,6 +12,7 @@ def publish_outbound_sms_messages(payloads):
 
     entries = []
     for payload in payloads:
+        # TODO: use event_id once we have a callsite for this method
         idempotency_key = str(uuid.uuid4())
         payload["idempotency_key"] = idempotency_key
         entries.append({"Id": idempotency_key, "MessageBody": json.dumps(payload)})

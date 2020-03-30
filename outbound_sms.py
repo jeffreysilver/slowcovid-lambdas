@@ -9,9 +9,6 @@ def send_message(event, context):
 
     messages = get_payloads_from_sqs_event(event)
 
-    twilio_responses = [
-        twilio.send_message(message["To"], message["Body"]) for message in messages
-    ]
     twilio_responses = []
     for message in messages:
         idempotency_key = message["idempotency_key"]
@@ -22,7 +19,9 @@ def send_message(event, context):
         dynamo.persist_outbound_sms_idempotency_key(idempotency_key)
         twilio_responses.append(response)
 
-    kinesis_response = kinesis.publish_log_outbound_sms(twilio_responses)
+    if twilio_responses:
+        kinesis_response = kinesis.publish_log_outbound_sms(twilio_responses)
+        tag_event("send_message", "publish_log_message_response", kinesis_response)
 
     tag_event(
         "send_message",
@@ -40,7 +39,6 @@ def send_message(event, context):
         ],
     )
 
-    tag_event("send_message", "publish_log_message_response", kinesis_response)
 
     return {
         "statusCode": 200,

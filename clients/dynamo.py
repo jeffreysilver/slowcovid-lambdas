@@ -1,20 +1,25 @@
 import boto3
 import os
+import time
 
-DYNAMO = boto3.resource("dynamodb")
 
+DYNAMO = boto3.client("dynamodb")
+
+OUTBOUND_SMS_IDEMPOTENCY_KEY_TABLE_NAME = f"outbound-sms-idempotency-{os.getenv('STAGE')}"
 
 def persist_outbound_sms_idempotency_key(idempotency_key):
-    table_name = f"outbound-sms-idempotency-cache-{os.getenv('STAGE')}"
+    expire_at = time.time() + 60 * 60 * 24 # clean up idempotency keys after one day
     return DYNAMO.put_item(
-        TableName=table_name, Item={"idempotency_key": {"S": idempotency_key}}
+        TableName=OUTBOUND_SMS_IDEMPOTENCY_KEY_TABLE_NAME, Item={
+            "idempotency_key": {"S": idempotency_key},
+            "expire_at": {"N": str(expire_at)},
+        }
     )
 
 
 def outbound_sms_idempotency_key_exists(idempotency_key):
-    table_name = f"outbound-sms-idempotency-cache-{os.getenv('STAGE')}"
     response = DYNAMO.get_item(
-        TableName=table_name,
+        TableName=OUTBOUND_SMS_IDEMPOTENCY_KEY_TABLE_NAME,
         Key={"idempotency_key": {"S": idempotency_key}},
         AttributesToGet=["idempotency_key"],
         ConsistentRead=True,
