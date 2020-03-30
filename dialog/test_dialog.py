@@ -86,14 +86,14 @@ class TestSerialization(unittest.TestCase):
         deserialized = event_from_dict(serialized)
         self._make_base_assertions(original, deserialized)
 
-    def test_user_created(self):
-        original = UserCreated("123456789")
+    def test_user_validated(self):
+        original = UserValidated("123456789")
         serialized = original.to_dict()
         deserialized = event_from_dict(serialized)
         self._make_base_assertions(original, deserialized)
 
-    def test_user_creation_failed(self):
-        original = UserCreationFailed("123456789")
+    def test_user_validation_failed(self):
+        original = UserValidationFailed("123456789")
         serialized = original.to_dict()
         deserialized = event_from_dict(serialized)
         self._make_base_assertions(original, deserialized)

@@ -60,8 +60,8 @@ class ProcessSMSMessage(types.Command):
     def execute(self, dialog_state: types.DialogState) -> List[types.DialogEvent]:
         if not dialog_state.user_profile.validated:
             if self.content_lower in VALID_OPT_IN_CODES:
-                return [UserCreated(self.phone_number)]
-            return [UserCreationFailed(self.phone_number)]
+                return [UserValidated(self.phone_number)]
+            return [UserValidationFailed(self.phone_number)]
 
         prompt = dialog_state.get_prompt()
         if prompt is None:
@@ -135,17 +135,17 @@ class ReminderTriggered(types.DialogEvent):
         dialog_state.current_prompt_state.reminder_triggered = True
 
 
-class UserCreatedSchema(types.DialogEventSchema):
+class UserValidatedSchema(types.DialogEventSchema):
     @post_load
     def make_user_created(self, data, **kwargs):
-        return UserCreated(**{k: v for k, v in data.items() if k != "event_type"})
+        return UserValidated(**{k: v for k, v in data.items() if k != "event_type"})
 
 
-class UserCreated(types.DialogEvent):
+class UserValidated(types.DialogEvent):
     def __init__(self, phone_number: str, **kwargs):
         super().__init__(
-            UserCreatedSchema(),
-            types.DialogEventType.USER_CREATED,
+            UserValidatedSchema(),
+            types.DialogEventType.USER_VALIDATED,
             phone_number,
             **kwargs
         )
@@ -154,17 +154,17 @@ class UserCreated(types.DialogEvent):
         dialog_state.user_profile.validated = True
 
 
-class UserCreationFailedSchema(types.DialogEventSchema):
+class UserValidationFailedSchema(types.DialogEventSchema):
     @post_load
     def make_user_creation_failed(self, data, **kwargs):
-        return UserCreationFailed(**{k: v for k, v in data.items() if k != "event_type"})
+        return UserValidationFailed(**{k: v for k, v in data.items() if k != "event_type"})
 
 
-class UserCreationFailed(types.DialogEvent):
+class UserValidationFailed(types.DialogEvent):
     def __init__(self, phone_number: str, **kwargs):
         super().__init__(
-            UserCreationFailedSchema(),
-            types.DialogEventType.USER_CREATION_FAILED,
+            UserValidationFailedSchema(),
+            types.DialogEventType.USER_VALIDATION_FAILED,
             phone_number,
             **kwargs
         )
@@ -284,12 +284,12 @@ def event_from_dict(event_dict: Dict[str, Any]) -> types.DialogEvent:
         return AdvancedToNextPromptSchema().load(event_dict)
     if event_type == types.DialogEventType.DRILL_COMPLETED:
         return DrillCompletedSchema().load(event_dict)
-    if event_type == types.DialogEventType.USER_CREATION_FAILED:
-        return UserCreationFailedSchema().load(event_dict)
+    if event_type == types.DialogEventType.USER_VALIDATION_FAILED:
+        return UserValidationFailedSchema().load(event_dict)
     if event_type == types.DialogEventType.DRILL_STARTED:
         return DrillStartedSchema().load(event_dict)
-    if event_type == types.DialogEventType.USER_CREATED:
-        return UserCreatedSchema().load(event_dict)
+    if event_type == types.DialogEventType.USER_VALIDATED:
+        return UserValidatedSchema().load(event_dict)
     if event_type == types.DialogEventType.COMPLETED_PROMPT:
         return CompletedPromptSchema().load(event_dict)
     if event_type == types.DialogEventType.FAILED_PROMPT:
