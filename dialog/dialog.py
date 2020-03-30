@@ -88,6 +88,7 @@ class ProcessSMSMessage(types.Command):
 
 class DrillStartedSchema(types.DialogEventSchema):
     drill = fields.Nested(drills.DrillSchema, required=True)
+    drill_instance_id = fields.UUID(required=True)
 
     @post_load
     def make_drill_started(self, data, **kwargs):
@@ -104,9 +105,11 @@ class DrillStarted(types.DialogEvent):
         )
         self.drill = drill
         self.prompt = drill.first_prompt()
+        self.drill_instance_id = kwargs.get('drill_instance_id', uuid.uuid4())
 
     def apply_to(self, dialog_state: types.DialogState):
         dialog_state.current_drill = self.drill
+        dialog_state.drill_instance_id = self.drill_instance_id
         dialog_state.current_prompt_state = types.PromptState(
             self.prompt.slug,
             start_time=self.created_time
@@ -253,7 +256,7 @@ class AdvancedToNextPrompt(types.DialogEvent):
 
 
 class DrillCompletedSchema(types.DialogEventSchema):
-    drill = fields.Nested(drills.DrillSchema, required=True)
+    drill_instance_id = fields.UUID(required=True)
 
     @post_load
     def make_drill_completed(self, data, **kwargs):
@@ -261,18 +264,18 @@ class DrillCompletedSchema(types.DialogEventSchema):
 
 
 class DrillCompleted(types.DialogEvent):
-    def __init__(self, phone_number: str, drill: drills.Drill, **kwargs):
+    def __init__(self, phone_number: str, drill_instance_id: uuid.UUID, **kwargs):
         super().__init__(
             DrillCompletedSchema(),
             types.DialogEventType.DRILL_COMPLETED,
             phone_number,
             **kwargs
         )
-        self.drill = drill
+        self.drill_instance_id = drill_instance_id
 
     def apply_to(self, dialog_state: types.DialogState):
-        dialog_state.completed_drills.append(dialog_state.current_drill)
         dialog_state.current_drill = None
+        dialog_state.drill_instance_id = None
 
 
 def event_from_dict(event_dict: Dict[str, Any]) -> types.DialogEvent:
