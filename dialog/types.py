@@ -136,7 +136,7 @@ class DialogEvent(ABC):
         # relying on created time to determine ordering. We should be fine and it's simpler than
         # sequence numbers. Events are processed in order by phone number and are relatively
         # infrequent. And the lambda environment has some clock guarantees.
-        self.created_time = kwargs.get('created_time', datetime.datetime.utcnow())
+        self.created_time = kwargs.get('created_time', datetime.datetime.now(datetime.timezone.utc))
         self.event_id = kwargs.get('event_id', uuid.uuid4())
         self.event_type = event_type
 
