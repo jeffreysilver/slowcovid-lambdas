@@ -45,7 +45,7 @@ class DynamoDBDialogRepository(DialogRepository):
             ConsistentRead=True
         )
         if "Item" not in response:
-            return DialogState(phone_number=phone_number)
+            return DialogState(phone_number=phone_number, seq="0")
         dialog_dict = _deserialize(response["Item"])
         return DialogStateSchema().load(dialog_dict)
 

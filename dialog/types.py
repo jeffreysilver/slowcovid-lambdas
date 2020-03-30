@@ -58,6 +58,8 @@ class PromptState:
 
 class DialogStateSchema(Schema):
     phone_number = fields.Str(required=True)
+    # store sequence number as a string to int conversion imprecision
+    seq = fields.Str(required=True)
     user_profile = fields.Nested(UserProfileSchema, allow_none=True)
     # persist the entire drill so that modifications to drills don"t affect
     # drills that are in flight
@@ -73,11 +75,13 @@ class DialogStateSchema(Schema):
 class DialogState:
     def __init__(self,
                  phone_number: str,
+                 seq: str,
                  user_profile: Optional[UserProfile] = None,
                  current_drill: Optional[drills.Drill] = None,
                  drill_instance_id: Optional[uuid.UUID] = None,
                  current_prompt_state: Optional[PromptState] = None):
         self.phone_number = phone_number
+        self.seq = seq
         self.user_profile = user_profile or UserProfile(validated=False)
         self.current_drill = current_drill
         self.drill_instance_id = drill_instance_id
