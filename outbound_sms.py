@@ -7,22 +7,17 @@ def send_message(event, context):
     tag_event("send_message", "raw_event", event)
 
     messages = get_payloads_from_sqs_event(event)
-    for message in messages:
-        response = twilio.send_message(message["To"], message["Body"])
-        kinesis.publish_log_outbound_message(
-            {
-                "type": "OUTBOUND_SMS",
-                "payload": {
-                    "MessageSid": response.sid,
-                    "To": response.to,
-                    "Body": response.body,
-                    "MessageStatus": response.status,
-                },
-            }
-        )
-        tag_event(
-            "send_message",
-            "twilio_response",
+
+    twilio_responses = [
+        twilio.send_message(message["To"], message["Body"]) for message in messages
+    ]
+
+    kinesis_response = kinesis.publish_log_outbound_sms(twilio_responses)
+
+    tag_event(
+        "send_message",
+        "twilio_responses",
+        [
             {
                 "twilio_message_id": response.sid,
                 "to": response.to,
@@ -30,8 +25,12 @@ def send_message(event, context):
                 "status": response.status,
                 "error_code": response.error_code,
                 "error_message": response.error_message,
-            },
-        )
+            }
+            for response in twilio_responses
+        ],
+    )
+
+    tag_event("send_message", "publish_log_message_response", kinesis_response)
 
     return {
         "statusCode": 200,

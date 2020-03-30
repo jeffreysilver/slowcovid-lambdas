@@ -1,22 +1,31 @@
 import boto3
 import os
 import json
-from serverless_sdk import tag_event
 
 
 KINESIS = boto3.client("kinesis")
 
 
-def publish_log_outbound_message(payload):
+def publish_log_outbound_sms(twilio_responses):
 
     stage = os.environ.get("STAGE")
 
-    response = KINESIS.put_record(
-        StreamName=f"message-log-{stage}",
-        Data=json.dumps(payload),
-        PartitionKey=payload["payload"]["To"],
-    )
+    records = [
+        {
+            "Data": json.dumps(
+                {
+                    "type": "OUTBOUND_SMS",
+                    "payload": {
+                        "MessageSid": response.sid,
+                        "To": response.to,
+                        "Body": response.body,
+                        "MessageStatus": response.status,
+                    },
+                }
+            ),
+            "PartitionKey": response.to,
+        }
+        for response in twilio_responses
+    ]
 
-    tag_event("kinesis", "publish_outbound_message_response", response)
-
-    return response
+    return KINESIS.put_records(Records=records, StreamName=f"message-log-{stage}",)
