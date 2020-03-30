@@ -53,6 +53,7 @@ functions:
 
   logMessage:
     handler: message_log.log_message
+    timeout: 20  # Aurora cold starts take some time
 
   healthcheck:
     handler: healthcheck.healthcheck
