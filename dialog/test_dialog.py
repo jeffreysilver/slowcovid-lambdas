@@ -68,6 +68,7 @@ class TestSerialization(unittest.TestCase):
         original = DrillStarted(
             phone_number="12345678",
             drill=self.drill,
+            first_prompt=self.prompt,
             drill_instance_id=uuid.uuid4()
         )
         serialized = original.to_dict()
@@ -75,6 +76,7 @@ class TestSerialization(unittest.TestCase):
         self._make_base_assertions(original, deserialized)
         self.assertEqual(original.drill.name, deserialized.drill.name)
         self.assertEqual(original.drill_instance_id, deserialized.drill_instance_id)
+        self.assertEqual(original.first_prompt.slug, deserialized.first_prompt.slug)
 
     def test_drill_completed(self):
         original = DrillCompleted(

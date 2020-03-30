@@ -35,7 +35,7 @@ class StartDrill(types.Command):
         self.drill = drill
 
     def execute(self, dialog_state: types.DialogState) -> List[types.DialogEvent]:
-        return [DrillStarted(self.phone_number, self.drill)]
+        return [DrillStarted(self.phone_number, self.drill, self.drill.first_prompt())]
 
 
 class TriggerReminder(types.Command):
@@ -111,6 +111,7 @@ class ProcessSMSMessage(types.Command):
 class DrillStartedSchema(types.DialogEventSchema):
     drill = fields.Nested(drills.DrillSchema, required=True)
     drill_instance_id = fields.UUID(required=True)
+    first_prompt = fields.Nested(drills.PromptSchema, required=True)
 
     @post_load
     def make_drill_started(self, data, **kwargs):
@@ -118,7 +119,13 @@ class DrillStartedSchema(types.DialogEventSchema):
 
 
 class DrillStarted(types.DialogEvent):
-    def __init__(self, phone_number: str, drill: drills.Drill, **kwargs):
+    def __init__(
+            self,
+            phone_number: str,
+            drill: drills.Drill,
+            first_prompt: drills.Prompt,
+            **kwargs
+    ):
         super().__init__(
             DrillStartedSchema(),
             types.DialogEventType.DRILL_STARTED,
@@ -126,14 +133,14 @@ class DrillStarted(types.DialogEvent):
             **kwargs
         )
         self.drill = drill
-        self.prompt = drill.first_prompt()
+        self.first_prompt = first_prompt
         self.drill_instance_id = kwargs.get('drill_instance_id', uuid.uuid4())
 
     def apply_to(self, dialog_state: types.DialogState):
         dialog_state.current_drill = self.drill
         dialog_state.drill_instance_id = self.drill_instance_id
         dialog_state.current_prompt_state = types.PromptState(
-            self.prompt.slug,
+            self.first_prompt.slug,
             start_time=self.created_time
         )
 

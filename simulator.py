@@ -156,7 +156,7 @@ class InMemoryRepository(DialogRepository):
             elif event.event_type == DialogEventType.USER_VALIDATION_FAILED:
                 print("(try DRILL0)")
             elif event.event_type == DialogEventType.DRILL_STARTED:
-                fake_sms(event.phone_number, event.prompt.messages)
+                fake_sms(event.phone_number, event.first_prompt.messages)
             elif event.event_type == DialogEventType.DRILL_COMPLETED:
                 print("(The drill is complete. Type crtl-D to exit.)")
         if should_start_drill:
