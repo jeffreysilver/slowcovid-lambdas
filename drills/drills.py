@@ -5,6 +5,12 @@ from marshmallow import Schema, fields, post_load
 
 from .response_check import is_correct_response
 
+def drill_from_dict(obj):
+    return DrillSchema.loads(name=obj["name"], prompts=[
+        PromptSchema.loads(**prompt)
+        for prompt in obj["prompts"]
+    ])
+
 
 class PromptSchema(Schema):
     slug = fields.String(required=True)
