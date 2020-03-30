@@ -1,17 +1,17 @@
 {
   "Records": [
     {
-      "messageId": "ee0389f9-b0e1-4fea-8d35-56d677d41222",
-      "receiptHandle": "AQEB9/wU2JO9hkAdJOS4FKLY4Uonb673CPRS/wpQQMwvwjZk+CJ8bFsPvaDYSNgWunLhiGk5HvhIgGuYvWrPaoIUqOs+umYYxXr3kXQ7hYOMS2HjD6DXPlCu9KXcVSUk4FPp1BljbDEQrVWt3P+2+QFKSowev5tHS9y0h6VMSmO2SQwWb9/rutJzQ1XtDYSy2jVoNqpFbo7QxMRx5QIiTLOn137tvkdWHkyxKNhU7y8iO0/fkOD2ZIsyTfwFK8VWwCMO66a0nwYDhAGXWZEviamcePgDF7UaACSJuSdeFYTazCyBnNTvE7vgdVNzPlc8Mvq1IzTe5EjOQE7faSfQjRieydfZvT8oufxxI5AwJKZ6aSiPf+87+83aBP2uerlzFev+iKL9O/VYkb7WkVK2lCN2Ag==",
-      "body": "test",
+      "messageId": "e08aee4b-73e3-41d0-80f1-527e418eaddb",
+      "receiptHandle": "AQEB6KhzCnjN0/35ibSro8dvk9GjXEzjSQcEK0niS7vOrb+Y3RZPCL8IxOiXAjPF9KNYI8l+byUvSTWR4hrbhrW6gggWChAER8Gea8+G33N0s/xiIuUn5re5gC5RGa1//+anPrP80UO1TAjSwumbNel6Uw2/381hnkABJC6J+2+UyZcDPQjEEtV2kZxXCAOSDMkVEkW05HRiVyjjvCU/Tmp2Cy7DfoTgbp0cqHNOJ+TW2tPIryu5SfKfsH9CVhZe3jupshOV7cDeei9e5acb6lSLwGo2jTDUvEG7VqtHDRMFtYaXLXEIqf2CS3yREQehkU39msZJvkBJOPgsqndWZ9EQGQSLgPnmZ3KkPERp7KhunUsRDJQ15/jKg/dfnqxNEOL+uA0+FxghyoMO1KFiwAhTlg==",
+      "body": "{\"To\": \"+14802865415\", \"Body\": \"\\ud83d\\udc22\\ud83d\\udc22\"}",
       "attributes": {
-        "ApproximateReceiveCount": "43",
-        "SentTimestamp": "1585510215061",
-        "SenderId": "AIDA2ER7MCBLI3NF2VX6H",
-        "ApproximateFirstReceiveTimestamp": "1585510215061"
+        "ApproximateReceiveCount": "1",
+        "SentTimestamp": "1585582265931",
+        "SenderId": "AROA2ER7MCBLLHUI44ECY:slowcovid-dev-handleCommand",
+        "ApproximateFirstReceiveTimestamp": "1585582265950"
       },
       "messageAttributes": {},
-      "md5OfBody": "098f6bcd4621d373cade4e832627b4f6",
+      "md5OfBody": "ccf127c77e8bc9c6f1e2f17451a8bf0f",
       "eventSource": "aws:sqs",
       "eventSourceARN": "arn:aws:sqs:us-east-1:696991354966:outbound-sms-dev",
       "awsRegion": "us-east-1"
