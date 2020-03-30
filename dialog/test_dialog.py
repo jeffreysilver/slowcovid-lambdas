@@ -12,7 +12,7 @@ class TestSerialization(unittest.TestCase):
             messages=['one', 'two']
         )
         self.drill = Drill(
-            drill_id=uuid.uuid4(),
+            name="01 START",
             prompts=[self.prompt]
         )
 
@@ -66,7 +66,7 @@ class TestSerialization(unittest.TestCase):
         serialized = original.to_dict()
         deserialized = event_from_dict(serialized)
         self._make_base_assertions(original, deserialized)
-        self.assertEqual(original.drill.drill_id, deserialized.drill.drill_id)
+        self.assertEqual(original.drill.name, deserialized.drill.name)
 
     def test_drill_completed(self):
         original = DrillCompleted(
@@ -76,7 +76,7 @@ class TestSerialization(unittest.TestCase):
         serialized = original.to_dict()
         deserialized = event_from_dict(serialized)
         self._make_base_assertions(original, deserialized)
-        self.assertEqual(original.drill.drill_id, deserialized.drill.drill_id)
+        self.assertEqual(original.drill.name, deserialized.drill.name)
 
     def test_reminder_triggered(self):
         original = ReminderTriggered("123456789")

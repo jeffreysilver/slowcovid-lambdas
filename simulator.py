@@ -12,7 +12,7 @@ from drills.drills import Drill, Prompt
 TRY_AGAIN = "Sorry, not correct.\n\n*Try again one more time!*"
 PHONE_NUMBER = "123456789"
 DRILL = Drill(
-    drill_id=uuid.uuid4(),
+    name="01 DEMO",
     prompts=[
         Prompt(
             slug="language",
