@@ -58,6 +58,8 @@ class PromptState:
 
 class DialogStateSchema(Schema):
     phone_number = fields.Str(required=True)
+    # store sequence number as a string to int conversion imprecision
+    seq = fields.Str(required=True)
     user_profile = fields.Nested(UserProfileSchema, allow_none=True)
     # persist the entire drill so that modifications to drills don"t affect
     # drills that are in flight
@@ -73,11 +75,13 @@ class DialogStateSchema(Schema):
 class DialogState:
     def __init__(self,
                  phone_number: str,
+                 seq: str,
                  user_profile: Optional[UserProfile] = None,
                  current_drill: Optional[drills.Drill] = None,
                  drill_instance_id: Optional[uuid.UUID] = None,
                  current_prompt_state: Optional[PromptState] = None):
         self.phone_number = phone_number
+        self.seq = seq
         self.user_profile = user_profile or UserProfile(validated=False)
         self.current_drill = current_drill
         self.drill_instance_id = drill_instance_id
@@ -136,7 +140,7 @@ class DialogEvent(ABC):
         # relying on created time to determine ordering. We should be fine and it's simpler than
         # sequence numbers. Events are processed in order by phone number and are relatively
         # infrequent. And the lambda environment has some clock guarantees.
-        self.created_time = kwargs.get('created_time', datetime.datetime.utcnow())
+        self.created_time = kwargs.get('created_time', datetime.datetime.now(datetime.timezone.utc))
         self.event_id = kwargs.get('event_id', uuid.uuid4())
         self.event_type = event_type
 
