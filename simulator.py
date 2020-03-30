@@ -9,6 +9,8 @@ from dialog.dialog import (
 from dialog.types import DialogStateSchema, DialogEventType, DialogEvent, DialogState
 from drills.drills import Drill, Prompt
 
+
+SEQ = 1
 TRY_AGAIN = "Sorry, not correct.\n\n*Try again one more time!*"
 PHONE_NUMBER = "123456789"
 DRILL = Drill(
@@ -127,7 +129,7 @@ class InMemoryRepository(DialogRepository):
         if phone_number in self.repo:
             return DialogStateSchema().loads(self.repo[phone_number])
         else:
-            return DialogState(phone_number=phone_number)
+            return DialogState(phone_number=phone_number, seq="0")
 
     def persist_dialog_state(self, events: List[DialogEvent], dialog_state: DialogState):
         self.repo[dialog_state.phone_number] = DialogStateSchema().dumps(dialog_state)
@@ -158,15 +160,19 @@ class InMemoryRepository(DialogRepository):
             elif event.event_type == DialogEventType.DRILL_COMPLETED:
                 print("(The drill is complete. Type crtl-D to exit.)")
         if should_start_drill:
-            process_command(StartDrill(PHONE_NUMBER, DRILL), repo=self)
+            global SEQ
+            SEQ += 1
+            process_command(StartDrill(PHONE_NUMBER, DRILL), str(SEQ), repo=self)
 
 
 def main():
+    global SEQ
     repo = InMemoryRepository()
     try:
         while True:
             message = input("> ")
-            process_command(ProcessSMSMessage(PHONE_NUMBER, message), repo=repo)
+            SEQ += 1
+            process_command(ProcessSMSMessage(PHONE_NUMBER, message), str(SEQ), repo=repo)
     except EOFError:
         pass
     dialog_state = repo.fetch_dialog_state(PHONE_NUMBER)

@@ -43,6 +43,7 @@ class TestPersistence(unittest.TestCase):
         )
         dialog_state = DialogState(
             self.phone_number,
+            "0",
             user_profile=UserProfile(validated=True, language="de"),
             drill_instance_id=event1.drill_instance_id
         )

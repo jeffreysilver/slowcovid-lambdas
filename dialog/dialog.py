@@ -1,3 +1,4 @@
+import logging
 import uuid
 from typing import List, Dict, Any
 
@@ -10,13 +11,21 @@ from . import types
 VALID_OPT_IN_CODES = {"drill0"}
 
 
-def process_command(command: types.Command, repo: DialogRepository = None):
+def process_command(command: types.Command, seq: str, repo: DialogRepository = None):
     if repo is None:
         repo = DynamoDBDialogRepository()
     dialog_state = repo.fetch_dialog_state(command.phone_number)
+    command_seq = int(seq)
+    state_seq = int(dialog_state.seq)
+    if command_seq <= state_seq:
+        logging.info(f"Processing already processed command {seq}. Current dialog state has "
+                     f"sequence {dialog_state.seq}.")
+        return
+
     events = command.execute(dialog_state)
     for event in events:
         event.apply_to(dialog_state)
+    dialog_state.seq = seq
     repo.persist_dialog_state(events, dialog_state)
 
 
