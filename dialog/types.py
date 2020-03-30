@@ -4,7 +4,7 @@ from abc import abstractmethod, ABC
 import datetime
 from typing import Optional, List, Dict
 
-from marshmallow import Schema, fields, post_load
+from marshmallow import Schema, fields, post_load, EXCLUDE
 from drills import drills
 
 
@@ -12,7 +12,13 @@ class UserProfileSchema(Schema):
     validated = fields.Boolean(required=True)
     language = fields.Str(allow_none=True)
     name = fields.Str(allow_none=True)
-    self_rating = fields.Str(allow_none=True)
+    self_rating_1 = fields.Str(allow_none=True)
+    self_rating_2 = fields.Str(allow_none=True)
+    self_rating_3 = fields.Str(allow_none=True)
+    self_rating_4 = fields.Str(allow_none=True)
+    self_rating_5 = fields.Str(allow_none=True)
+    self_rating_6 = fields.Str(allow_none=True)
+    self_rating_7 = fields.Str(allow_none=True)
 
     @post_load
     def make_user_profile(self, data, **kwargs):
@@ -24,12 +30,24 @@ class UserProfile:
                  validated: bool,
                  name: Optional[str] = None,
                  language: Optional[str] = None,
-                 self_rating: Optional[str] = None
+                 self_rating_1: Optional[str] = None,
+                 self_rating_2: Optional[str] = None,
+                 self_rating_3: Optional[str] = None,
+                 self_rating_4: Optional[str] = None,
+                 self_rating_5: Optional[str] = None,
+                 self_rating_6: Optional[str] = None,
+                 self_rating_7: Optional[str] = None,
                  ):
         self.language = language
         self.validated = validated
         self.name = name
-        self.self_rating = self_rating
+        self.self_rating_1 = self_rating_1
+        self.self_rating_2 = self_rating_2
+        self.self_rating_3 = self_rating_3
+        self.self_rating_4 = self_rating_4
+        self.self_rating_5 = self_rating_5
+        self.self_rating_6 = self_rating_6
+        self.self_rating_7 = self_rating_7
 
     def __str__(self):
         return (f"lang={self.language}, validated={self.validated}, "

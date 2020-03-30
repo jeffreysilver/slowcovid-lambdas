@@ -1,0 +1,2427 @@
+[
+  {
+    "name": "01. COVID19: Basics",
+    "language": "en",
+    "prompts": [
+      {
+        "slug": "00 - GO",
+        "messages": [
+          "Thank you for dedicating your time to StopCovid training. By completing one training everyday, you are helping prevent the spread of Coronavirus. \n\nTogether, we will stop COVID-19.",
+          "Today's drill is: COVID-19 Basics. Text me the word GO when you're ready to start."
+        ]
+      },
+      {
+        "slug": "01.2 - Name",
+        "messages": [
+          "What's your full name?\n(First and Last)"
+        ]
+      },
+      {
+        "slug": "01 - Self assessment",
+        "messages": [
+          "(Your answer will be kept private.)",
+          "On a scale of 1-10, how would you rate your current knowledge of today's topic: COVID-19 Basics. \n\n(1 = I don't know anything, 10 = I'm great and I teach others)",
+          "Ok! Here we go! Let’s learn a little bit about you first. "
+        ]
+      },
+      {
+        "slug": "02 - Q1",
+        "messages": [
+          "Thanks!",
+          "PRACTICE 1: True or false?\n\nCOVID-19 is a bacteria.\n\na) true\nb) false"
+        ],
+        "correct_response": "b) False"
+      },
+      {
+        "slug": "03 - Q2",
+        "messages": [
+          "PRACTICE 2: Fill in the blank by choosing the best answer.\n\nCOVID-19 is [---] the flu. \n\na) as contagious as\nb) less contagious than\nc) more contagious than\n",
+          "FACT:  COVID-19 is not a bacteria. It is a virus disease. If you hear someone say “coronavirus” or “novel coronavirus,” they are talking about the same thing."
+        ],
+        "correct_response": "c) more contagious than"
+      },
+      {
+        "slug": "04 - Q3",
+        "messages": [
+          "PRACTICE 3: Answer the question. \n\nHow is COVID-19 spread from person to person?\n\na) Contact with an infected person\nb) An infected person coughs or sneezes \nc) Touching a surface with COVID-19 on it, then touching your face\nd) All of the above",
+          "FACT: COVID-19 is more contagious and deadly than the flu. It is important that we all work together to control its spread and save lives."
+        ],
+        "correct_response": "d) All of the above"
+      },
+      {
+        "slug": "05 - Q4",
+        "messages": [
+          "PRACTICE 4: Answer the question.\n\nWhat are the most common symptoms of COVID-19?\n\na) Stomachache, nausea, diarrhea\nb) Fever, cough, shortness of breath\nc) Itchy rash\nd) Blurred vision\n",
+          "FACT: It's possible for COVID-19 to be spread by people who don’t show symptoms. Keep your distance with other people + practice good hygiene all the time."
+        ],
+        "correct_response": "b) Fever, cough, shortness of breath"
+      },
+      {
+        "slug": "06 - Q5",
+        "messages": [
+          "Almost done! ⬇️",
+          "PRACTICE 5: If you think you may have symptoms of COVID-19, you should [---]. \n\na) stay home, except to get medical care\nb) don't take public transportation\nc) call your doctor before you visit \nd) all of the above\n",
+          "FACT: If you or someone near you has difficulty breathing, chest pain, confusion, or blue lips, get medical attention immediately."
+        ],
+        "correct_response": "d) All of the above"
+      },
+      {
+        "slug": "07 - Celebration",
+        "messages": [
+          "Congrats {{name}}! Your training drill for today is complete.\n\nWe’ll let {{company}} know you finished.\n\nYou will get your next drill tomorrow afternoon! ",
+          "FACT: If you are experiencing only mild symptoms, self isolate to control the spread of COVID-19."
+        ]
+      },
+      {
+        "slug": "0 - Intake",
+        "messages": [
+          "Welcome! Choose your language:\nen - English\nes - Español\nfr - Français\npt - Português\nzh - Chinese 中文"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "02. COVID19: Prevention",
+    "language": "en",
+    "prompts": [
+      {
+        "slug": "00 - Go",
+        "messages": [
+          "Today's drill is:COVID-19 Prevention. \n\nText me the word GO when you're ready to start."
+        ]
+      },
+      {
+        "slug": "01 - Self assessment",
+        "messages": [
+          "(Your answer will be kept private.)",
+          "On a scale of 1-10, how would you rate your current knowledge of today's topic:COVID-19 Prevention.\n\n(1 = I don't know anything, 10 = I'm great and I teach others)",
+          "Ok! Here we go! Let’s learn a little bit about you first. "
+        ]
+      },
+      {
+        "slug": "02 - Q1",
+        "messages": [
+          "PRACTICE 1: Answer the question.\n\nWhat is the best way to prevent becoming ill from COVID-19?\n\na) Get the vaccine from your doctor\nb) Avoid being exposed to the virus\nc) Drink lots of water\nd) Eat leafy greens",
+          "Thanks!"
+        ],
+        "correct_response": "b) Avoid being exposed to the virus"
+      },
+      {
+        "slug": "03 - Q2",
+        "messages": [
+          "PRACTICE 2: \n\nWhat is the best way to avoid exposure to COVID-19?\n\na) Maintain a social distance\nb) Wash your hands frequently\nc) Avoid touching your eyes, nose, and mouth\nd) All of the above\n",
+          "FACT: There is no vaccine to the virus currently, which is why social distancing and good hand hygiene are so critical to prevent coming ill.\n"
+        ],
+        "correct_response": "d) All of the above"
+      },
+      {
+        "slug": "04 - Q3",
+        "messages": [
+          "PRACTICE 3: \n\nWhen do symptoms of COVID-19 typically appear?\n\na) Immediately after exposure\nb) 12 hours after exposure\nc) 2-14 days after exposure\n",
+          "FACT: COVID-19 is primarily spread through the air and respiratory system. It is important to keep distance from others, wash your hands, and to not touch your face."
+        ],
+        "correct_response": "c) 2-14 days after exposure"
+      },
+      {
+        "slug": "05 - Q4",
+        "messages": [
+          "PRACTICE 4: \n\nWhen should you wear a mask?\n\na) if you are coughing or sneezing\nb) if you are showing the symptoms of COVID-19\nc) if you are taking care of someone suspected of having COVID-19\nd) all of the above\n",
+          "FACT: COVID-19 can be spread by people who are showing no symptoms of sickness. Keep a social distance to avoid getting infected or infecting others. "
+        ],
+        "correct_response": "d) All of the above"
+      },
+      {
+        "slug": "06 - Q5",
+        "messages": [
+          "PRACTICE 5:\n\nMasks are only effective when they are combined with regular handwashing.\n\na) true\nb) false",
+          "FACT: If you are healthy, you only need to wear a mask if you are taking care of a person with COVID-19."
+        ],
+        "correct_response": "a) True"
+      },
+      {
+        "slug": "07 - Celebration",
+        "messages": [
+          "Congrats {{name}}! Your training drill for today is complete.\n\nWe’ll let {{company}} know you finished."
+        ]
+      }
+    ]
+  },
+  {
+    "name": "03. How to wash your hands",
+    "language": "en",
+    "prompts": [
+      {
+        "slug": "1 - Intro - GO",
+        "messages": [
+          "Today's drill is: How to wash your hands\n\nText me the word GO when you're ready to start."
+        ]
+      },
+      {
+        "slug": "3 - self assessment - #",
+        "messages": [
+          "Ok! Here we go! Let’s learn a little bit about you first. ",
+          "(Your answer will be kept private.)",
+          "On a scale of 1-10, how would you rate your current knowledge of today's topic: How to wash your hands\n\n(1 = I don't know anything, 10 = I'm great and I teach others)"
+        ]
+      },
+      {
+        "slug": "4 - Practice 1 (MCQ2)",
+        "messages": [
+          "Thanks!",
+          "PRACTICE 1: Answer the question.\n\nYou should only wash your hands with warm water.\n\na) true\nb) false"
+        ],
+        "correct_response": "b) False"
+      },
+      {
+        "slug": "5 - Practice 2 (MCQ3)",
+        "messages": [
+          "FACT: Hot water is great for getting oil off of your hands! When it comes to germs - hot and cold water are equally effective. Good handwashing is about the amount of soap you use and how long you scrub your hands. ",
+          "PRACTICE 2: Answer the question.\n\nHow much soap should you use when you wash your hands?\n\na) 1 pump\nb) 2-3 pumps\nc) none"
+        ],
+        "correct_response": "b) 2-3 pumps"
+      },
+      {
+        "slug": "6 - Practice 3 (FIB_MCQ3)",
+        "messages": [
+          "PRACTICE 3: Choose the best option to fill in the space. \n\nWash the palms and tops of your hands. Don't forget to scrub between [---].\n\na) your fingers \nb) your toes\nc) your fingers and under your fingernails ",
+          "FACT: Pump enough soap to cover your hands. That means 2+ pumps! "
+        ],
+        "correct_response": "c) your fingers and under your fingernails "
+      },
+      {
+        "slug": "7 - Practice 4 (FIB_MCQ5)",
+        "messages": [
+          "FACT: Bacteria are most likely to be hiding underneath your nails. ",
+          "PRACTICE 4: Choose the best option to fill in the space. \n\nVigorously scrub your hands with soap [---].\n\na) for 10 seconds\nb) for 20 seconds\nc) for 60 seconds\nd) if you want to\ne) while you eat"
+        ],
+        "correct_response": "b) for 20 seconds"
+      },
+      {
+        "slug": "8 - Practice 5 - (open_MCQ5)",
+        "messages": [
+          "FACT: Germs can be transferred more easily to and from wet hands.",
+          "PRACTICE 5: Answer the question.\n\nWhat is the safest way to dry your hands? \n\na) kitchen towel\nb) wipe on your apron\nc) shaking them \nd) wipe on your shirt\ne) paper towel or air dryer",
+          "Almost done! ⬇️"
+        ],
+        "correct_response": "e) paper towel or air dryer"
+      },
+      {
+        "slug": "9 - 6 (congrats! + NPS)",
+        "messages": [
+          "Congrats {{name}}! Your training drill for today is complete.\n\nWe’ll let {{company}} know you finished."
+        ]
+      }
+    ]
+  },
+  {
+    "name": "04. Hand sanitizer best practices",
+    "language": "en",
+    "prompts": [
+      {
+        "slug": "00 - GO",
+        "messages": [
+          "Today's drill is: Hand sanitizer best practices. \n\nText me the word GO when you're ready to start."
+        ]
+      },
+      {
+        "slug": "01 - Self assessment",
+        "messages": [
+          "(Your answer will be kept private.)",
+          "On a scale of 1-10, how would you rate your current knowledge of today's topic: Hand sanitizer best practices. \n\n(1 = I don't know anything, 10 = I'm great and I teach others)",
+          "Ok! Here we go! Let’s learn a little bit about you first. "
+        ]
+      },
+      {
+        "slug": "02 - Q1",
+        "messages": [
+          "Thanks!",
+          "PRACTICE 1: Answer the question.\n\nHand sanitizers eliminate all types of germs. \n\na) true\nb) false"
+        ],
+        "correct_response": "b) False"
+      },
+      {
+        "slug": "03 - Q2",
+        "messages": [
+          "PRACTICE 2: Choose the best option to fill in the space. \n\nIf soap and water are not available, use an [---] hand sanitizer. \n \na) bleach-based\nb) soap-based\nc) alcohol-based",
+          "FACT: Hand sanitizers can quickly reduce the microbes on your hands, but they do not eliminate all types of germs. Soap and water is more effective than hand sanitizers. "
+        ],
+        "correct_response": "c) alcohol-based"
+      },
+      {
+        "slug": "04 - Q3",
+        "messages": [
+          "PRACTICE 3: Answer the question.\n\nWhen you use alcohol-based hand sanitizer, make sure it contains [---] alcohol.\n \na) at least 30%\nb) at least 60% \nc) only 90% or higher\n",
+          "FACT: Alcohol-based hand sanitizers, which don't require water, are an acceptable alternative when soap and water aren't available."
+        ],
+        "correct_response": "b) at least 60%"
+      },
+      {
+        "slug": "05 - Q4",
+        "messages": [
+          "PRACTICE 4: \n\nTo use hand sanitizer correctly, rub it all over the surfaces of your hands until your hands are dry.\n\na) true\nb) false",
+          "FACT: Sanitizers with an alcohol concentration between 60–95% are more effective at killing germs than those with a less alcohol concentration."
+        ],
+        "correct_response": "a) True"
+      },
+      {
+        "slug": "06 - Q5",
+        "messages": [
+          "PRACTICE 5: \n\nScented sanitizers are ok to use only if they [---].\n\na) use organic ingredients\nb) contain antibodies\nc) smell good\nd) are 60-90% alcohol-based \ne) all of the above\n",
+          "FACT: Rub sanitizer on your hands until your hands are dry. But remember that it will only reduce the growth of germs. It will not kill them outright."
+        ],
+        "correct_response": "d) are 60-90% percent alcohol based"
+      },
+      {
+        "slug": "07 - Celebration",
+        "messages": [
+          "Congrats {{name}}! Your training drill for today is complete.\n\nWe’ll let {{company}} know you finished."
+        ]
+      }
+    ]
+  },
+  {
+    "name": "05. How to disinfect your phone",
+    "language": "en",
+    "prompts": [
+      {
+        "slug": "00 - GO",
+        "messages": [
+          "Today's drill is: How to disinfect your phone. \n\nText me the word GO when you're ready to start."
+        ]
+      },
+      {
+        "slug": "01 - Self Assessment",
+        "messages": [
+          "(Your answer will be kept private.)",
+          "On a scale of 1-10, how would you rate your current knowledge of today's topic: How to disinfect your phone. \n\n(1 = I don't know anything, 10 = I'm great and I teach others)",
+          "Ok! Here we go! Let’s learn a little bit about you first. "
+        ]
+      },
+      {
+        "slug": "02 - Q1",
+        "messages": [
+          "PRACTICE 1: \n\n80 percent of all infections are transmitted by [---]\n\na) hands\nb) coughing\nc) sneezing\n",
+          "Thanks!"
+        ],
+        "correct_response": "a) hands"
+      },
+      {
+        "slug": "03 - Q2",
+        "messages": [
+          "PRACTICE 2: \n\nThe average smartphone screen is more than three times dirtier than a toilet seat.\n\na) true\nb) false\n",
+          "FACT: Our smartphones have become an extension of our hands, so it's important to sanitize them."
+        ],
+        "correct_response": "a) True"
+      },
+      {
+        "slug": "04 - Q3",
+        "messages": [
+          "PRACTICE 3: \n\nAre sanitizer wipes safe to use on your phone?\n\na) yes\nb) no\n",
+          "FACT: This makes cell phones one of the dirtiest objects we come in contact with every day."
+        ],
+        "correct_response": "a) yes"
+      },
+      {
+        "slug": "05 - Q4",
+        "messages": [
+          "FACT: Many sanitizer wipes are ok to use on Smartphones, Tablets and Remote Controls. Just be sure to check the sanitizer label first to confirm it's safe for that use! ",
+          "PRACTICE 4: Choose the best option to fill in the space. \n\nClean your phone while it is [---]\n\na) off \nb) unplugged\nc) off and unplugged\n"
+        ],
+        "correct_response": "c) off and unplugged"
+      },
+      {
+        "slug": "06 - Q5",
+        "messages": [
+          "PRACTICE 5: \n\nThe best way to use your phone in order to avoid the transmission of germs is [---]\n\na) avoid pressing your phone against your face\nb) use headphones\nc) use speakerphone when appropriate\nd) all of the above\n",
+          "FACT: Hand sanitizer, can easily get through small cracks and enter the interior of your phone. It can cause permanent damage. "
+        ],
+        "correct_response": "d) {{all of the above}}"
+      },
+      {
+        "slug": "07 - Celebration",
+        "messages": [
+          "FACT: Phones hold germs on their surface for 3+ days. Everytime you touch your phone, you run the risk of getting sick. ",
+          "Congrats {{name}}! Your training drill for today is complete.\n\nWe’ll let {{company}} know you finished."
+        ]
+      }
+    ]
+  },
+  {
+    "name": "06. When to wash your hands",
+    "language": "en",
+    "prompts": [
+      {
+        "slug": "1 - requirements - READY",
+        "messages": [
+          "Today's drill is: When to wash your hands. \n\nText me the word GO when you're ready to start."
+        ]
+      },
+      {
+        "slug": "2 - self assessment - #",
+        "messages": [
+          "(Your answer will be kept private.)\n",
+          "On a scale of 1-10, how would you rate your current knowledge of today's topic: When to wash your hands.\n\n(1 = I don't know anything, 10 = I'm great and I teach others)",
+          "Ok! Here we go! Let’s learn a little bit about you first. "
+        ]
+      },
+      {
+        "slug": "3 - Practice 1 (MCQ2)",
+        "messages": [
+          "There are a lot of opportunities to wash your hands at work. In this drill, you will focus on the times when you should wash your hands to prevent the spread of disease.",
+          "PRACTICE 1: Answer the question.\n\nYou only need to wash your hands when they are visibly dirty. \n\na) true\nb) false"
+        ],
+        "correct_response": "b) False"
+      },
+      {
+        "slug": "4 - Practice 2 (MCQ3)",
+        "messages": [
+          "PRACTICE 2: Choose the best option to fill in the space.\n\nLatex gloves are [---] a replacement for handwashing. \n\na) always\nb) sometimes\nc) never",
+          "FACT: You need to wash your hands to remove dirt AND germs. Germs are invisible. So, it's impossible to know where they are.  \n"
+        ],
+        "correct_response": "c) never"
+      },
+      {
+        "slug": "5 - Practice 3 (FIB_MCQ3)",
+        "messages": [
+          "PRACTICE 3:\n\nWash your hands after you [---].\n\na) use your phone\nb) touch garbage \nc) use the toilet\nd) shake someone's hand\ne) all of the above\n",
+          "FACT: Single-use (latex/nitrile) gloves are great, but they are not a replacement for washing your hands. In fact, you should your hands before you put on gloves. "
+        ],
+        "correct_response": "e) All of the above"
+      },
+      {
+        "slug": "6 - Practice 4 (FIB_MCQ5)",
+        "messages": [
+          "",
+          "PRACTICE 4: He needs to wash his hands because [---].\n\na) he coughed into them\nb) he walked outside \nc) he is over 30 years old\n",
+          "FACT: It's also a good idea to wash your hands after you've been outside. You've probably touched dirty doors or handrails without realizing it. "
+        ],
+        "correct_response": "a) he coughed into them"
+      },
+      {
+        "slug": "7 - Practice 5",
+        "messages": [
+          "PRACTICE 5: Gabby's about to eat. What should she plan to do?\n\na) wash her hands before \nb) wash her hands after\nc) wash her hands before and after\nd) wipe her hands on a towel\ne) nothing\n",
+          "FACT: We touch our phones a lot -- 2,000 times per day! The average smartphone has 15x more germs on its surface than a public bathroom. \n"
+        ],
+        "correct_response": "c) wash her hands before and after"
+      },
+      {
+        "slug": "8 - (congrats! + NPS)",
+        "messages": [
+          "Congrats {{name}}! Your training drill for today is complete.\n\nWe’ll let {{company}} know you finished.",
+          ""
+        ]
+      },
+      {
+        "slug": "9 - thank you",
+        "messages": []
+      }
+    ]
+  },
+  {
+    "name": "07. Sanitizing high-contact surfaces",
+    "language": "en",
+    "prompts": [
+      {
+        "slug": "00 - GO",
+        "messages": [
+          "Today's drill is: Sanitizing High-Contact Surfaces. \n\nText me the word GO when you're ready to start."
+        ]
+      },
+      {
+        "slug": "01 - Self assessment",
+        "messages": [
+          "(Your answer will be kept private.)",
+          "On a scale of 1-10, how would you rate your current knowledge of today's topic:Sanitizing High-Contact Surfaces. \n\n(1 = I don't know anything, 10 = I'm great and I teach others)",
+          "Ok! Here we go! Let’s learn a little bit about you first. "
+        ]
+      },
+      {
+        "slug": "02 - Q1",
+        "messages": [
+          "PRACTICE 1: Answer the question.\n\nCOVID19 cannot survive on material surfaces.\n\na) true\nb) false\n",
+          "Thanks!"
+        ],
+        "correct_response": "b) False"
+      },
+      {
+        "slug": "03 - Q2",
+        "messages": [
+          "PRACTICE 2: Choose the best option to fill in the space.\n\nTables, doorknobs, light switches, countertops, handles, desks, phones, keyboards, toilets, faucets, sinks are [---]\n\na) low-contact surfaces\nb) high-contact surfaces\nc) never dirty",
+          "FACT: Early findings suggest the COVID-19 virus can survive on door handles, plastic-coated or laminated worktops and other hard surfaces."
+        ],
+        "correct_response": "b) high-contact surfaces"
+      },
+      {
+        "slug": "04 - Q3",
+        "messages": [
+          "PRACTICE 3: Choose the best option to fill in the space.\n\nCOVID-19 can survive on cardboard for [---].\n\na) up to 24 hours\nb) 2-3 days\nc) 1 week\n",
+          "FACT: Current evidence suggests that COVID-19 may remain on surfaces for hours to days."
+        ],
+        "correct_response": "a) up to 24 hours"
+      },
+      {
+        "slug": "05 - Q4",
+        "messages": [
+          "PRACTICE 4:\n\nCOVID-19 can survive on plastic and stainless steel surfaces for [---].\n\na) up to 24 hours\nb) 2-3 days\nc) 1 week",
+          "FACT: After touching cardboard from deliveries, you should always wash your hands. Gloves will not prevent the spread. \n"
+        ],
+        "correct_response": "b) 2-3 days"
+      },
+      {
+        "slug": "06 - Q5",
+        "messages": [
+          "PRACTICE 5:\n\nTo prevent the spread of COVID-19 through high-contact surfaces, you should [---] them frequently. Use a bleach and water solution or other household sanitizing solution. \n\na) clean \u0026 disinfect\nb) aerate\nc) wipe them down ",
+          "FACT: Clothing and other soft surfaces are harder to disinfect, it is not yet clear how long the virus can survive on the materials. Do not shake dirty laundry."
+        ],
+        "correct_response": "a) clean \u0026 disinfect"
+      },
+      {
+        "slug": "07 - Celebration",
+        "messages": [
+          "Congrats {{name}}! Your training drill for today is complete.\n\nWe’ll let {{company}} know you finished."
+        ]
+      }
+    ]
+  },
+  {
+    "name": "01. COVID19: Basics",
+    "language": "es",
+    "prompts": [
+      {
+        "slug": "00 - GO",
+        "messages": [
+          "Gracias por tomar de su tiempo para entrenamiento StopCovid. Al completar estas actividades diariamente, usted estará ayudando a prevenir la transmisión de Coronavirus. \n\nJuntos podemos detener el COVID-19.",
+          "El entrenamiento de hoy: Los básicos de COVID-19. Enviame un texto con la palabra GO cuando estés listo para comenzar."
+        ]
+      },
+      {
+        "slug": "01.2 - Name",
+        "messages": [
+          "Cuál es su nombre completo?\n(primer nombre y apellido)"
+        ]
+      },
+      {
+        "slug": "01 - Self assessment",
+        "messages": [
+          "(Su respuesta se mantendrá privada.)",
+          "En una escala del 1 al 10, ¿cómo calificaría su conocimiento actual del tema de hoy: Los básicos de COVID-19. \n\n(1 = No conozco nada, 10 = Soy un experto y le enseño a otros)",
+          "¡Ok! Vamos! Vamos a aprender un poco sobre ti primero.\n"
+        ]
+      },
+      {
+        "slug": "02 - Q1",
+        "messages": [
+          "¡Gracias! ",
+          "EJERCICIO 1: ¿Verdadero o falso?\n\nCOVID-19 es una bacteria.\n\na) cierto\nb) falso"
+        ],
+        "correct_response": "b) Falso"
+      },
+      {
+        "slug": "03 - Q2",
+        "messages": [
+          "EJERCICIO 2: Elija la mejor opción para llenar el blanco. \n\nCOVID-19 es [---] la gripe. \n\na) tan contagioso como\nb) menos contagioso que\nc) más contagioso que\n",
+          "HECHO: COVID-19 no es una bacteria. Es una enfermedad viral. Si escuchas a alguien decir \"coronavirus\" o \"coronavirus novel\", están hablando de la misma enfermedad."
+        ],
+        "correct_response": "c) más contagioso que"
+      },
+      {
+        "slug": "04 - Q3",
+        "messages": [
+          "EJERCICIO 3: Contesta la pregunta. \n\n¿Cómo se transmite COVID-19?\n\na) Contacto cercano con una persona infectada \nb) Gotas respiratorias en el aire cuando una persona enferma tose o estornuda\nc) Al tocar una superficie con el virus y luego tocarse la cara\nd) Todas las anteriores\n",
+          "HECHO: COVID-19 es más contagioso y más mortal que la gripe. Es importante que todos trabajemos juntos para controlar su propagación y salvar vidas."
+        ],
+        "correct_response": "d) Todas las anteriores"
+      },
+      {
+        "slug": "05 - Q4",
+        "messages": [
+          "EJERCICIO 4: Responda a la pregunta.\n\n¿Cuáles son los síntomas más comunes del COVID-19?\n\na) Dolor de estómago, náuseas, diarrea\nb) Fiebre, tos, dificultad al respirar\nc) Salpullido con comezón\nd) Visión borrosa\n",
+          "HECHO: Es posible que COVID-19 sea transmitido por personas que no muestran síntomas. Mantenga distancia de otras personas + practique buena higiene en todos momentos para estar seguro."
+        ],
+        "correct_response": "b) Fiebre, tos, dificultad al respirar"
+      },
+      {
+        "slug": "06 - Q5",
+        "messages": [
+          "¡Casi terminas! ⬇️",
+          "EJERCICIO 5: Si cree que puede tener síntomas de COVID-19, debería [---]. \n\na) quedarse en casa, excepto para obtener atención médica\nb) no tomar transportación pública\nc) llamar a su médico antes de visitar \nd) Todas las anteriores",
+          "HECHO: Si usted o alguien cerca de usted tiene dificultad al respirar, dolor de pecho, confusión o labios azules, busque atención médica inmediatamente."
+        ],
+        "correct_response": "d) Todas las anteriores"
+      },
+      {
+        "slug": "07 - Celebration",
+        "messages": [
+          "¡Felicidades {{name}}! Tu entrenamiento para hoy ha terminado.\n\nLe haremos saber a {{company}} que lo completó.\n\n¡Tendrás tu próximo ejercicio mañana por la tarde!\n\n",
+          "HECHO: Si experimenta síntomas leves, autoaislamiento es lo mejor para controlar la propagación de COVID-19."
+        ]
+      },
+      {
+        "slug": "0 - Intake",
+        "messages": [
+          "Welcome! Choose your language:\nen - English\nes - Español\nfr - Français\npt - Português\nzh - Chinese 中文"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "02. COVID19: Prevention",
+    "language": "es",
+    "prompts": [
+      {
+        "slug": "00 - Go",
+        "messages": [
+          "El entrenamiento de hoy:COVID-19 Prevención. \n\nEnviame un texto con la palabra GO cuando estés listo para comenzar."
+        ]
+      },
+      {
+        "slug": "01 - Self assessment",
+        "messages": [
+          "(Su respuesta se mantendrá privada.)",
+          "En una escala del 1 al 10, ¿cómo calificaría su conocimiento actual del tema de hoy:COVID-19 Prevención.\n\n(1 = No conozco nada, 10 = Soy un experto y le enseño a otros)",
+          "¡Ok! Vamos! Vamos a aprender un poco sobre ti primero.\n"
+        ]
+      },
+      {
+        "slug": "02 - Q1",
+        "messages": [
+          "EJERCICIO 1: Contesta la pregunta\n\n¿Cuál es la mejor manera de evitar enfermarse con COVID-19?\n\na) Obtenga la vacuna de su médico\nb) Evite exponerse al virus\nc) Beba mucha agua\nd) Coma verduras de hoja \n",
+          "¡Gracias! "
+        ],
+        "correct_response": "b) Evite exponerse al virus"
+      },
+      {
+        "slug": "03 - Q2",
+        "messages": [
+          "EJERCICIO 2: \n\n¿Cuál es la mejor manera de evitar la exposición al COVID-19?\n\na) Mantener una distancia social\nb) Lavarse las manos con frecuencia\nc) Evitar tocarse los ojos, la nariz y la boca ¡\nd) Todas las anteriores!\n",
+          "HECHO: Actualmente no existe una vacuna contra el virus, por lo cual el distanciamiento social y la buena higiene de las manos son tan cruciales para evitar enfermarse.\n"
+        ],
+        "correct_response": "d) Todas las anteriores"
+      },
+      {
+        "slug": "04 - Q3",
+        "messages": [
+          "EJERCICIO 3: \n\n¿Cuándo aparecen típicamente los síntomas deL COVID-19?\n\na) Inmediatamente después de exposición\nb) 12 horas después de exposición\nc) 2-14 días después de exposición\n",
+          "HECHO: COVID-19 se transmite principalmente a través del aire y el sistema respiratorio. Es importante mantener distancia de los demás, lavarse las manos y no tocarse la cara."
+        ],
+        "correct_response": "c) 2-14 días después de exposición"
+      },
+      {
+        "slug": "05 - Q4",
+        "messages": [
+          "EJERCICIO 4: \n\n¿Cuándo debe usar una máscara?\n\na) si está tosiendo o estornudando\nb) si muestra los síntomas del COVID-19\nc) si está cuidando a alguien que se sospecha de tener COVID-19\nd) todas las anteriores\n",
+          "HECHO: COVID-19 puede transmitirse por personas que no muestran síntomas de la enfermedad. Mantenga una distancia social para evitar infectarse o infectar a otros. "
+        ],
+        "correct_response": "d) Todas las anteriores"
+      },
+      {
+        "slug": "06 - Q5",
+        "messages": [
+          "EJERCICIO 5:\n\nLas máscaras solamente son efectivas cuando también se lava las manos regularmente.\n\na) cierto\nb) falso\n",
+          "HECHO: Si está sano, solamente necesita usar una máscara si está cuidando a una persona con COVID-19.\n"
+        ],
+        "correct_response": "a) Verdadero"
+      },
+      {
+        "slug": "07 - Celebration",
+        "messages": [
+          "¡Felicidades {{name}}! Tu entrenamiento para hoy ha terminado.\n\nLe haremos saber a {{company}} que lo completó."
+        ]
+      }
+    ]
+  },
+  {
+    "name": "03. How to wash your hands",
+    "language": "es",
+    "prompts": [
+      {
+        "slug": "1 - Intro - GO",
+        "messages": [
+          "El entrenamiento de hoy: Cómo lavarse las manos\n\nEnviame un texto con la palabra GO cuando estés listo para comenzar."
+        ]
+      },
+      {
+        "slug": "3 - self assessment - #",
+        "messages": [
+          "¡Ok! Vamos! Vamos a aprender un poco sobre ti primero.\n",
+          "(Su respuesta se mantendrá privada.)",
+          "En una escala del 1 al 10, ¿cómo calificaría su conocimiento actual del tema de hoy: Cómo lavarse las manos\n\n(1 = No conozco nada, 10 = Soy un experto y le enseño a otros)"
+        ]
+      },
+      {
+        "slug": "4 - Practice 1 (MCQ2)",
+        "messages": [
+          "¡Gracias! ",
+          "EJERCICIO 1: Responde la pregunta.\n\nSólo debería lavarse las manos con agua tibia.\n\na) verdadero\nb) falso"
+        ],
+        "correct_response": "b) Falso"
+      },
+      {
+        "slug": "5 - Practice 2 (MCQ3)",
+        "messages": [
+          "HECHO: ¡El agua caliente es excelente para quitar el aceite de las manos! Cuando se trata de gérmenes, el agua caliente y fría son igualmente efectivas. Lavarse las manos bien se trata de la cantidad de jabón utilizado y la cantidad de tiempo que se restriega las manos.\n",
+          "EJERCICIO 2: Responde la pregunta.\n\n¿Cuánto jabón debería usar cuando se lava las manos?\n\na) 1 bombeo\nb) 2-3 bombeos\nc) nada\n"
+        ],
+        "correct_response": "b) 2-3 bombeos"
+      },
+      {
+        "slug": "6 - Practice 3 (FIB_MCQ3)",
+        "messages": [
+          "EJERCICIO 3: Escoja la mejor opción para llenar el blanco. \n\nLávese las palmas y parte superior de sus manos. No olvide restregar entre [---].\n\na) los dedos\nb) los dedos de los pies\nc) los dedos y debajo de las uñas",
+          "HECHO: Bombea suficiente jabón como para cubrirte las manos. ¡Eso significa 2 bombeos o más! \n"
+        ],
+        "correct_response": "c) los dedos y debajo de las uñas"
+      },
+      {
+        "slug": "7 - Practice 4 (FIB_MCQ5)",
+        "messages": [
+          "HECHO: Las bacterias son más probables de esconderse debajo de las uñas.",
+          "EJERCICIO 4: Escoja la mejor opción para llenar el blanco. \n\nRestréguese las manos fuertemente con jabón [---].\n\na) durante 10 segundos\nb) durante 20 segundos\nc) durante 60 segundos\nd) si quiere\ne) mientras come"
+        ],
+        "correct_response": "b) durante 20 segundos"
+      },
+      {
+        "slug": "8 - Practice 5 - (open_MCQ5)",
+        "messages": [
+          "HECHO: Los gérmenes pueden transferirse más fácilmente entre manos mojadas.",
+          "EJERCICIO 5: Responde la pregunta.\n\n¿Cuál es la forma más segura de secarse las manos? \n\na) toalla de cocina\nb) sacudéndolas\nc) dejarlas secar al aire\nd) en su camisa\ne) toalla de papel o secadores de mano",
+          "¡Casi terminas! ⬇️"
+        ],
+        "correct_response": "e) toalla de papel o secadores de mano"
+      },
+      {
+        "slug": "9 - 6 (congrats! + NPS)",
+        "messages": [
+          "¡Felicidades {{name}}! Tu entrenamiento para hoy ha terminado.\n\nLe haremos saber a {{company}} que lo completó."
+        ]
+      }
+    ]
+  },
+  {
+    "name": "04. Hand sanitizer best practices",
+    "language": "es",
+    "prompts": [
+      {
+        "slug": "00 - GO",
+        "messages": [
+          "El entrenamiento de hoy: Mejores prácticas con desinfectantes de mano. \n\nEnviame un texto con la palabra GO cuando estés listo para comenzar."
+        ]
+      },
+      {
+        "slug": "01 - Self assessment",
+        "messages": [
+          "(Su respuesta se mantendrá privada.)",
+          "En una escala del 1 al 10, ¿cómo calificaría su conocimiento actual del tema de hoy: Mejores prácticas con desinfectantes de mano. \n\n(1 = No conozco nada, 10 = Soy un experto y le enseño a otros)",
+          "¡Ok! Vamos! Vamos a aprender un poco sobre ti primero.\n"
+        ]
+      },
+      {
+        "slug": "02 - Q1",
+        "messages": [
+          "¡Gracias! ",
+          "EJERCICIO 1: Responde la pregunta.\n\nLos desinfectantes de mano eliminan todo tipo de gérmenes. \n\na) cierto\nb) falso\n"
+        ],
+        "correct_response": "b) Falso"
+      },
+      {
+        "slug": "03 - Q2",
+        "messages": [
+          "EJERCICIO 2: Escoja la mejor opción para llenar el blanco. \n\nSi no hay agua y jabón disponibles, use desinfectante de manos [---]. \n \na) a base de lejía\nb) a base de jabón\nc) a base de alcohol",
+          "HECHO: Los desinfectantes de mano pueden rápidamente reducir los microbios en las manos pero no eliminan todo tipo de gérmenes. El agua y jabón son más efectivos que los desinfectantes de mano. \n"
+        ],
+        "correct_response": "c) a base de alcohol"
+      },
+      {
+        "slug": "04 - Q3",
+        "messages": [
+          "EJERCICIO 3: Contesta la pregunta.\n\nCuando use desinfectante de manos a base de alcohol, asegúrese de que contenga [---] de alcohol.\n \na) al menos 30%\nb) al menos 60% \nc) solamente 90% o más\n",
+          "HECHO: Desinfectantes a base de alcohol, las cuales no requieren agua, son una alternativa aceptable cuando no se encuentran disponibles agua y jabón.\n"
+        ],
+        "correct_response": "b) al menos 60%"
+      },
+      {
+        "slug": "05 - Q4",
+        "messages": [
+          "EJERCICIO 4: \n\nPara usar el desinfectante de manos correctamente, restriegalo sobre las superficies de las manos hasta que estén secas.\n\na) verdadero\nb) falso",
+          "HECHO: Los desinfectantes con una concentración de alcohol entre 60-95% son más efectivos en contra de los gérmenes que aquellos con una menor concentración de alcohol. \n"
+        ],
+        "correct_response": "a) Verdadero"
+      },
+      {
+        "slug": "06 - Q5",
+        "messages": [
+          "EJERCICIO 5: \n\nLos desinfectantes perfumados son aceptables siempre y cuando [---].\n\na) utilicen ingredientes orgánicos\nb) contengan anticuerpos\nc) huelan bien\nd) sean 60-90% a base de alcohol \ne) todo lo anterior\n",
+          "HECHO: Frote el desinfectante sobre sus manos hasta que éstas estén secas. Recuerde que esto solamente reducirá el crecimiento de gérmenes; no los matará por completo.\n"
+        ],
+        "correct_response": "d) sean 60-90% a base de alcohol "
+      },
+      {
+        "slug": "07 - Celebration",
+        "messages": [
+          "¡Felicidades {{name}}! Tu entrenamiento para hoy ha terminado.\n\nLe haremos saber a {{company}} que lo completó."
+        ]
+      }
+    ]
+  },
+  {
+    "name": "05. How to disinfect your phone",
+    "language": "es",
+    "prompts": [
+      {
+        "slug": "00 - GO",
+        "messages": [
+          "El entrenamiento de hoy: Cómo desinfectar su teléfono. \n\nEnviame un texto con la palabra GO cuando estés listo para comenzar."
+        ]
+      },
+      {
+        "slug": "01 - Self Assessment",
+        "messages": [
+          "(Su respuesta se mantendrá privada.)",
+          "En una escala del 1 al 10, ¿cómo calificaría su conocimiento actual del tema de hoy: Cómo desinfectar su teléfono. \n\n(1 = No conozco nada, 10 = Soy un experto y le enseño a otros)",
+          "¡Ok! Vamos! Vamos a aprender un poco sobre ti primero.\n"
+        ]
+      },
+      {
+        "slug": "02 - Q1",
+        "messages": [
+          "EJERCICIO 1: \n\nEl 80 por ciento de todas las infecciones se transmiten mediante [---]\n\na) las manos\nb) La tos\nc) estornudos\n",
+          "¡Gracias! "
+        ],
+        "correct_response": "a) los manos"
+      },
+      {
+        "slug": "03 - Q2",
+        "messages": [
+          "EJERCICIO 2: \n\nLa pantalla promedio de un teléfono inteligente tiene más de tres veces el sucio de un asiento de inodoro. \n\na) verdadero\nb) cierto",
+          "HECHO: Nuestros teléfonos inteligentes se han convertido en una extensión de nuestras manos, por lo que es importante desinfectarlos.\n"
+        ],
+        "correct_response": "a) Verdadero"
+      },
+      {
+        "slug": "04 - Q3",
+        "messages": [
+          "EJERCICIO 3: \n\n¿Es seguro usar toallitas desinfectantes en su teléfono? \n\na) sí\nb) no\n",
+          "HECHO: Por esta razón, los teléfonos celulares son uno de los objetos más sucios con los que interactuamos diariamente.\n"
+        ],
+        "correct_response": "a) sí"
+      },
+      {
+        "slug": "05 - Q4",
+        "messages": [
+          "HECHO: Muchas toallitas desinfectantes pueden usarse en teléfonos inteligentes, tabletas y controles remotos. ¡Solo asegúrese de primero revisar la etiqueta del desinfectante para confirmar que sea seguro para ese uso! \n",
+          "EJERCICIO 4: Elija la mejor opción para llenar el blanco.\n\nLimpie su teléfono mientras está [---]\n\na) apagado \nb) desconectado\nc) apagado y desconectado\n"
+        ],
+        "correct_response": "c) apagado y desconectado"
+      },
+      {
+        "slug": "06 - Q5",
+        "messages": [
+          "EJERCICIO 5: \n\nLa mejor manera de utilizar el teléfono con el fin de evitar la transmisión de gérmenes es [---]\n\na) evitar presionar el teléfono contra su cara\nb) auriculares uso\nc) uso altavoz cuando sea apropiado\nd) todo lo anterior",
+          "HECHO: Desinfectante de manos, puede atravesar fácilmente pequeñas grietas e ingresar al interior de su teléfono. Puede causar daños permanentes. \n"
+        ],
+        "correct_response": "d) {{all of the above}}"
+      },
+      {
+        "slug": "07 - Celebration",
+        "messages": [
+          "HECHO: Móviles sostienen los gérmenes en su superficie para 3+ días. Cada vez que toca su teléfono, corre el riesgo de enfermarse.  \n",
+          "¡Felicidades {{name}}! Tu entrenamiento para hoy ha terminado.\n\nLe haremos saber a {{company}} que lo completó."
+        ]
+      }
+    ]
+  },
+  {
+    "name": "06. When to wash your hands",
+    "language": "es",
+    "prompts": [
+      {
+        "slug": "1 - requirements - READY",
+        "messages": [
+          "El entrenamiento de hoy: Cuándo lavarse las manos. \n\nEnviame un texto con la palabra GO cuando estés listo para comenzar."
+        ]
+      },
+      {
+        "slug": "2 - self assessment - #",
+        "messages": [
+          "(Su respuesta se mantendrá privada.)\n",
+          "En una escala del 1 al 10, ¿cómo calificaría su conocimiento actual del tema de hoy: Cuándo lavarse las manos.\n\n(1 = No conozco nada, 10 = Soy un experto y le enseño a otros)",
+          "¡Ok! Vamos! Vamos a aprender un poco sobre ti primero.\n"
+        ]
+      },
+      {
+        "slug": "3 - Practice 1 (MCQ2)",
+        "messages": [
+          "Hay muchas oportunidades para lavarse las manos en el trabajo. En este ejercicio, se centrará en los momentos en que debe lavarse las manos para evitar la propagación de la enfermedad.",
+          "EJERCICIO 1: Responde la pregunta.\n\nSolo necesita lavarse las manos cuando estén visiblemente sucias.\n\na) verdad\nb) falso"
+        ],
+        "correct_response": "b) Falso"
+      },
+      {
+        "slug": "4 - Practice 2 (MCQ3)",
+        "messages": [
+          "EJERCICIO 2: Elija la mejor opción para llenar el blanco.\n\nLos guantes de látex son [---] una sustitución para el lavado de manos. \n\na) siempre\nb) a veces\nc) nunca\n",
+          "HECHO: Tiene que lavarse las manos para eliminar el sucio Y los gérmenes. Los gérmenes son invisibles. Por lo tanto es imposible saber dónde están.  \n"
+        ],
+        "correct_response": "c) nunca"
+      },
+      {
+        "slug": "5 - Practice 3 (FIB_MCQ3)",
+        "messages": [
+          "EJERCICIO 3:\n\nLávese las manos después de que usted haya [---].\n\na) utilizado su teléfono\nb) tocado la basura \nc) utilizado el baño\nd) dado la mano a alguien\ne) todos los anteriores\n",
+          "HECHO: Los guantes de un solo uso (látex / nitrilo) son excelentes pero no sustituyen el lavarse las manos. De hecho, debería lavarse las manos antes de ponerse los guantes. \n"
+        ],
+        "correct_response": "e) Todas las anteriores"
+      },
+      {
+        "slug": "6 - Practice 4 (FIB_MCQ5)",
+        "messages": [
+          "",
+          "EJERCICIO 4: Él necesita lavarse las manos porque [---].\n\na) tosió en ellas\nb) fue para afuera \nc) tiene más de 30 años\n",
+          "HECHO: También es una buena idea lavarse las manos después de haber estado afuera. Es probable que haya tocado puertas o pasamanos sucios sin darse cuenta. \n"
+        ],
+        "correct_response": "a) tosió en ellas"
+      },
+      {
+        "slug": "7 - Practice 5",
+        "messages": [
+          "EJERCICIO 5: Gabby está a punto de comer. ¿Qué debería planificar hacer?\n\na) lavarse las manos primero \nb) lavarse las manos después \nc) lavarse las manos antes y después\nd) limpiarse sus manos con una toalla\ne) nada\n",
+          "HECHO: ¡Tocamos mucho nuestros teléfonos -- 2,000 veces por día! El teléfono inteligente promedio tiene 15 veces más gérmenes en su superficie que un baño público. \n"
+        ],
+        "correct_response": "c) lavarse las manos antes y después"
+      },
+      {
+        "slug": "8 - (congrats! + NPS)",
+        "messages": [
+          "¡Felicidades {{name}}! Tu entrenamiento para hoy ha terminado.\n\nLe haremos saber a {{company}} que lo completó.",
+          ""
+        ]
+      },
+      {
+        "slug": "9 - thank you",
+        "messages": []
+      }
+    ]
+  },
+  {
+    "name": "07. Sanitizing high-contact surfaces",
+    "language": "es",
+    "prompts": [
+      {
+        "slug": "00 - GO",
+        "messages": [
+          "El entrenamiento de hoy: Desinfección de superficies de alto contacto. \n\nEnviame un texto con la palabra GO cuando estés listo para comenzar."
+        ]
+      },
+      {
+        "slug": "01 - Self assessment",
+        "messages": [
+          "(Su respuesta se mantendrá privada.)",
+          "En una escala del 1 al 10, ¿cómo calificaría su conocimiento actual del tema de hoy:Desinfección de superficies de alto contacto. \n\n(1 = No conozco nada, 10 = Soy un experto y le enseño a otros)",
+          "¡Ok! Vamos! Vamos a aprender un poco sobre ti primero.\n"
+        ]
+      },
+      {
+        "slug": "02 - Q1",
+        "messages": [
+          "EJERCICIO 1: Responde la pregunta.\n\nCOVID19 no puede sobrevivir en superficies de materiales.\n\na) verdadero\nb) falso\n",
+          "¡Gracias! "
+        ],
+        "correct_response": "b) Falso"
+      },
+      {
+        "slug": "03 - Q2",
+        "messages": [
+          "EJERCICIO 2: Elija la mejor opción para llenar el blanco. \n\nLas mesas, perillas, interruptores de luz, encimeras, manijas, escritorios, teléfonos, teclados, inodoros, grifos, lavabos son [---]\n\na) superficies de bajo contacto\nb) superficies de alto contacto\nc) nunca sucias\n",
+          "HECHO: Los primeros resultados sugieren que el virus COVID-19 puede durar tanto tiempo en manijas de puertas, encimeras de plástico revestido o laminado y otras superficies duras. \n"
+        ],
+        "correct_response": "b) superficies de alto contacto"
+      },
+      {
+        "slug": "04 - Q3",
+        "messages": [
+          "EJERCICIO 3: Elija la mejor opción para llenar el blanco.\n\nCOVID-19 puede sobrevivir en cartón por [---].\n\na) hasta 24 horas\nb) 2-3 días\nc) 1 semana\n",
+          "HECHO: Evidencia actual sugiere que COVID-19 puede permanecer en las superficies entre horas y días. \n"
+        ],
+        "correct_response": "a) hasta 24 horas"
+      },
+      {
+        "slug": "05 - Q4",
+        "messages": [
+          "EJERCICIO 4:\n\nCOVID-19 puede sobrevivir en superficies de plástico y acero inoxidable por [---].\n\na) hasta 24 horas\nb) 2-3 días\nc) 1 semana\n",
+          "HECHO: Después de tocar el cartón de las entregas, siempre debería lavarse las manos. Los guantes no evitarán el contagio. \n"
+        ],
+        "correct_response": "b) 2-3 días"
+      },
+      {
+        "slug": "06 - Q5",
+        "messages": [
+          "EJERCICIO 5:\n\nPara evitar la propagación del COVID-19 mediante superficies de alto contacto, debe [---] los con frecuencia. Use una solución de cloro y agua u otra solución desinfectante doméstica.. \n\na) limpiar y desinfectar\nb) airear\nc) desempolvar  \n",
+          "HECHO: La ropa y otras superficies suaves son más difíciles de desinfectar, aún no se sabe cuánto tiempo el virus puede sobrevivir en estos materiales. No sacuda la ropa sucia. \n"
+        ],
+        "correct_response": "a) limpiar y desinfectar"
+      },
+      {
+        "slug": "07 - Celebration",
+        "messages": [
+          "¡Felicidades {{name}}! Tu entrenamiento para hoy ha terminado.\n\nLe haremos saber a {{company}} que lo completó."
+        ]
+      }
+    ]
+  },
+  {
+    "name": "01. COVID19: Basics",
+    "language": "fr",
+    "prompts": [
+      {
+        "slug": "00 - GO",
+        "messages": [
+          "Nous vous remercions de prendre le temps de faire cette formation StopCovid. En faisant ces courts exercices tous les jours, vous aidez à ralentir la progression du Coronavirus. \n\nNous éliminerons le COVID-19 tous ensemble. ",
+          "La formation d'aujourd'hui est: \n Ce qu’il faut savoir sur le COVID-19. Répondez à ce message en tapant GO quand vous êtes prêts à commencer. "
+        ]
+      },
+      {
+        "slug": "01.2 - Name",
+        "messages": [
+          "Quel est votre nom complet?\n(prénom et nom)"
+        ]
+      },
+      {
+        "slug": "01 - Self assessment",
+        "messages": [
+          "(Votre réponse sera gardée privée.)",
+          "Sur une échelle de 1 à 10, comment évaluez-vous vos connaissances sur le sujet d'aujourd'hui:  Ce qu’il faut savoir sur le COVID-19. \n\n(1 = Je ne connais rien, 10 = Je le connais très bien et je l’apprend aux autres)",
+          "Ok! Allons-y! Tout d’abord, nous aimerions en savoir un peu plus sur vous."
+        ]
+      },
+      {
+        "slug": "02 - Q1",
+        "messages": [
+          "Merci!",
+          "EXERCICE 1: Vrai ou faux? \n\nLe COVID-19 est une bactérie\n\na) Vrai \nb) Faux"
+        ],
+        "correct_response": "b) Faux"
+      },
+      {
+        "slug": "03 - Q2",
+        "messages": [
+          "EXERCICE 2: Choisissez la meilleure option pour compléter la phrase. \n\nLe COVID-19 est [---] que la grippe. \n\na) aussi contagieux\nb) moins contagieux\nc) plus contagieux\n",
+          "LES FAITS: Le COVID-19 n’est pas une bactérie, c’est une maladie virale. Si vous entendez quelqu’un parler du “coronavirus” ou du “nouveau coronavirus”, ils parlent de la même chose. "
+        ],
+        "correct_response": "c) plus contagieux"
+      },
+      {
+        "slug": "04 - Q3",
+        "messages": [
+          "EXERCICE 3: Répondez à la question. \n\nCommet le COVID-19 se propage-t-il d’une personne à une autre? \n\na) En étant en contact avec une personne infectée\nb) Par des gouttelettes projetées dans l’air quand une personne malade tousse ou éternue\nc) En touchant une surface sur laquelle le virus est présent, et en se touchant le visage ensuite\nd) Toutes les options ci-dessus\n",
+          "LES FAITS: Le COVID-19 est plus contagieux et plus mortel que la grippe. Il est très important que nous travaillions tous ensemble pour limiter sa propagation et sauver des vies. "
+        ],
+        "correct_response": "d) Toutes les options ci-dessus"
+      },
+      {
+        "slug": "05 - Q4",
+        "messages": [
+          "EXERCICE 4: Répondez à cette question. \n\nQuels sont les symptômes les plus fréquents du COVID-19? \n\na) Maux de ventre, nausée, diarrhée\nb) Fièvre, toux, souffle court\nc) Démangeaison, éruption cutanée\nd) Vision floue\n",
+          "LES FAITS: Une personne qui ne montre aucun symptôme du virus peut quand même être porteuse et contaminer d’autres personnes. Tenez-vous à distance des autres et gardez une bonne hygiène à tout moment. "
+        ],
+        "correct_response": "b) Fièvre, toux, souffle court"
+      },
+      {
+        "slug": "06 - Q5",
+        "messages": [
+          "C'est presque terminé ⬇️",
+          "EXERCICE 5: Si vous pensez que vous avez les symptômes du COVID-19, vous devez [---]\n\na) Rester à la maison, sauf pour recevoir des soins médicaux\nb) Ne pas prendre les transports publics \nc) Appeler votre médecin avant de lui rendre visite\nd) Toutes les options ci-dessus \n",
+          "LES FAITS: Si vous ou quelqu’un autour de vous avez du mal à respirer, des douleurs à la poitrine, de la confusion, ou les lèvres bleues, demandez immédiatement une assistance médicale. "
+        ],
+        "correct_response": "d) Toutes les options ci-dessus"
+      },
+      {
+        "slug": "07 - Celebration",
+        "messages": [
+          "Félicitations {{name}}! La formation est terminée pour aujourd’hui. \n\nNous dirons à {{company}} que vous avez terminé cet exercice.\n\nVous aurez votre prochain exercice demain après-midi!\n",
+          "LES FAITS: Si vous n’avez que de très légers symptômes, isolez-vous pour éviter de contaminer d’autres personnes. "
+        ]
+      },
+      {
+        "slug": "0 - Intake",
+        "messages": [
+          "Welcome! Choose your language:\nen - English\nes - Español\nfr - Français\npt - Português\nzh - Chinese 中文"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "02. COVID19: Prevention",
+    "language": "fr",
+    "prompts": [
+      {
+        "slug": "00 - Go",
+        "messages": [
+          "La formation d'aujourd'hui est: \nCOVID-19 Prévention. \n\nRépondez à ce message en tapant GO quand vous êtes prêts à commencer. "
+        ]
+      },
+      {
+        "slug": "01 - Self assessment",
+        "messages": [
+          "(Votre réponse sera gardée privée.)",
+          "Sur une échelle de 1 à 10, comment évaluez-vous vos connaissances sur le sujet d'aujourd'hui: COVID-19 Prévention.\n\n(1 = Je ne connais rien, 10 = Je le connais très bien et je l’apprend aux autres)",
+          "Ok! Allons-y! Tout d’abord, nous aimerions en savoir un peu plus sur vous."
+        ]
+      },
+      {
+        "slug": "02 - Q1",
+        "messages": [
+          "EXERCICE 1: Répondez à cette question. \n\nQuel est le meilleur moyen de ne pas attraper le COVID-19?\n\na) Se faire vacciner chez son médecin\nb) Éviter d’être exposé(e) au virus\nc) Boire beaucoup d’eau\nd) Manger des légumes\n",
+          "Merci!"
+        ],
+        "correct_response": "b) Éviter d’être exposé(e) au virus"
+      },
+      {
+        "slug": "03 - Q2",
+        "messages": [
+          "EXERCICE 2: \n\nQuel est le meilleur moyen de se protéger face au COVID-19? \n\na) Maintenir une distance entre chaque personne \nb) Se laver les mains fréquemment\nc) Éviter de se toucher les yeux, le nez et la bouche \nd) Toutes les options ci-dessus\n",
+          "LES FAITS: Il n’y a pas de vaccin contre le coronavirus aujourd’hui. C’est pour cela que la distanciation sociale et le lavage des mains régulier sont si importants pour éviter de tomber malade. \n"
+        ],
+        "correct_response": "d) Toutes les options ci-dessus"
+      },
+      {
+        "slug": "04 - Q3",
+        "messages": [
+          "EXERCICE 3: \n\nQuand apparaissent les symptômes du COVID-19? \n\na) Immédiatement après y avoir été exposé\nb) 12 heures après y avoir été exposé\nc) 2 à 14 jours après y avoir été exposé\n",
+          "LES FAITS: Le COVID-19 se transmet principalement dans l’air par des gouttelettes respiratoires (quand une personne éternue ou tousse). Il faut garder ses distances avec les autres, se laver les mains, et ne pas se toucher le visage. "
+        ],
+        "correct_response": "c) 2 à 14 jours après y avoir été exposé"
+      },
+      {
+        "slug": "05 - Q4",
+        "messages": [
+          "EXERCICE 4: \n\nQuand devez-vous porter un masque? \n\na) Quand vous toussez ou éternuez\nb) Si vous avez les symptômes du COVID-19\nc) Si vous prenez soin de quelqu’un qui a peut-être le COVID-19\nd) Toutes les options ci-dessus \n",
+          "LES FAITS: Le COVID-19 peut être transmis par des personnes qui n’ont pas de symptômes et ne se sentent pas malades. Pratiquez la distanciation sociale pour éviter d’être porteur et de le transmettre à d’autres."
+        ],
+        "correct_response": "d) Toutes les options ci-dessus"
+      },
+      {
+        "slug": "06 - Q5",
+        "messages": [
+          "EXERCICE 5:\n\nLes masques sont efficaces quand ils sont doublés d’un lavage de main régulier.\n\na) Vrai \nb) Faux\n",
+          "LES FAITS: Si vous êtes en bonne santé, vous devez porter un masque uniquement si vous vous occupez d’une personne malade du COVID-19.\n"
+        ],
+        "correct_response": "a) Vrai"
+      },
+      {
+        "slug": "07 - Celebration",
+        "messages": [
+          "Félicitations {{name}}! La formation est terminée pour aujourd’hui. \n\nNous dirons à {{company}} que vous avez terminé cet exercice."
+        ]
+      }
+    ]
+  },
+  {
+    "name": "03. How to wash your hands",
+    "language": "fr",
+    "prompts": [
+      {
+        "slug": "1 - Intro - GO",
+        "messages": [
+          "La formation d'aujourd'hui est: \n Comment se laver les mains\n\nRépondez à ce message en tapant GO quand vous êtes prêts à commencer. "
+        ]
+      },
+      {
+        "slug": "3 - self assessment - #",
+        "messages": [
+          "Ok! Allons-y! Tout d’abord, nous aimerions en savoir un peu plus sur vous.",
+          "(Votre réponse sera gardée privée.)",
+          "Sur une échelle de 1 à 10, comment évaluez-vous vos connaissances sur le sujet d'aujourd'hui:  Comment se laver les mains\n\n(1 = Je ne connais rien, 10 = Je le connais très bien et je l’apprend aux autres)"
+        ]
+      },
+      {
+        "slug": "4 - Practice 1 (MCQ2)",
+        "messages": [
+          "Merci!",
+          "EXERCICE 1: Répondez à la question.\n\nIl faut toujours se laver avec de l’eau chaude. \n\na) Vrai\nb) Faux"
+        ],
+        "correct_response": "b) Faux"
+      },
+      {
+        "slug": "5 - Practice 2 (MCQ3)",
+        "messages": [
+          "LES FAITS: L’eau chaude est efficace pour enlever la graisse ou l’huile des mains. Dans le cas des germes, l’eau chaude ou l’eau froide ont la même efficacité. Un bon lavage de mains dépend de la quantité de savon que vous utilisez and combien de temps vous vous frottez les mains. \n",
+          "EXERCICE 2: Répondez à la question.\n\nQuelle quantité de savon faut-il utiliser quand on se lave les mains? \n\na) 1 goutte\nb) 2-3 gouttes\nc) aucun\n"
+        ],
+        "correct_response": "b) 2-3 gouttes"
+      },
+      {
+        "slug": "6 - Practice 3 (FIB_MCQ3)",
+        "messages": [
+          "EXERCICE 3: Choisissez la meilleure option pour compléter la phrase. \n\nLavez les paumes et le dessus de vos mains. N’oubliez pas de frotter entre [---].\n\na) Vos doigts\nb) Vos orteils\nc) Vos doigts et en-dessous des ongles",
+          "LES FAITS: Il faut prendre suffisamment de savon pour couvrir entièrement les mains. Cela correspond à 2 gouttes ou plus. \n"
+        ],
+        "correct_response": "c) Vos doigts et en-dessous des ongles"
+      },
+      {
+        "slug": "7 - Practice 4 (FIB_MCQ5)",
+        "messages": [
+          "FAIT: Les bactéries sont plus susceptibles de se cacher sous les ongles.\n",
+          "EXERCICE 4: Choisissez la meilleure option pour compléter la phrase. \n\nFrottez-vous vigoureusement les mains avec du savon [---]\n\na) Pendant 10 secondes\nb) Pendant 20 secondes\nc) Pendant 60 secondes\nd) Si vous avez envie\ne) Pendant que vous mangez"
+        ],
+        "correct_response": "b) Pendant 20 secondes"
+      },
+      {
+        "slug": "8 - Practice 5 - (open_MCQ5)",
+        "messages": [
+          "LES FAITS: Les germes se transmettent plus facilement entre des mains sont mouillées. ",
+          "EXERCICE 5: Répondez à la question.\n\nQuelle est la façon la plus sûre de se sécher les mains? \n\na) Sur un torchon\nb) En les essuyant sur son tablier\nc) En les secouant\nd) Sur votre t-shirt\ne) Avec de l’essuie-tout ou un séchoir",
+          "C'est presque terminé ⬇️"
+        ],
+        "correct_response": "e) Avec de l’essuie-tout ou un séchoir"
+      },
+      {
+        "slug": "9 - 6 (congrats! + NPS)",
+        "messages": [
+          "Félicitations {{name}}! La formation est terminée pour aujourd’hui. \n\nNous dirons à {{company}} que vous avez terminé cet exercice."
+        ]
+      }
+    ]
+  },
+  {
+    "name": "04. Hand sanitizer best practices",
+    "language": "fr",
+    "prompts": [
+      {
+        "slug": "00 - GO",
+        "messages": [
+          "La formation d'aujourd'hui est: \n Tout savoir sur les désinfectants pour les mains . \n\nRépondez à ce message en tapant GO quand vous êtes prêts à commencer. "
+        ]
+      },
+      {
+        "slug": "01 - Self assessment",
+        "messages": [
+          "(Votre réponse sera gardée privée.)",
+          "Sur une échelle de 1 à 10, comment évaluez-vous vos connaissances sur le sujet d'aujourd'hui:  Tout savoir sur les désinfectants pour les mains . \n\n(1 = Je ne connais rien, 10 = Je le connais très bien et je l’apprend aux autres)",
+          "Ok! Allons-y! Tout d’abord, nous aimerions en savoir un peu plus sur vous."
+        ]
+      },
+      {
+        "slug": "02 - Q1",
+        "messages": [
+          "Merci!",
+          "EXERCICE 1: Répondez à la question.\n\nLes désinfectants pour les mains éliminent tous les types de germes. \n\na) Vrai \nb) Faux\n"
+        ],
+        "correct_response": "b) Faux"
+      },
+      {
+        "slug": "03 - Q2",
+        "messages": [
+          "EXERCICE 2: Choisissez la meilleure option pour compléter la phrase. \n\nSi vous n’avez pas de savon et d’eau, utilisez un désinfectant pour les mains à base de [---] \n\na) D’eau de javel\nb) De savon \nc) D’alcool\n",
+          "LES FAITS: Les désinfectants pour les mains peuvent rapidement réduire les microbes sur vos mains mais ils n’éliminent pas tous les types de germes. Le savon et l’eau sont plus efficaces que les désinfectants.\n"
+        ],
+        "correct_response": "c) D’alcool"
+      },
+      {
+        "slug": "04 - Q3",
+        "messages": [
+          "EXERCICE 3: Répondez à cette question. \n\nQuand vous utilisez un gel hydroalcoolique, il faut qu’il contienne [---] d’alcool\n\na) Au moins 30%\nb) Au moins 60%\nc) 90% ou plus \n\n",
+          "LES FAITS: Les désinfectants à base d’alcool (gels hydroalcooliques) ne nécessitent pas d’eau et sont une alternative au savon quand celui-ci n’est pas disponible. \n"
+        ],
+        "correct_response": "b) Au moins 60%"
+      },
+      {
+        "slug": "05 - Q4",
+        "messages": [
+          "EXERCICE 4: \n\nPour utiliser un désinfectant correctement, il faut en mettre partout sur vos mains jusqu’à ce qu’elles soient sèches. \n\na) Vrai \nb) Faux",
+          "LES FAITS: Les gels hydroalcooliques qui contiennent entre 60 et 95% d’alcool sont les plus efficaces pour tuer les germes. \n"
+        ],
+        "correct_response": "a) Vrai"
+      },
+      {
+        "slug": "06 - Q5",
+        "messages": [
+          "EXERCICE 5: \n\nLes désinfectants avec un parfum peuvent être utilisés seulement si [---]\n\na) Ils contiennent des ingrédients organiques\nb) Ils contiennent des anticorps\nc) Ils sentent bon\nd) Ils contiennent entre 60 et 90% d’alcool\ne) Toutes les réponses ci-dessus\n\n",
+          "LES FAITS: Frictionnez vos mains avec du désinfectant jusqu’à ce qu’elles soient sèches. N’oubliez pas que cela va seulement réduire la croissance des germes. Cela ne va pas tous les tuer. \n"
+        ],
+        "correct_response": "d) Ils contiennent entre 60 et 90%"
+      },
+      {
+        "slug": "07 - Celebration",
+        "messages": [
+          "Félicitations {{name}}! La formation est terminée pour aujourd’hui. \n\nNous dirons à {{company}} que vous avez terminé cet exercice."
+        ]
+      }
+    ]
+  },
+  {
+    "name": "05. How to disinfect your phone",
+    "language": "fr",
+    "prompts": [
+      {
+        "slug": "00 - GO",
+        "messages": [
+          "La formation d'aujourd'hui est: \n Comment désinfecter votre téléphone. \n\nRépondez à ce message en tapant GO quand vous êtes prêts à commencer. "
+        ]
+      },
+      {
+        "slug": "01 - Self Assessment",
+        "messages": [
+          "(Votre réponse sera gardée privée.)",
+          "Sur une échelle de 1 à 10, comment évaluez-vous vos connaissances sur le sujet d'aujourd'hui:  Comment désinfecter votre téléphone. \n\n(1 = Je ne connais rien, 10 = Je le connais très bien et je l’apprend aux autres)",
+          "Ok! Allons-y! Tout d’abord, nous aimerions en savoir un peu plus sur vous."
+        ]
+      },
+      {
+        "slug": "02 - Q1",
+        "messages": [
+          "EXERCICE 1: \n\n80% des infections sont transmises par [---]\n\na) Les mains\nb) La toux\nc) Les éternuements\n",
+          "Merci!"
+        ],
+        "correct_response": "a) Les mains"
+      },
+      {
+        "slug": "03 - Q2",
+        "messages": [
+          "EXERCICE 2: \n\nEn moyenne, nos écrans de téléphones sont trois fois plus sales qu’un siège de toilette.\n\na) Vrai \nb) Faux ",
+          "LES FAITS: Nos téléphones sont devenus une extension de nos mains donc il est très important de les désinfecter aussi. \n"
+        ],
+        "correct_response": "a) Vrai"
+      },
+      {
+        "slug": "04 - Q3",
+        "messages": [
+          "EXERCICE 3: \n\nLes lingettes désinfectantes peuvent-elles être utilisées pour désinfecter votre téléphone? \n\na) Oui\nb) Non\n",
+          "LES FAITS: Nos téléphones sont l’objet le plus sale que nous touchons tous les jours. \n"
+        ],
+        "correct_response": "a) Vrai"
+      },
+      {
+        "slug": "05 - Q4",
+        "messages": [
+          "LES FAITS: Beaucoup de lingettes désinfectantes peuvent être utilisées sur les smartphones, tablettes et télécommandes. Assurez-vous que cela est possible en lisant l’étiquette sur l’emballage. \n",
+          "EXERCICE 4: Choisissez la meilleure option pour compléter la phrase.\n\nNettoyez votre téléphone quand il est [---]\n\na) Éteint\nb) Débranché\nc) Éteint et débranché \n"
+        ],
+        "correct_response": "c) Éteint et débranché"
+      },
+      {
+        "slug": "06 - Q5",
+        "messages": [
+          "EXERCICE 5: \n\nQuand on utilise son téléphone, la meilleure façon d’éviter la transmission de germes est  [---]\n\na) D’éviter de mettre son téléphone contre son visage\nb) D’utiliser des écouteurs\nc) D’utiliser son téléphone en haut parleur\nd) Toutes les réponses ci-dessus",
+          "LES FAITS: Les gels hydroalcooliques peuvent facilement pénétrer à l’intérieur de votre téléphone et les abîmer. \n"
+        ],
+        "correct_response": "d) {{all of the above}}"
+      },
+      {
+        "slug": "07 - Celebration",
+        "messages": [
+          "LES FAITS: Les germes restent sur les surfaces des téléphones pendant plus de 3 jours. À chaque fois que nous les touchons, nous prenons le risque de tomber malade. ",
+          "Félicitations {{name}}! La formation est terminée pour aujourd’hui. \n\nNous dirons à {{company}} que vous avez terminé cet exercice."
+        ]
+      }
+    ]
+  },
+  {
+    "name": "06. When to wash your hands",
+    "language": "fr",
+    "prompts": [
+      {
+        "slug": "1 - requirements - READY",
+        "messages": [
+          "La formation d'aujourd'hui est: \n Quand faut-il se laver les mains. \n\nRépondez à ce message en tapant GO quand vous êtes prêts à commencer. "
+        ]
+      },
+      {
+        "slug": "2 - self assessment - #",
+        "messages": [
+          "(Votre réponse sera gardée privée.)\n",
+          "Sur une échelle de 1 à 10, comment évaluez-vous vos connaissances sur le sujet d'aujourd'hui:  Quand faut-il se laver les mains.\n\n(1 = Je ne connais rien, 10 = Je le connais très bien et je l’apprend aux autres)",
+          "Ok! Allons-y! Tout d’abord, nous aimerions en savoir un peu plus sur vous."
+        ]
+      },
+      {
+        "slug": "3 - Practice 1 (MCQ2)",
+        "messages": [
+          "Il existe de nombreuses possibilités pour se laver les mains au travail. Dans cet exercice, nous allons apprendre quand vous devez vous laver les mains pour éviter la propagation des maladies.",
+          "EXERCICE 1: Répondez à la question.\n\nIl faut seulement se laver les mains quand elles ont l’air sales. \n\na) Vrai\nb) Faux\n"
+        ],
+        "correct_response": "b) Faux"
+      },
+      {
+        "slug": "4 - Practice 2 (MCQ3)",
+        "messages": [
+          "EXERCICE 2: Choisissez la bonne réponse pour compléter la phrase. \n\nLes gants en latex remplacent [---] le lavage des mains. \n\na) Toujours\nb) De temps en temps\nc) Jamais",
+          "LES FAITS: Il faut se laver pour enlever la saleté ET les germes. Les germes sont invisibles. C’est impossible de savoir où ils sont.\n\n"
+        ],
+        "correct_response": "c) jamais"
+      },
+      {
+        "slug": "5 - Practice 3 (FIB_MCQ3)",
+        "messages": [
+          "EXERCICE 3:\n\nLavez-vous les mains après avoir [---]\n\na) utilisé votre téléphone\nb) touché des déchets\nc) été aux toilettes\nd) serré la main de quelqu’un\ne) toutes les réponses ci-dessus\n",
+          "LES FAITS: Les gants à usage unique (latex/nitrile) sont utiles mais ils ne remplacent pas le lavage des mains. Il faut se laver les mains avant de mettre des gants et après les avoir retirés. \n"
+        ],
+        "correct_response": "e) Toutes les options ci-dessus"
+      },
+      {
+        "slug": "6 - Practice 4 (FIB_MCQ5)",
+        "messages": [
+          "",
+          "EXERCICE 4: Il doit se laver les mains car [---]\n\na) il a toussé dans ses mains\nb) il a été dehors\nc) il a plus de 30 ans\n",
+          "LES FAITS: C’est une bonne idée de vous lavez les mains après être allé(e) dehors. Vous avez probablement touché des poignées de porte ou des rampes d’escalier sans vous en rendre compte. \n"
+        ],
+        "correct_response": "a) il a toussé dans ses mains"
+      },
+      {
+        "slug": "7 - Practice 5",
+        "messages": [
+          "EXERCICE 5: Gabby s’apprête à manger un repas. Que devrait-elle faire? \n\na) Se laver les mains avant\nb) Se laver les mains après\nc) Se laver les mains avant et après\nd) Se frotter les mains avec un torchon\ne) Rien\n\n",
+          "LES FAITS: Nous touchons nos téléphones en permanence, presque 2000 fois par jour! En moyenne, nos portables ont 15 fois plus de germes sur leur surface que des toilettes publiques. \n\n"
+        ],
+        "correct_response": "c) Se laver les mains avant et après"
+      },
+      {
+        "slug": "8 - (congrats! + NPS)",
+        "messages": [
+          "Félicitations {{name}}! La formation est terminée pour aujourd’hui. \n\nNous dirons à {{company}} que vous avez terminé cet exercice.",
+          ""
+        ]
+      },
+      {
+        "slug": "9 - thank you",
+        "messages": []
+      }
+    ]
+  },
+  {
+    "name": "07. Sanitizing high-contact surfaces",
+    "language": "fr",
+    "prompts": [
+      {
+        "slug": "00 - GO",
+        "messages": [
+          "La formation d'aujourd'hui est: \n Désinfecter les surfaces très utilisées. \n\nRépondez à ce message en tapant GO quand vous êtes prêts à commencer. "
+        ]
+      },
+      {
+        "slug": "01 - Self assessment",
+        "messages": [
+          "(Votre réponse sera gardée privée.)",
+          "Sur une échelle de 1 à 10, comment évaluez-vous vos connaissances sur le sujet d'aujourd'hui: Désinfecter les surfaces très utilisées. \n\n(1 = Je ne connais rien, 10 = Je le connais très bien et je l’apprend aux autres)",
+          "Ok! Allons-y! Tout d’abord, nous aimerions en savoir un peu plus sur vous."
+        ]
+      },
+      {
+        "slug": "02 - Q1",
+        "messages": [
+          "EXERCICE 1: Répondez à la question.\n\nLe COVID19 ne peut pas survivre sur les surfaces.\n\na) Vrai \nb) Faux \n\n",
+          "Merci!"
+        ],
+        "correct_response": "b) Faux"
+      },
+      {
+        "slug": "03 - Q2",
+        "messages": [
+          "EXERCICE 2: Choisissez la meilleure option pour compléter la phrase. \n\nLes tables, poignées de porte, interrupteurs, rampes, bureaux, téléphones, claviers, toilettes, éviers, robinets sont [---]\n\na) Des surfaces de contact faible\nb) Des surfaces de contact élevé\nc) Jamais sales\n",
+          "LES FAITS: Des premiers résultats suggèrent que le virus du COVID-19 peut rester longtemps sur les poignées de porte, le plastique, les plans de travail et autres surfaces dures. "
+        ],
+        "correct_response": "b) Des surfaces de contact élevé"
+      },
+      {
+        "slug": "04 - Q3",
+        "messages": [
+          "EXERCICE 3: Choisissez la meilleure option pour compléter la phrase.\n\nLe COVID-19 peut survivre sur du carton [---]\na) Jusqu’à 24h\nb) Pendant 2 à 3 jours\nc) Pendant 1 semaine\n",
+          "LES FAITS: Les recherches actuelles montrent que le COVID-19 peut rester sur les objets et les surfaces de quelques heures à plusieurs jours.  \n"
+        ],
+        "correct_response": "a) Jusqu’à 24h"
+      },
+      {
+        "slug": "05 - Q4",
+        "messages": [
+          "EXERCICE 4:\n\nLe COVID-19 peut survivre sur des surfaces en plastique ou métal [---]\n\na) Jusqu’à 24h\nb) Pendant 2 à 3 jours\nc) Pendant une semaine\n",
+          "LES FAITS: Après avoir touché des emballages en carton lors des livraisons, il faut impérativement se laver les mains. Les gants ne suffisent pas pour empêcher la propagation du virus.  \n"
+        ],
+        "correct_response": "b) Pendant 2 à 3 jours"
+      },
+      {
+        "slug": "06 - Q5",
+        "messages": [
+          "EXERCICE 5:\n\nPour empêcher la propagation du COVID-19 sur des surfaces fréquemment touchées, vous devez les [---] régulièrement. Utilisez de l’eau de javel ou un produit d’entretien désinfectant. \n\na) Nettoyer et désinfecter\nb) Aérer\nc) Essuyer\n",
+          "LES FAITS: Les vêtements et autres surfaces souples sont difficiles à désinfecter. Nous ne savons pas exactement combien de temps le virus peut survivre sur ces matériaux mais nous vous recommandons de ne pas secouer du linge sale. \n"
+        ],
+        "correct_response": "a) Nettoyer \u0026 désinfecter"
+      },
+      {
+        "slug": "07 - Celebration",
+        "messages": [
+          "Félicitations {{name}}! La formation est terminée pour aujourd’hui. \n\nNous dirons à {{company}} que vous avez terminé cet exercice."
+        ]
+      }
+    ]
+  },
+  {
+    "name": "01. COVID19: Basics",
+    "language": "pt",
+    "prompts": [
+      {
+        "slug": "00 - GO",
+        "messages": [
+          "Obrigado por dedicar seu tempo a este treinamento. Ao concluir essas atividades diariamente, você ajudará a impedir a propagação desse vírus.\n\nJuntos, podemos parar o COVID-19.",
+          "O exercício de hoje é:  O que você precisa saber sobre o COVID-19. Envie-me um texto com a palavra GO quando estiver pronto."
+        ]
+      },
+      {
+        "slug": "01.2 - Name",
+        "messages": [
+          "Qual é o seu nome completo?\n(nome e sobrenome)"
+        ]
+      },
+      {
+        "slug": "01 - Self assessment",
+        "messages": [
+          "(Sua resposta será mantida em sigilo.)",
+          "Em uma escala de 1 a 10, como você classificaria seu conhecimento atual do tópico de hoje:  O que você precisa saber sobre o COVID-19. \n\n(1 = Não sei nada, 10 = Sou especialista e ensino outras pessoas)",
+          "Ok! Aqui vamos nós! Vamos começar primeiro aprendendo um pouco sobre você.  "
+        ]
+      },
+      {
+        "slug": "02 - Q1",
+        "messages": [
+          "Obrigado!",
+          "EXERCÍCIO 1: Verdadeiro ou falso?\n\nCOVID-19 é uma bactéria.\n\na) verdadeiro\nb) falso\n"
+        ],
+        "correct_response": "b) Falso"
+      },
+      {
+        "slug": "03 - Q2",
+        "messages": [
+          "EXERCÍCIO 2: Escolha a melhor opção para preencher o espaço em branco. \n\nCOVID-19 é [---] a gripe. \n\na) contagioso quanto\nb) menos contagioso que\nc) mais contagioso que",
+          "FATO: COVID-19 não é uma bactéria. É uma doença viral. Se você ouvir alguém dizer \"coronavírus\" ou \"novo coronavírus\", eles estão falando sobre a mesma doença."
+        ],
+        "correct_response": "c) mais contagioso que"
+      },
+      {
+        "slug": "04 - Q3",
+        "messages": [
+          "EXERCÍCIO 3: Responda a pergunta. \n\nComo o COVID-19 é transmitido de pessoa para pessoa?\n\na) Contato próximo com uma pessoa infectada\nb) Respiratório cai no ar quando uma pessoa doente tosse ou espirra\nc) Ao tocar uma superfície com o vírus e depois tocar no rosto\nd) Todas acima\n",
+          "FATO: COVID-19 é mais contagioso e mais mortal que a gripe. É importante que todos trabalhemos juntos para controlar sua propagação e salvar vidas."
+        ],
+        "correct_response": "d) Todas acima"
+      },
+      {
+        "slug": "05 - Q4",
+        "messages": [
+          "EXERCÍCIO 4: Responda a pergunta.\n\nQuais são os sintomas mais comuns do COVID-19?\n\na) Dor de estômago, náusea, diarréia\nb) Febre, tosse, dificuldade em respirar\nc) Erupção cutânea com comichão\nd) Visão turva",
+          "FATO: É possível que o COVID-19 seja transmitido por pessoas que não mostram sintomas da doença. \nMantenha distância de outras pessoas e pratique sempre uma boa higiene para estar seguro."
+        ],
+        "correct_response": "b) Febre, tosse, dificuldade em respirar"
+      },
+      {
+        "slug": "06 - Q5",
+        "messages": [
+          "Você está quase pronto! ⬇️",
+          "EXERCÍCIO 5: Se você acha que pode ter sintomas do COVID-19, deveria [---]. \n\na) fique em casa, exceto pelos cuidados médicos\nb) não use o transporte público\nc) ligue para seu médico antes de visitar \nd) Todas as opções acima. ",
+          "FATO: Se você ou alguém próximo a você tiver dificuldade em respirar, dor no peito, confusão ou lábios azuis, procure atendimento médico imediatamente."
+        ],
+        "correct_response": "d) Todas acima"
+      },
+      {
+        "slug": "07 - Celebration",
+        "messages": [
+          "Parabéns {{name}}! Você concluiu seu treinamento hoje. \n\nInformaremos {{company}} que você terminou.\n\nVocê fará seu próximo exercício amanhã à tarde!\n",
+          "FATO: Se você tiver apenas sintomas leves, se isole para controlar a propagação do COVID-19."
+        ]
+      },
+      {
+        "slug": "0 - Intake",
+        "messages": [
+          "Welcome! Choose your language:\nen - English\nes - Español\nfr - Français\npt - Português\nzh - Chinese 中文"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "02. COVID19: Prevention",
+    "language": "pt",
+    "prompts": [
+      {
+        "slug": "00 - Go",
+        "messages": [
+          "O exercício de hoje é: Covid-19 Prevenção. \n\nEnvie-me um texto com a palavra GO quando estiver pronto."
+        ]
+      },
+      {
+        "slug": "01 - Self assessment",
+        "messages": [
+          "(Sua resposta será mantida em sigilo.)",
+          "Em uma escala de 1 a 10, como você classificaria seu conhecimento atual do tópico de hoje: Covid-19 Prevenção.\n\n(1 = Não sei nada, 10 = Sou especialista e ensino outras pessoas)",
+          "Ok! Aqui vamos nós! Vamos começar primeiro aprendendo um pouco sobre você.  "
+        ]
+      },
+      {
+        "slug": "02 - Q1",
+        "messages": [
+          "EXERCÍCIO 1: Responda a pergunta\n\nQual é a melhor maneira de evitar adoecer com COVID-19?\n\na) Receba a vacina de seu médico\nb) Evite se expor ao vírus\nc) Beba bastante água\nd) Coma vegetais folhosos ",
+          "Obrigado!"
+        ],
+        "correct_response": "b) Evite se expor ao vírus"
+      },
+      {
+        "slug": "03 - Q2",
+        "messages": [
+          "EXERCÍCIO 2: \n\nQual é a melhor maneira de evitar a exposição ao COVID-19?\n\na) Manter distância social \nb) Lavar as mãos com frequência\nc) Evite tocar seus olhos, nariz e boca\nd) Alla acima!",
+          "FATO: Atualmente, não existe vacina contra o vírus, e é por isso que o distanciamento social e a boa higiene das mãos são tão cruciais para evitar o adoecimento."
+        ],
+        "correct_response": "d) Todas acima"
+      },
+      {
+        "slug": "04 - Q3",
+        "messages": [
+          "EXERCÍCIO 3: \n\nQuando os sintomas geralmente aparecem COVID-19?\n\na) Imediatamente após a exposição\nb) 12 horas após a exposição,\nc) 2-14 dias após a exposição",
+          "FATO: COVID-19 é transmitido principalmente pelo ar e pelo sistema respiratório. É importante manter distância dos outros, lavar as mãos e não tocar no rosto."
+        ],
+        "correct_response": "c) 2-14 dias após a exposição\n"
+      },
+      {
+        "slug": "05 - Q4",
+        "messages": [
+          "EXERCÍCIO 4: \n\nQuando deve usar uma máscara?\n\na) se você tossir ou espirrar\nb) se apresentar sintomas de COVID-19\nc) se estiver cuidando de alguém com suspeita de COVID-19\nd) todos acima",
+          "FATO: COVID-19 pode ser transmitido por pessoas que não apresentam sintomas da doença. Mantenha uma distância social para evitar ser infectado ou infectar outras pessoas. "
+        ],
+        "correct_response": "d) Todas acima"
+      },
+      {
+        "slug": "06 - Q5",
+        "messages": [
+          "EXERCÍCIO 5:\n\nAs máscaras só são eficazes quando você também lava as mãos regularmente.\n\na) verdadeiro\nb) falso",
+          "FATO: Se você estiver saudável, você só precisará usar uma máscara se estiver cuidando de alguém com COVID-19."
+        ],
+        "correct_response": "a) Verdadeiro"
+      },
+      {
+        "slug": "07 - Celebration",
+        "messages": [
+          "Parabéns {{name}}! Você concluiu seu treinamento hoje. \n\nInformaremos {{company}} que você terminou."
+        ]
+      }
+    ]
+  },
+  {
+    "name": "03. How to wash your hands",
+    "language": "pt",
+    "prompts": [
+      {
+        "slug": "1 - Intro - GO",
+        "messages": [
+          "O exercício de hoje é:  Como lavar as mãos\n\nEnvie-me um texto com a palavra GO quando estiver pronto."
+        ]
+      },
+      {
+        "slug": "3 - self assessment - #",
+        "messages": [
+          "Ok! Aqui vamos nós! Vamos começar primeiro aprendendo um pouco sobre você.  ",
+          "(Sua resposta será mantida em sigilo.)",
+          "Em uma escala de 1 a 10, como você classificaria seu conhecimento atual do tópico de hoje:  Como lavar as mãos\n\n(1 = Não sei nada, 10 = Sou especialista e ensino outras pessoas)"
+        ]
+      },
+      {
+        "slug": "4 - Practice 1 (MCQ2)",
+        "messages": [
+          "Obrigado!",
+          "EXERCÍCIO 1: Responde à pergunta.\n\nVocê só deve lavar as mãos com água morna. \n\na) verdadeiro\nb) falso"
+        ],
+        "correct_response": "b) Falso"
+      },
+      {
+        "slug": "5 - Practice 2 (MCQ3)",
+        "messages": [
+          "FATO: A água quente é excelente para remover o óleo das suas mãos! Quando se trata de germes, água quente e fria são igualmente eficazes. Lavar bem as mãos é sobre a quantidade de sabão usada e a quantidade de tempo que você lava as mãos.",
+          "EXERCÍCIO 2: Responde à pergunta.\n\nQuanto sabão você deve usar ao lavar as mãos?\n\na) 1 bomba\nb) 2-3 bombas\nc) nada"
+        ],
+        "correct_response": "b) 2-3 bombas"
+      },
+      {
+        "slug": "6 - Practice 3 (FIB_MCQ3)",
+        "messages": [
+          "EXERCÍCIO 3: Escolha a melhor opção para preencher o espaço em branco. \n\nLave as palmas das mãos e o topo das mãos. Não esqueça de esfregar entre [---].\n\na) dedos\nb) dedos dos pés\nc) dedos e sob as unhas",
+          "FATO: Bombeie sabão suficiente para cobrir as mãos. Isso significa 2 bombas ou mais! "
+        ],
+        "correct_response": "c) dedos e sob as unhas"
+      },
+      {
+        "slug": "7 - Practice 4 (FIB_MCQ5)",
+        "messages": [
+          "FATO: As bactérias têm maior probabilidade de se esconder sob as unhas.",
+          "EXERCÍCIO 4: Escolha a melhor opção para preencher o espaço em branco. \n\nEsfregue bem as mãos com sabão [---].\n\na) por 10 segundos\nb) por 20 segundos\nc) por 60 segundos\nd) se você quiser\ne) enquanto come"
+        ],
+        "correct_response": "b) por 20 segundos"
+      },
+      {
+        "slug": "8 - Practice 5 - (open_MCQ5)",
+        "messages": [
+          "FATO: Germes podem ser transferidos mais facilmente em mãos molhadas.",
+          "EXERCÍCIO 5: Responde à pergunta.\n\nQual é a maneira mais segura de secar as mãos? \n\na) toalha de cozinha\nb) sacudindo-os\nc) deixe-os secar ao ar\nd) em sua camisa\ne) toalha de papel ou secador de mãos",
+          "Você está quase pronto! ⬇️"
+        ],
+        "correct_response": "e) toalha de papel ou secador de mãos"
+      },
+      {
+        "slug": "9 - 6 (congrats! + NPS)",
+        "messages": [
+          "Parabéns {{name}}! Você concluiu seu treinamento hoje. \n\nInformaremos {{company}} que você terminou."
+        ]
+      }
+    ]
+  },
+  {
+    "name": "04. Hand sanitizer best practices",
+    "language": "pt",
+    "prompts": [
+      {
+        "slug": "00 - GO",
+        "messages": [
+          "O exercício de hoje é:  Melhores práticas com desinfetantes para as mãos. \n\nEnvie-me um texto com a palavra GO quando estiver pronto."
+        ]
+      },
+      {
+        "slug": "01 - Self assessment",
+        "messages": [
+          "(Sua resposta será mantida em sigilo.)",
+          "Em uma escala de 1 a 10, como você classificaria seu conhecimento atual do tópico de hoje:  Melhores práticas com desinfetantes para as mãos. \n\n(1 = Não sei nada, 10 = Sou especialista e ensino outras pessoas)",
+          "Ok! Aqui vamos nós! Vamos começar primeiro aprendendo um pouco sobre você.  "
+        ]
+      },
+      {
+        "slug": "02 - Q1",
+        "messages": [
+          "Obrigado!",
+          "EXERCÍCIO 1: Responde à pergunta.\n\nDesinfetantes para as mãos matam todos os tipos de germes. \n\na) verdadeiro\nb) falso"
+        ],
+        "correct_response": "b) Falso"
+      },
+      {
+        "slug": "03 - Q2",
+        "messages": [
+          "EXERCÍCIO 2: Escolha a melhor opção para preencher o espaço em branco. \n\nSe sabão e água não estiverem disponíveis, use desinfetante para as mãos [---]. \n \na) à base de água sanitária\nb) à base de sabão\nc) à base de álcool",
+          "FATO: Os desinfetantes para as mãos podem reduzir rapidamente os germes em suas mãos, mas não matam todos os tipos de germes. Sabão e água são mais eficazes que os desinfetantes para as mãos. "
+        ],
+        "correct_response": "c) à base de álcool"
+      },
+      {
+        "slug": "04 - Q3",
+        "messages": [
+          "EXERCÍCIO 3: Responda a pergunta.\n\nAo usar um desinfetante para as mãos à base de álcool, verifique se ele contém [---] álcool.\n \na) pelo menos 30%,\nb) pelo menos 60%, \nc) apenas 90% ou mais\n",
+          "FATO: Desinfetantes à base de álcool, que não necessitam de água, são uma alternativa aceitável, quando o sabão e água disponível não estão disponíveis."
+        ],
+        "correct_response": "b) pelo menos 60%"
+      },
+      {
+        "slug": "05 - Q4",
+        "messages": [
+          "EXERCÍCIO 4: \n\nPara usar o desinfetante para as mãos corretamente, esfregue-o nas superfícies das mãos até que estejam secas.\n\na) verdadeiro\nb) falso",
+          "FATO: Os desinfetantes com uma concentração de álcool entre 60-95% são mais eficazes contra os germes do que aqueles com uma menor concentração de álcool. "
+        ],
+        "correct_response": "a) Verdadeiro"
+      },
+      {
+        "slug": "06 - Q5",
+        "messages": [
+          "EXERCÍCIO 5: \n\nDesinfetantes perfumados são aceitáveis ​​desde [---].\n\na) use ingredientes orgânicos que\nb) contenham anticorpos\nc) cheiram bem a\nd) 60-90% de álcool com base em \ne) todos acima\n",
+          "FATO: Esfregue o desinfetante nas mãos até que estejam secas. Lembre-se de que isso reduzirá apenas o crescimento de germes; não os matará completamente."
+        ],
+        "correct_response": "d) 60-90% de álcool com base em"
+      },
+      {
+        "slug": "07 - Celebration",
+        "messages": [
+          "Parabéns {{name}}! Você concluiu seu treinamento hoje. \n\nInformaremos {{company}} que você terminou."
+        ]
+      }
+    ]
+  },
+  {
+    "name": "05. How to disinfect your phone",
+    "language": "pt",
+    "prompts": [
+      {
+        "slug": "00 - GO",
+        "messages": [
+          "O exercício de hoje é:  Como desinfetar seu telefone. \n\nEnvie-me um texto com a palavra GO quando estiver pronto."
+        ]
+      },
+      {
+        "slug": "01 - Self Assessment",
+        "messages": [
+          "(Sua resposta será mantida em sigilo.)",
+          "Em uma escala de 1 a 10, como você classificaria seu conhecimento atual do tópico de hoje:  Como desinfetar seu telefone. \n\n(1 = Não sei nada, 10 = Sou especialista e ensino outras pessoas)",
+          "Ok! Aqui vamos nós! Vamos começar primeiro aprendendo um pouco sobre você.  "
+        ]
+      },
+      {
+        "slug": "02 - Q1",
+        "messages": [
+          "EXERCÍCIO 1: \n\n80 por cento de todas as infecções são transmitidas através de [---]\n\na) mãos\nb) de tosse\nc) espirros",
+          "Obrigado!"
+        ],
+        "correct_response": "a) mãos"
+      },
+      {
+        "slug": "03 - Q2",
+        "messages": [
+          "EXERCÍCIO 2: \n\nA tela média do smartphone tem mais de três vezes a bagunça de uma sanita. \n\na) verdadeiro\nb) falso",
+          "FATO: Nossos smartphones se tornaram uma extensão de nossas mãos, por isso é importante desinfetar."
+        ],
+        "correct_response": "a) Verdadeiro"
+      },
+      {
+        "slug": "04 - Q3",
+        "messages": [
+          "EXERCÍCIO 3: \n\nÉ seguro usar toalhetes higiênicos no seu telefone?\n\na) sim\nb) não\n",
+          "FATO: Por esse motivo, os telefones celulares são um dos objetos mais sujos com os quais interagimos diariamente. "
+        ],
+        "correct_response": "a) verdadeiro"
+      },
+      {
+        "slug": "05 - Q4",
+        "messages": [
+          "FATO: Muitos lenços desinfetantes podem ser usados ​​em smartphones, tablets e controles remotos. Apenas verifique o rótulo do desinfetante primeiro para confirmar se é seguro para esse uso! ",
+          "EXERCÍCIO 4: Escolha a melhor opção para preencher o espaço em branco. \n\nLimpe seu telefone enquanto estiver [---]\n\na) desligado \nb) desconectado\nc) desligado e desconectado\n"
+        ],
+        "correct_response": "c) desligado e desconectado"
+      },
+      {
+        "slug": "06 - Q5",
+        "messages": [
+          "EXERCÍCIO 5: \n\nA melhor maneira de usar o telefone para evitar a propagação de germes é [---]\n\na) evitar pressionar o telefone contra o rosto\nb) ouvido use\nc) viva-voz quando apropriado\nd) todos acima",
+          "FATO: Desinfetante para as mãos, pode passar facilmente por pequenas rachaduras e entrar no telefone. Pode causar danos permanentes. "
+        ],
+        "correct_response": "d) {{all of the above}}"
+      },
+      {
+        "slug": "07 - Celebration",
+        "messages": [
+          "FATO: Os celulares contêm germes sua superfície por mais de 3 dias. Toda vez que você toca no telefone, corre o risco de ficar doente. ",
+          "Parabéns {{name}}! Você concluiu seu treinamento hoje. \n\nInformaremos {{company}} que você terminou."
+        ]
+      }
+    ]
+  },
+  {
+    "name": "06. When to wash your hands",
+    "language": "pt",
+    "prompts": [
+      {
+        "slug": "1 - requirements - READY",
+        "messages": [
+          "O exercício de hoje é:  Quando lavar as mãos. \n\nEnvie-me um texto com a palavra GO quando estiver pronto."
+        ]
+      },
+      {
+        "slug": "2 - self assessment - #",
+        "messages": [
+          "(Sua resposta será mantida em sigilo.)\n",
+          "Em uma escala de 1 a 10, como você classificaria seu conhecimento atual do tópico de hoje:  Quando lavar as mãos.\n\n(1 = Não sei nada, 10 = Sou especialista e ensino outras pessoas)",
+          "Ok! Aqui vamos nós! Vamos começar primeiro aprendendo um pouco sobre você.  "
+        ]
+      },
+      {
+        "slug": "3 - Practice 1 (MCQ2)",
+        "messages": [
+          "Existem muitas oportunidades para lavar as mãos no trabalho. Nesta seção, você se concentrará nos momentos em que deve lavar as mãos para evitar a propagação da doença.",
+          "EXERCÍCIO 1: Responde à pergunta.\n\nVocê só precisa lavar as mãos quando elas estiverem visivelmente sujas.\n\na) verdadeiro\nb) falso"
+        ],
+        "correct_response": "b) Falso"
+      },
+      {
+        "slug": "4 - Practice 2 (MCQ3)",
+        "messages": [
+          "EXERCÍCIO 2: Escolha a melhor opção para preencher o espaço em branco.\n\nAs luvas de látex são [---] um substituto para a lavagem das mãos.\n\na) sempre\nb) às vezes\nc) nunca",
+          "FATO: Você precisa lavar as mãos para remover a sujeira E os germes. Os germes são invisíveis. Então, é impossível saber onde eles estão.\n"
+        ],
+        "correct_response": "c) nunca"
+      },
+      {
+        "slug": "5 - Practice 3 (FIB_MCQ3)",
+        "messages": [
+          "EXERCÍCIO 3:\n\nLave as mãos depois de fazer [---].\n\na) usou seu telefone\nb) tocou o lixo \nc) usou o banheiro\nd) apertou as mãos de alguém\ne) todos acima",
+          "FATO: As luvas de uso único (látex / nitrilo) são excelentes, mas não substituem a lavagem das mãos. De fato, você deve lavar as mãos antes de colocar as luvas. "
+        ],
+        "correct_response": "e) Todas acima"
+      },
+      {
+        "slug": "6 - Practice 4 (FIB_MCQ5)",
+        "messages": [
+          "",
+          "EXERCÍCIO 4: Ele precisa lavar as mãos porque [---].\n\na) ele tossiu para eles\nb) ele saiu lá fora \nc) ele tem mais de 30 anos",
+          "FATO: Também é uma boa ideia lavar as mãos depois de sair. É provável que você tenha batido em portas ou trilhos sujos sem perceber."
+        ],
+        "correct_response": "a) ele tossiu para eles"
+      },
+      {
+        "slug": "7 - Practice 5",
+        "messages": [
+          "EXERCÍCIO 5: Gabby está prestes a comer. O que você deve fazer?\n\na) lave as mãos primeiro \nb) lave as mãos depois \nc) lave as mãos antes e depois\nd) limpe as mãos com uma toalha\ne) nada\n",
+          "FATO: Tocamos muito em nossos telefones - 2.000 vezes por dia! O smartphone médio tem 15 vezes mais germes em sua superfície do que um banheiro público.\n"
+        ],
+        "correct_response": "c) lave as mãos antes e depois"
+      },
+      {
+        "slug": "8 - (congrats! + NPS)",
+        "messages": [
+          "Parabéns {{name}}! Você concluiu seu treinamento hoje. \n\nInformaremos {{company}} que você terminou.",
+          ""
+        ]
+      },
+      {
+        "slug": "9 - thank you",
+        "messages": []
+      }
+    ]
+  },
+  {
+    "name": "07. Sanitizing high-contact surfaces",
+    "language": "pt",
+    "prompts": [
+      {
+        "slug": "00 - GO",
+        "messages": [
+          "O exercício de hoje é:  Desinfecção de superfícies de alto contato. \n\nEnvie-me um texto com a palavra GO quando estiver pronto."
+        ]
+      },
+      {
+        "slug": "01 - Self assessment",
+        "messages": [
+          "(Sua resposta será mantida em sigilo.)",
+          "Em uma escala de 1 a 10, como você classificaria seu conhecimento atual do tópico de hoje: Desinfecção de superfícies de alto contato. \n\n(1 = Não sei nada, 10 = Sou especialista e ensino outras pessoas)",
+          "Ok! Aqui vamos nós! Vamos começar primeiro aprendendo um pouco sobre você.  "
+        ]
+      },
+      {
+        "slug": "02 - Q1",
+        "messages": [
+          "EXERCÍCIO 1: Responde à pergunta.\n\nCOVID19 não pode sobreviver em superfícies de materiais.\n\na) verdadeiro\nb) falso\n",
+          "Obrigado!"
+        ],
+        "correct_response": "b) Falso"
+      },
+      {
+        "slug": "03 - Q2",
+        "messages": [
+          "EXERCÍCIO 2: Escolha a melhor opção para preencher o espaço em branco. \n\nMesas, maçanetas, interruptores de luz, bancadas, alças, mesas, telefones, teclados, banheiros, torneiras, pias são [---]\n\na) superfícies de baixo contato\nb) superfícies de alto contato\nc) nunca sujas\n",
+          "FATO: Os primeiros resultados sugerem que o vírus COVID-19 pode durar em portas, bancadas plásticas laminadas ou revestidas e outras superfícies duras."
+        ],
+        "correct_response": "b) superfícies de alto contato"
+      },
+      {
+        "slug": "04 - Q3",
+        "messages": [
+          "EXERCÍCIO 3: Escolha a melhor opção para preencher o espaço em branco.\n\nCOVID-19 pode sobreviver à caixa de papelão por [---].\n\na) até 24 horas\nb) 2-3 dias\nc) 1 semana\n",
+          "FATO: As evidências atuais sugerem que o COVID-19 pode permanecer em superfícies entre horas e dias. "
+        ],
+        "correct_response": "a) até 24 horas"
+      },
+      {
+        "slug": "05 - Q4",
+        "messages": [
+          "EXERCÍCIO 4:\n\nCOVID-19 pode sobreviver em superfícies de plástico e aço inoxidável por [---].\n\na) até 24 horas\nb) 2-3 dias\nc) 1 semana",
+          "FATO: Depois de tocar na caixa de remessa, você deve sempre lavar as mãos. Luvas não impedirão o contágio."
+        ],
+        "correct_response": "b) 2-3 dias"
+      },
+      {
+        "slug": "06 - Q5",
+        "messages": [
+          "EXERCÍCIO 5:\n\nPara evitar espalhar o COVID-19 por superfícies de alto contato, você deve [---] freqüentemente. Utilize uma solução de água sanitária e água ou outra solução desinfetante doméstico. \n\na) limpar e desinfectar\nb) arejar\nc) poeira  ",
+          "FATO: As roupas e outras superfícies macias são mais difíceis de desinfetar, ainda não se sabe quanto tempo o vírus pode sobreviver nesses materiais. Não sacuda roupas sujas. "
+        ],
+        "correct_response": "a) limpar e desinfectar"
+      },
+      {
+        "slug": "07 - Celebration",
+        "messages": [
+          "Parabéns {{name}}! Você concluiu seu treinamento hoje. \n\nInformaremos {{company}} que você terminou."
+        ]
+      }
+    ]
+  },
+  {
+    "name": "01. COVID19: Basics",
+    "language": "zh",
+    "prompts": [
+      {
+        "slug": "00 - GO",
+        "messages": [
+          "感谢你参加我们的安全培训。采取这些预防措施，你就能实实在在地帮助阻止病毒传播。让我们一起战胜这次新型冠状病毒(COVID-19) 疫情。\n",
+          "今天的主题是 2019 新型冠状病毒(COVID-19)：你需要知道的. 如果你准备好了，请回复“GO”。\n"
+        ]
+      },
+      {
+        "slug": "01.2 - Name",
+        "messages": [
+          "你的全名是什么？\n（名字和姓氏）"
+        ]
+      },
+      {
+        "slug": "01 - Self assessment",
+        "messages": [
+          "（放心！我们会为你的答案保密）",
+          "给自己关于今天主题的了解打个分吧？ 2019 新型冠状病毒(COVID-19)：你需要知道的. \n\n（1分代表完全不了解，10分代表非常了解，并且可以教给身边的其他人）\n",
+          "好！让我们开始吧。首先让我们对你有多一点了解吧。"
+        ]
+      },
+      {
+        "slug": "02 - Q1",
+        "messages": [
+          "谢谢你！",
+          "问题 1: 新冠肺炎是由细菌引起的。\n\na）正确\nb）错误\n"
+        ],
+        "correct_response": "b) 错误"
+      },
+      {
+        "slug": "03 - Q2",
+        "messages": [
+          "问题 2: 2019 新型冠状病毒(COVID-19)的传染性有多强？\n\nA）和流感一样\nB）比流感弱\nC）比流感强\n",
+          "2019 新型冠状病毒(COVID-19) 是病毒而不是细菌。除了 COVID-19，大家也会称之为 coronavirus 或者 novel coronavirus。"
+        ],
+        "correct_response": "c) 比流感强"
+      },
+      {
+        "slug": "04 - Q3",
+        "messages": [
+          "问题 3: 2019 新型冠状病毒(COVID-19)通过什么的途径在人和人之间传播？\nA）通过感染者与他人近距离（2米以内）接触\nB）通过感染者的咳嗽和喷嚏飞沫传播\nC）通过接触病毒污染的物体表面，然后触碰脸部传播\nD）以上全部方式\n",
+          "2019 新型冠状病毒(COVID-19)的传染性和伤害性都比流感强很多。每个人都出一分力，才能控制病毒传播，拯救更多生命。"
+        ],
+        "correct_response": "d) 以上全部方式"
+      },
+      {
+        "slug": "05 - Q4",
+        "messages": [
+          "问题 4: 2019 新型冠状病毒(COVID-19)最常见的症状是什么？\n\nA）腹痛、恶心、腹泻\nB）干咳、发烧、胸闷气短\nC）皮疹、瘙痒\nD）视力减退\n",
+          "即使感染者不出现任何症状，新型冠状病毒(COVID-19) 仍可以由他们传染其他人。保险起见，请时刻尽量与其他人保持 2 米以上距离，并且注意个人卫生。"
+        ],
+        "correct_response": "b) 干咳、发烧、胸闷气短"
+      },
+      {
+        "slug": "06 - Q5",
+        "messages": [
+          "快完成了",
+          "问题 5: 如果你认为你自己出现了 2019 新型冠状病毒(COVID-19)的症状，你应该怎样做？\nA）除了出门就医之外，居家隔离\nB）避免乘坐公共交通工具\nC）在就诊前，先给医生或医院打电话咨询\nD）以上所有\n",
+          "如果你或者周围有人出现呼吸困难、胸部疼痛、意识模糊或者嘴唇发青等症状，请即使就医。"
+        ],
+        "correct_response": "d) 以上全部方式"
+      },
+      {
+        "slug": "07 - Celebration",
+        "messages": [
+          "恭喜你，{{name}}！今天的培训到此结束，{{company}}会接到你已经完成的通知。\n\n{{drill_complete_next}}",
+          "如果你有轻微症状，请自主居家隔离，帮助防止病毒传播"
+        ]
+      },
+      {
+        "slug": "0 - Intake",
+        "messages": [
+          "Welcome! Choose your language:\nen - English\nes - Español\nfr - Français\npt - Português\nzh - Chinese 中文"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "02. COVID19: Prevention",
+    "language": "zh",
+    "prompts": [
+      {
+        "slug": "00 - Go",
+        "messages": [
+          "今天的主题是2019 新型冠状病毒(COVID-19)：预防措施. \n\n如果你准备好了，请回复“GO”。\n"
+        ]
+      },
+      {
+        "slug": "01 - Self assessment",
+        "messages": [
+          "（放心！我们会为你的答案保密）",
+          "给自己关于今天主题的了解打个分吧？2019 新型冠状病毒(COVID-19)：预防措施.\n\n（1分代表完全不了解，10分代表非常了解，并且可以教给身边的其他人）\n",
+          "好！让我们开始吧。首先让我们对你有多一点了解吧。"
+        ]
+      },
+      {
+        "slug": "02 - Q1",
+        "messages": [
+          "问题 1: 预防 2019 新型冠状病毒(COVID-19)的最佳方式是什么？\nA）接种疫苗\nB）尽量避免和病毒的接触\nC）多喝水\nD）多吃蔬菜\n",
+          "谢谢你！"
+        ],
+        "correct_response": "b) 尽量避免和病毒的接触"
+      },
+      {
+        "slug": "03 - Q2",
+        "messages": [
+          "问题 2: \n\n避免接触 2019 新型冠状病毒(COVID-19)的最佳方式是什么？\nA）和所有人保持2米的距离\nB）勤洗手\nC）不要碰眼睛、鼻子和嘴\nD）以上全部选项\n",
+          "目前还没有针对 2019 新型冠状病毒(COVID-19) 的疫苗。这也是和所有人保持距离和正确洗手尤其重要的原因。\n"
+        ],
+        "correct_response": "d) 以上全部方式"
+      },
+      {
+        "slug": "04 - Q3",
+        "messages": [
+          "问题 3: \n\n2019 新型冠状病毒(COVID-19)的潜伏期（从暴露于病毒到出现症状的时间）有多长？\nA）几个小时\nB）12 小时\nC）2 - 14 天\n",
+          "2019 新型冠状病毒 (COVID-19) 主要作用于呼吸系统。和他人保持距离，勤洗手，和尽量不摸脸，都是很重要的。\n"
+        ],
+        "correct_response": "c) 2 - 14 天"
+      },
+      {
+        "slug": "05 - Q4",
+        "messages": [
+          "问题 4: \n\n在下面哪些情况下需要戴口罩？\nA）你咳嗽或打喷嚏的时候\nB）你出现了 2019 新型冠状病毒(COVID-19) 的症状\nC）你在照顾 2019 新型冠状病毒(COVID-19)的疑似感染者时\nD）以上全部选项\n",
+          "2019 新型冠状病毒(COVID-19)可以通过无症状的感染者进行传播，所以即便他人没有症状，也要记住保持距离。"
+        ],
+        "correct_response": "d) 以上全部方式"
+      },
+      {
+        "slug": "06 - Q5",
+        "messages": [
+          "问题 5:\n\n戴口罩也不能忘了勤洗手，二者结合才能起作用。\n\na）正确\nb）错误\n",
+          "如果你是健康的，那么只有在照顾 2019 新型冠状病毒(COVID-19) 病人时才需要戴口罩"
+        ],
+        "correct_response": "a) 正确"
+      },
+      {
+        "slug": "07 - Celebration",
+        "messages": [
+          "恭喜你，{{name}}！今天的培训到此结束，{{company}}会接到你已经完成的通知。"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "03. How to wash your hands",
+    "language": "zh",
+    "prompts": [
+      {
+        "slug": "1 - Intro - GO",
+        "messages": [
+          "今天的主题是 如何洗手\n\n\n如果你准备好了，请回复“GO”。\n"
+        ]
+      },
+      {
+        "slug": "3 - self assessment - #",
+        "messages": [
+          "好！让我们开始吧。首先让我们对你有多一点了解吧。",
+          "（放心！我们会为你的答案保密）",
+          "给自己关于今天主题的了解打个分吧？ 如何洗手\n\n\n（1分代表完全不了解，10分代表非常了解，并且可以教给身边的其他人）\n"
+        ]
+      },
+      {
+        "slug": "4 - Practice 1 (MCQ2)",
+        "messages": [
+          "谢谢你！",
+          "问题 1: 回答问题\n\n洗手只能用温水。\n\na）正确\nb）错误"
+        ],
+        "correct_response": "b) 错误"
+      },
+      {
+        "slug": "5 - Practice 2 (MCQ3)",
+        "messages": [
+          "去除细菌时，热水和冷水都一样有效．重要的是您使用的肥皂量以及洗手时间．",
+          "问题 2: 回答问题\n\n如果你的洗手液是按压式的，洗手时应该用多少肥皂?\n\na）按一次\nb）按两三次\nc）不用洗手液\n"
+        ],
+        "correct_response": "b) 按两三次"
+      },
+      {
+        "slug": "6 - Practice 3 (FIB_MCQ3)",
+        "messages": [
+          "问题 3: 洗手时，请务必洗手掌和手背。 也不要忘记清洗:\n\na）手指\nb）脚趾头\nc）手指和指甲下",
+          "按两次以上！\n"
+        ],
+        "correct_response": "c) 手指和指甲下"
+      },
+      {
+        "slug": "7 - Practice 4 (FIB_MCQ5)",
+        "messages": [
+          "细菌最有可能藏在指甲下。\n",
+          "问题 4: 你应该用肥皂大力揉搓双手多长时间?\n\na）大约十秒\nb）大约二十秒\nc）大约六十秒\nd）多久都没关系"
+        ],
+        "correct_response": "b) 大约二十秒"
+      },
+      {
+        "slug": "8 - Practice 5 - (open_MCQ5)",
+        "messages": [
+          "潮湿的手更容易传播细菌",
+          "问题 5: 回答问题\n\n弄干手的最安全的方法是什么？\n\na）用毛巾擦干\nb）甩干\nc）晾干\nd）在衣服上擦干\ne）用纸巾、厨房纸擦干或者用干手机烘干",
+          "快完成了"
+        ],
+        "correct_response": "e) 用纸巾、厨房纸擦干或者用干手机烘干"
+      },
+      {
+        "slug": "9 - 6 (congrats! + NPS)",
+        "messages": [
+          "恭喜你，{{name}}！今天的培训到此结束，{{company}}会接到你已经完成的通知。"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "04. Hand sanitizer best practices",
+    "language": "zh",
+    "prompts": [
+      {
+        "slug": "00 - GO",
+        "messages": [
+          "今天的主题是 免洗洗手液的正确使用方式. \n\n如果你准备好了，请回复“GO”。\n"
+        ]
+      },
+      {
+        "slug": "01 - Self assessment",
+        "messages": [
+          "（放心！我们会为你的答案保密）",
+          "给自己关于今天主题的了解打个分吧？ 免洗洗手液的正确使用方式. \n\n（1分代表完全不了解，10分代表非常了解，并且可以教给身边的其他人）\n",
+          "好！让我们开始吧。首先让我们对你有多一点了解吧。"
+        ]
+      },
+      {
+        "slug": "02 - Q1",
+        "messages": [
+          "谢谢你！",
+          "问题 1: 回答问题\n\n免洗洗手液可以清楚所有种类的细菌。\n\na）正确\nb）错误\n"
+        ],
+        "correct_response": "b) 错误"
+      },
+      {
+        "slug": "03 - Q2",
+        "messages": [
+          "问题 2: 在没有流水和肥皂的情况下，可以选用下面哪种免洗洗手液？\n\nA）以漂白剂为主要成分的免洗洗手液\nB）以肥皂为主要成分的免洗洗手液\nC）以酒精为主要成分免洗洗手液\n",
+          "免洗洗手液能够迅速减少手上微生物的数量，但它并不能杀死所有细菌。用流水和香皂或洗手液洗手，要比用免洗洗手液更有效。\n"
+        ],
+        "correct_response": "c) 以酒精为主要成分免洗洗手液"
+      },
+      {
+        "slug": "04 - Q3",
+        "messages": [
+          "问题 3: 以酒精为主要成分免洗洗手液，要有多少酒精含量才足够有效？\n\nA）30% 以上\nB）60% 以上\nC）90% 以上\n",
+          "以酒精为主要成分的免洗洗手液不需要用水冲洗。在无法使用流水和香皂的情况下，可以用酒精免洗洗手液来洗手。\n"
+        ],
+        "correct_response": "b) 60% 以上"
+      },
+      {
+        "slug": "05 - Q4",
+        "messages": [
+          "问题 4: \n\n正确使用免洗洗手液的方式是将它涂满双手，并揉搓直到手变干为止。\n\na）正确\nb）错误",
+          "酒精含量在 60% 到 95% 之间的免洗洗手液能够最有效地抑制细菌。\n"
+        ],
+        "correct_response": "a) 正确"
+      },
+      {
+        "slug": "06 - Q5",
+        "messages": [
+          "问题 5: \n\n满足哪个条件才是合格有效的免洗洗手液。\nA）来自有机原料\nB）含有病菌抗体\nC）香味好闻\nD）酒精含量在 60% - 90%之间\nE）以上全部选项\n\n",
+          "用免洗洗手液时，要一直揉搓到手干了为止。但要记住，它能够抑制细菌滋生，但并不会完全杀灭所有细菌。"
+        ],
+        "correct_response": "d) 酒精含量在 60% - 90%之间"
+      },
+      {
+        "slug": "07 - Celebration",
+        "messages": [
+          "恭喜你，{{name}}！今天的培训到此结束，{{company}}会接到你已经完成的通知。"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "05. How to disinfect your phone",
+    "language": "zh",
+    "prompts": [
+      {
+        "slug": "00 - GO",
+        "messages": [
+          "今天的主题是 如何给手机消毒. \n\n如果你准备好了，请回复“GO”。\n"
+        ]
+      },
+      {
+        "slug": "01 - Self Assessment",
+        "messages": [
+          "（放心！我们会为你的答案保密）",
+          "给自己关于今天主题的了解打个分吧？ 如何给手机消毒. \n\n（1分代表完全不了解，10分代表非常了解，并且可以教给身边的其他人）\n",
+          "好！让我们开始吧。首先让我们对你有多一点了解吧。"
+        ]
+      },
+      {
+        "slug": "02 - Q1",
+        "messages": [
+          "问题 1: \n\n大约 80% 的传染病病例是通过哪个传播途径被感染的？\n\nA）手部接触传播\nB）咳嗽飞沫传播\nC）喷嚏飞沫传播\n",
+          "谢谢你！"
+        ],
+        "correct_response": "a) 手部接触传播"
+      },
+      {
+        "slug": "03 - Q2",
+        "messages": [
+          "问题 2: \n\n手机屏幕比马桶座还要脏 3 倍。\n\na）正确\nb）错误",
+          "现在大家都手机不离手，所以保持手机清洁正变得越来越重要。"
+        ],
+        "correct_response": "a) 正确"
+      },
+      {
+        "slug": "04 - Q3",
+        "messages": [
+          "问题 3: \n\n可以用消毒纸巾擦手机吗？\na）可以\nb）不可以\n",
+          "手机可能是我们日常生活种接触到的东西种最不干净的的一个。\n"
+        ],
+        "correct_response": "a) 正确"
+      },
+      {
+        "slug": "05 - Q4",
+        "messages": [
+          "一般的消毒纸巾都可以擦拭手机、平板电脑和遥控器。请在使用前参考消毒纸巾的产品说明，以确保物品不会遭到损坏。\n",
+          "问题 4: 什么时候清洁手机最安全？\na）手机关机时\nb）手机不在充电时\nc）手机关机并且不在充电时\n"
+        ],
+        "correct_response": "c) 手机关机并且不在充电时"
+      },
+      {
+        "slug": "06 - Q5",
+        "messages": [
+          "问题 5: \n\n为了防止细菌和病毒的传播，使用手机要注意什么？\na）手机不要接触脸部\nb）用耳机打电话\nc）在不影响别人的情况下使用免提\nd）以上全部选项\n",
+          "电子产品不防水的话，洗手液有可能渗透进它们内部，进而对设备造成损坏。"
+        ],
+        "correct_response": "d) {{all of the above}}"
+      },
+      {
+        "slug": "07 - Celebration",
+        "messages": [
+          "细菌和病毒可以在手机表面停留并存活三天以上。每次使用手机都可能接触到细菌和病毒。",
+          "恭喜你，{{name}}！今天的培训到此结束，{{company}}会接到你已经完成的通知。"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "06. When to wash your hands",
+    "language": "zh",
+    "prompts": [
+      {
+        "slug": "1 - requirements - READY",
+        "messages": [
+          "今天的主题是 什么时候需要洗手. \n\n如果你准备好了，请回复“GO”。\n"
+        ]
+      },
+      {
+        "slug": "2 - self assessment - #",
+        "messages": [
+          "（放心！我们会为你的答案保密）\n",
+          "给自己关于今天主题的了解打个分吧？ 什么时候需要洗手.\n\n（1分代表完全不了解，10分代表非常了解，并且可以教给身边的其他人）\n",
+          "好！让我们开始吧。首先让我们对你有多一点了解吧。"
+        ]
+      },
+      {
+        "slug": "3 - Practice 1 (MCQ2)",
+        "messages": [
+          "我们的培训将围绕防止病菌传播的主题来展开。",
+          "问题 1: 回答问题\n\n只有能看到手脏了的时候，你才需要洗手。\n\na）正确\nb）错误\n"
+        ],
+        "correct_response": "b) 错误"
+      },
+      {
+        "slug": "4 - Practice 2 (MCQ3)",
+        "messages": [
+          "问题 2: 在什么情况下，戴橡胶手套可以代替洗手？\n\na）任何情况都可以代替洗手\nb）在特殊情况下才需要洗手\nc）即便在戴手套的情况下，也需要洗手\n",
+          "洗手的目的是去除手上的能看到的污垢，和看不见的细菌和病毒，所以即使手上看起来不脏，你也需要洗手。\n"
+        ],
+        "correct_response": "c) 即便在戴手套的情况下，也需要洗手\n"
+      },
+      {
+        "slug": "5 - Practice 3 (FIB_MCQ3)",
+        "messages": [
+          "问题 3:\n\n在做了以下哪些事情时候，需要洗手\n\nA）使用手机\nB）处理垃圾\nC）去洗手间\nD）和别人握手\nE）以上全部选项\n",
+          "一次性收到虽然有很大的作用，但它并不能代替洗手的作用。我们应该在戴手套前洗一次手。\n"
+        ],
+        "correct_response": "e) 以上全部方式"
+      },
+      {
+        "slug": "6 - Practice 4 (FIB_MCQ5)",
+        "messages": [
+          "",
+          "问题 4: 图中的人为什么需要洗手？\n\nA）他用手遮盖了他的咳嗽\nB）他出门了\nC）他已经三十多岁了\n",
+          "出门之后也应该洗个手。在外面，你很可能不经意间接触了没那么干净的门把手或扶手。\n"
+        ],
+        "correct_response": "a) 他用手遮盖了他的咳嗽"
+      },
+      {
+        "slug": "7 - Practice 5",
+        "messages": [
+          "问题 5: 小张要吃饭了，她需要做些什么\n\nA）饭前洗手\nB）饭后洗手\nC）饭前饭后都要洗手\nD）用毛巾把手擦干\nE）什么都不做\n",
+          "我们每天大约会触摸2000次手机。一个普通只能手机上的细菌甚至有厕所的15倍之多。\n"
+        ],
+        "correct_response": "c) 饭前饭后都要洗手"
+      },
+      {
+        "slug": "8 - (congrats! + NPS)",
+        "messages": [
+          "恭喜你，{{name}}！今天的培训到此结束，{{company}}会接到你已经完成的通知。",
+          ""
+        ]
+      },
+      {
+        "slug": "9 - thank you",
+        "messages": []
+      }
+    ]
+  },
+  {
+    "name": "07. Sanitizing high-contact surfaces",
+    "language": "zh",
+    "prompts": [
+      {
+        "slug": "00 - GO",
+        "messages": [
+          "今天的主题是 清洁“高频接触”的物体表面. \n\n如果你准备好了，请回复“GO”。\n"
+        ]
+      },
+      {
+        "slug": "01 - Self assessment",
+        "messages": [
+          "（放心！我们会为你的答案保密）",
+          "给自己关于今天主题的了解打个分吧？清洁“高频接触”的物体表面. \n\n（1分代表完全不了解，10分代表非常了解，并且可以教给身边的其他人）\n",
+          "好！让我们开始吧。首先让我们对你有多一点了解吧。"
+        ]
+      },
+      {
+        "slug": "02 - Q1",
+        "messages": [
+          "问题 1: 回答问题\n\n2019 新型冠状病毒(COVID-19) 无法在物体表面存活。\na）正确\nb）错误\n",
+          "谢谢你！"
+        ],
+        "correct_response": "b) 错误"
+      },
+      {
+        "slug": "03 - Q2",
+        "messages": [
+          "问题 2: 桌面、门把手、开关、灶台、桌面、手机、键盘、厕所、水龙头和洗手池都属于那种分类？\na）高频接触的物体表面\nb）不经常接触的物体表面\nc）不会变脏的物体表面\n",
+          "2019 新型冠状病毒(COVID-19) 能够在门把手，塑料和工作台等坚硬表面存活。\n"
+        ],
+        "correct_response": "b) 不经常接触的物体表面"
+      },
+      {
+        "slug": "04 - Q3",
+        "messages": [
+          "问题 3: 2019 新型冠状病毒(COVID-19)能够在纸箱上能够存活多长时间？\nA）少于 24 小时\nB）两三天\nC）一周\n",
+          "研究表明2019 新型冠状病毒(COVID-19)能够在物品表面存活数小时到数天时间\n"
+        ],
+        "correct_response": "a) 少于 24 小时"
+      },
+      {
+        "slug": "05 - Q4",
+        "messages": [
+          "问题 4:\n\n2019 新型冠状病毒(COVID-19)能够在塑料表面和不锈钢表面能够存活多长时间？\nA）少于 24 小时\nB）两三天\nC）一周\n",
+          "在接触快递的纸箱后，应该按正确的方式洗手，即便带了手套也不能省略。\n"
+        ],
+        "correct_response": "b) 两三天"
+      },
+      {
+        "slug": "06 - Q5",
+        "messages": [
+          "问题 5:\n\n为了防止 2019 新型冠状病毒(COVID-19) 通过高频接触的物品表面传播，你应该用家用清洁剂或消毒水来怎样处理它们？\nA）清洁并消毒\nB）对物品通风透气\nC）擦拭物品\n",
+          "衣物布料等粗糙表面不容易进行表面清洁。目前尚不清楚病毒可以在衣物中存活多长时间。清洗衣物时，请勿抖甩衣物。\n"
+        ],
+        "correct_response": "a) 清洁并消毒"
+      },
+      {
+        "slug": "07 - Celebration",
+        "messages": [
+          "恭喜你，{{name}}！今天的培训到此结束，{{company}}会接到你已经完成的通知。"
+        ]
+      }
+    ]
+  }
+]

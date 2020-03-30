@@ -1,8 +1,13 @@
-from typing import Optional, List
+import json
+import os
+from collections import defaultdict
+from typing import Optional, List, Dict
 
 from marshmallow import Schema, fields, post_load
 
 from .response_check import is_correct_response
+
+__location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
 
 
 def drill_from_dict(obj):
@@ -76,3 +81,22 @@ class Drill:
             if p.slug == slug:
                 return_next = True
         return None
+
+
+DRILL_CACHE: Optional[Dict[str, Drill]] = None
+
+
+def get_drill(drill_key: str) -> Drill:
+    if DRILL_CACHE is None:
+        _populate_drill_cache()
+    return DRILL_CACHE[drill_key]
+
+
+def _populate_drill_cache():
+    global DRILL_CACHE
+    DRILL_CACHE = defaultdict(dict)
+    with open(os.path.join(__location__, "drill_content/drills.json")) as f:
+        data = f.read()
+        raw_drills = json.loads(data)
+        for drill_key, raw_drill in raw_drills.items():
+            DRILL_CACHE[drill_key] = DrillSchema().load(raw_drill)
