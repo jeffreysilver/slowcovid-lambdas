@@ -68,18 +68,31 @@ class ProcessSMSMessage(types.Command):
             return []
         events = []
         if prompt.should_advance_with_answer(self.content_lower):
-            events.append(CompletedPrompt(self.phone_number, prompt, self.content))
+            events.append(CompletedPrompt(
+                phone_number=self.phone_number,
+                prompt=prompt,
+                drill_instance_id=dialog_state.drill_instance_id,
+                response=self.content
+            ))
             should_advance = True
         else:
             should_advance = dialog_state.current_prompt_state.failures >= prompt.max_failures
             events.append(FailedPrompt(
-                self.phone_number, prompt, self.content, abandoned=should_advance
+                phone_number=self.phone_number,
+                prompt=prompt,
+                response=self.content,
+                drill_instance_id=dialog_state.drill_instance_id,
+                abandoned=should_advance
             ))
 
         if should_advance:
             next_prompt = dialog_state.get_next_prompt()
             if next_prompt is not None:
-                events.append(AdvancedToNextPrompt(self.phone_number, next_prompt))
+                events.append(AdvancedToNextPrompt(
+                    phone_number=self.phone_number,
+                    prompt=next_prompt,
+                    drill_instance_id=dialog_state.drill_instance_id
+                ))
                 if dialog_state.is_next_prompt_last():
                     # assume the last prompt doesn't wait for an answer
                     events.append(DrillCompleted(self.phone_number, dialog_state.current_drill))
@@ -176,6 +189,7 @@ class UserValidationFailed(types.DialogEvent):
 class CompletedPromptSchema(types.DialogEventSchema):
     prompt = fields.Nested(drills.PromptSchema, required=True)
     response = fields.String(required=True)
+    drill_instance_id = fields.UUID(required=True)
 
     @post_load
     def make_completed_prompt(self, data, **kwargs):
@@ -183,7 +197,14 @@ class CompletedPromptSchema(types.DialogEventSchema):
 
 
 class CompletedPrompt(types.DialogEvent):
-    def __init__(self, phone_number: str, prompt: drills.Prompt, response: str, **kwargs):
+    def __init__(
+            self,
+            phone_number: str,
+            prompt: drills.Prompt,
+            drill_instance_id: uuid.UUID,
+            response: str,
+            **kwargs
+    ):
         super().__init__(
             CompletedPromptSchema(),
             types.DialogEventType.COMPLETED_PROMPT,
@@ -192,6 +213,7 @@ class CompletedPrompt(types.DialogEvent):
         )
         self.prompt = prompt
         self.response = response
+        self.drill_instance_id = drill_instance_id
 
     def apply_to(self, dialog_state: types.DialogState):
         dialog_state.current_prompt_state = None
@@ -203,6 +225,7 @@ class FailedPromptSchema(types.DialogEventSchema):
     prompt = fields.Nested(drills.PromptSchema, required=True)
     abandoned = fields.Boolean(required=True)
     response = fields.String(required=True)
+    drill_instance_id = fields.UUID(required=True)
 
     @post_load
     def make_failed_prompt(self, data, **kwargs):
@@ -211,7 +234,13 @@ class FailedPromptSchema(types.DialogEventSchema):
 
 class FailedPrompt(types.DialogEvent):
     def __init__(
-            self, phone_number: str, prompt: drills.Prompt, response: str, abandoned: bool, **kwargs
+            self,
+            phone_number: str,
+            prompt: drills.Prompt,
+            drill_instance_id: uuid.UUID,
+            response: str,
+            abandoned: bool,
+            **kwargs
     ):
         super().__init__(
             FailedPromptSchema(),
@@ -222,6 +251,7 @@ class FailedPrompt(types.DialogEvent):
         self.prompt = prompt
         self.abandoned = abandoned
         self.response = response
+        self.drill_instance_id = drill_instance_id
 
     def apply_to(self, dialog_state: types.DialogState):
         if self.abandoned:
@@ -232,6 +262,7 @@ class FailedPrompt(types.DialogEvent):
 
 class AdvancedToNextPromptSchema(types.DialogEventSchema):
     prompt = fields.Nested(drills.PromptSchema, required=True)
+    drill_instance_id = fields.UUID(required=True)
 
     @post_load
     def make_advanced_to_next_prompt(self, data, **kwargs):
@@ -239,7 +270,13 @@ class AdvancedToNextPromptSchema(types.DialogEventSchema):
 
 
 class AdvancedToNextPrompt(types.DialogEvent):
-    def __init__(self, phone_number: str, prompt: drills.Prompt, **kwargs):
+    def __init__(
+            self,
+            phone_number: str,
+            prompt: drills.Prompt,
+            drill_instance_id: uuid.UUID,
+            **kwargs
+    ):
         super().__init__(
             AdvancedToNextPromptSchema(),
             types.DialogEventType.ADVANCED_TO_NEXT_PROMPT,
@@ -247,6 +284,7 @@ class AdvancedToNextPrompt(types.DialogEvent):
             **kwargs
         )
         self.prompt = prompt
+        self.drill_instance_id = drill_instance_id
 
     def apply_to(self, dialog_state: types.DialogState):
         dialog_state.current_prompt_state = types.PromptState(
