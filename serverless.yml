@@ -53,6 +53,7 @@ functions:
 
   logMessage:
     handler: message_log.log_message
+    timeout: 20  # Give aurora cluster time to cold start
 
   healthcheck:
     handler: healthcheck.healthcheck
