@@ -12,7 +12,7 @@ from drills.drills import Drill, Prompt
 TRY_AGAIN = "Sorry, not correct.\n\n*Try again one more time!*"
 PHONE_NUMBER = "123456789"
 DRILL = Drill(
-    drill_id=uuid.uuid4(),
+    name="01 DEMO",
     prompts=[
         Prompt(
             slug="language",
@@ -149,9 +149,9 @@ class InMemoryRepository(DialogRepository):
                     fake_sms(event.phone_number, ["Correct!"])
                 elif event.prompt.stores_answer():
                     fake_sms(event.phone_number, ["Thanks!"])
-            elif event.event_type == DialogEventType.USER_CREATED:
+            elif event.event_type == DialogEventType.USER_VALIDATED:
                 should_start_drill = True
-            elif event.event_type == DialogEventType.USER_CREATION_FAILED:
+            elif event.event_type == DialogEventType.USER_VALIDATION_FAILED:
                 print("(try DRILL0)")
             elif event.event_type == DialogEventType.DRILL_STARTED:
                 fake_sms(event.phone_number, event.prompt.messages)

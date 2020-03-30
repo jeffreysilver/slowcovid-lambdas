@@ -1,4 +1,5 @@
 import unittest
+import uuid
 
 from dialog.dialog import CompletedPrompt, AdvancedToNextPrompt
 from dialog.persistence import DynamoDBDialogRepository
@@ -29,18 +30,21 @@ class TestPersistence(unittest.TestCase):
                 slug="one",
                 messages=["one", "two"]
             ),
-            response="hi"
+            response="hi",
+            drill_instance_id=uuid.uuid4()
         )
         event2 = AdvancedToNextPrompt(
             phone_number=self.phone_number,
             prompt=Prompt(
                 slug="two",
                 messages=["three", "four"]
-            )
+            ),
+            drill_instance_id=event1.drill_instance_id,
         )
         dialog_state = DialogState(
             self.phone_number,
-            user_profile=UserProfile(validated=True, language="de")
+            user_profile=UserProfile(validated=True, language="de"),
+            drill_instance_id=event1.drill_instance_id
         )
         self.repo.persist_dialog_state([event1, event2], dialog_state)
         dialog_state2 = self.repo.fetch_dialog_state(self.phone_number)

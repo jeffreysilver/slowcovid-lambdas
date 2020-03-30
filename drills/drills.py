@@ -44,7 +44,7 @@ class Prompt:
 
 
 class DrillSchema(Schema):
-    drill_id = fields.UUID(required=True)
+    name = fields.String(required=True)
     prompts = fields.List(fields.Nested(PromptSchema), required=True)
 
     @post_load
@@ -53,8 +53,8 @@ class DrillSchema(Schema):
 
 
 class Drill:
-    def __init__(self, drill_id: uuid.UUID, prompts: List[Prompt]):
-        self.drill_id = drill_id
+    def __init__(self, name: str, prompts: List[Prompt]):
+        self.name = name
         self.prompts = prompts
 
     def first_prompt(self) -> Prompt:

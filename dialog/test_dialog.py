@@ -12,7 +12,7 @@ class TestSerialization(unittest.TestCase):
             messages=['one', 'two']
         )
         self.drill = Drill(
-            drill_id=uuid.uuid4(),
+            name="01 START",
             prompts=[self.prompt]
         )
 
@@ -25,31 +25,36 @@ class TestSerialization(unittest.TestCase):
     def test_advanced_to_next_prompt(self):
         original = AdvancedToNextPrompt(
             phone_number="123456789",
-            prompt=self.prompt
+            prompt=self.prompt,
+            drill_instance_id=uuid.uuid4(),
         )
         serialized = original.to_dict()
         deserialized = event_from_dict(serialized)
         self._make_base_assertions(original, deserialized)
         self.assertEqual(original.prompt.slug, deserialized.prompt.slug)
+        self.assertEqual(original.drill_instance_id, deserialized.drill_instance_id)
 
     def test_completed_prompt(self):
         original = CompletedPrompt(
             phone_number="123456789",
             prompt=self.prompt,
-            response="hello"
+            response="hello",
+            drill_instance_id=uuid.uuid4(),
         )
         serialized = original.to_dict()
         deserialized = event_from_dict(serialized)
         self._make_base_assertions(original, deserialized)
         self.assertEqual(original.prompt.slug, deserialized.prompt.slug)
         self.assertEqual(original.response, deserialized.response)
+        self.assertEqual(original.drill_instance_id, deserialized.drill_instance_id)
 
     def test_failed_prompt(self):
         original = FailedPrompt(
             phone_number="123456789",
             prompt=self.prompt,
             response="hello",
-            abandoned=True
+            abandoned=True,
+            drill_instance_id=uuid.uuid4()
         )
         serialized = original.to_dict()
         deserialized = event_from_dict(serialized)
@@ -57,26 +62,29 @@ class TestSerialization(unittest.TestCase):
         self.assertEqual(original.prompt.slug, deserialized.prompt.slug)
         self.assertEqual(original.response, deserialized.response)
         self.assertEqual(original.abandoned, deserialized.abandoned)
+        self.assertEqual(original.drill_instance_id, deserialized.drill_instance_id)
 
     def test_drill_started(self):
         original = DrillStarted(
             phone_number="12345678",
-            drill=self.drill
+            drill=self.drill,
+            drill_instance_id=uuid.uuid4()
         )
         serialized = original.to_dict()
         deserialized = event_from_dict(serialized)
         self._make_base_assertions(original, deserialized)
-        self.assertEqual(original.drill.drill_id, deserialized.drill.drill_id)
+        self.assertEqual(original.drill.name, deserialized.drill.name)
+        self.assertEqual(original.drill_instance_id, deserialized.drill_instance_id)
 
     def test_drill_completed(self):
         original = DrillCompleted(
             phone_number="12345678",
-            drill=self.drill
+            drill_instance_id=uuid.uuid4()
         )
         serialized = original.to_dict()
         deserialized = event_from_dict(serialized)
         self._make_base_assertions(original, deserialized)
-        self.assertEqual(original.drill.drill_id, deserialized.drill.drill_id)
+        self.assertEqual(original.drill_instance_id, deserialized.drill_instance_id)
 
     def test_reminder_triggered(self):
         original = ReminderTriggered("123456789")
@@ -84,14 +92,14 @@ class TestSerialization(unittest.TestCase):
         deserialized = event_from_dict(serialized)
         self._make_base_assertions(original, deserialized)
 
-    def test_user_created(self):
-        original = UserCreated("123456789")
+    def test_user_validated(self):
+        original = UserValidated("123456789")
         serialized = original.to_dict()
         deserialized = event_from_dict(serialized)
         self._make_base_assertions(original, deserialized)
 
-    def test_user_creation_failed(self):
-        original = UserCreationFailed("123456789")
+    def test_user_validation_failed(self):
+        original = UserValidationFailed("123456789")
         serialized = original.to_dict()
         deserialized = event_from_dict(serialized)
         self._make_base_assertions(original, deserialized)

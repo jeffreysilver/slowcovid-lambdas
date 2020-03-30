@@ -62,8 +62,8 @@ class DialogStateSchema(Schema):
     # persist the entire drill so that modifications to drills don"t affect
     # drills that are in flight
     current_drill = fields.Nested(drills.DrillSchema, allow_none=True)
+    drill_instance_id = fields.UUID(allow_none=True)
     current_prompt_state = fields.Nested(PromptStateSchema, allow_none=True)
-    completed_drills = fields.List(fields.Nested(drills.DrillSchema), allow_none=True)
 
     @post_load
     def make_dialog_state(self, data, **kwargs):
@@ -75,13 +75,13 @@ class DialogState:
                  phone_number: str,
                  user_profile: Optional[UserProfile] = None,
                  current_drill: Optional[drills.Drill] = None,
-                 current_prompt_state: Optional[PromptState] = None,
-                 completed_drills: List[drills.Drill] = None):
+                 drill_instance_id: Optional[uuid.UUID] = None,
+                 current_prompt_state: Optional[PromptState] = None):
         self.phone_number = phone_number
         self.user_profile = user_profile or UserProfile(validated=False)
         self.current_drill = current_drill
+        self.drill_instance_id = drill_instance_id
         self.current_prompt_state = current_prompt_state
-        self.completed_drills = completed_drills or []
 
     def get_prompt(self) -> Optional[drills.Prompt]:
         if self.current_drill is None or self.current_prompt_state is None:
@@ -101,8 +101,8 @@ class DialogState:
 class DialogEventType(enum.Enum):
     DRILL_STARTED = "DRILL_STARTED"
     REMINDER_TRIGGERED = "REMINDER_TRIGGERED"
-    USER_CREATED = "USER_CREATED"
-    USER_CREATION_FAILED = "USER_CREATION_FAILED"
+    USER_VALIDATED = "USER_CREATED"
+    USER_VALIDATION_FAILED = "USER_CREATION_FAILED"
     COMPLETED_PROMPT = "COMPLETED_PROMPT"
     FAILED_PROMPT = "FAILED_PROMPT"
     ADVANCED_TO_NEXT_PROMPT = "ADVANCED_TO_NEXT_PROMPT"
