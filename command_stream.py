@@ -1,3 +1,4 @@
+import logging
 from utils.kinesis import get_payload_from_kinesis_record
 
 from dialog.dialog import (
@@ -41,7 +42,7 @@ def handle_command(raw_event, context):
                 sequence_number,
             )
         else:
-            # tag_event("command_stream", "unknown command", event)
+            logging.error(f"Unknown command: {command_type}")
             raise RuntimeError(f"Unknown command: {command_type}")
 
     return {"statusCode": 200}
