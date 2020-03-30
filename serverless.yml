@@ -14,6 +14,7 @@ provider:
         - lambda:InvokeFunction
         - kinesis:*
         - sqs:*
+        - dynamodb:*
         - rds-data:ExecuteStatement
         - secretsmanager:GetSecretValue
       Resource: "*"
@@ -149,10 +150,27 @@ resources:
             MinCapacity: 2
             SecondsUntilAutoPause: 300
 
+    # OUTBOUND SMS
     OutboundSMSQueue:
       Type: AWS::SQS::Queue
       Properties:
         QueueName: outbound-sms-${self:provider.stage}
+    
+    OutboundSMSIdempotency:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: outbound-sms-idempotency-${self:provider.stage}
+        KeySchema:
+          - AttributeName: idempotency_key
+            KeyType: HASH
+        BillingMode: PAY_PER_REQUEST
+        AttributeDefinitions:
+          - AttributeName: idempotency_key
+            AttributeType: S
+        TimeToLiveSpecification:
+            Enabled: true
+            AttributeName: expire_at
+
 
     # DIALOG STATE AND EVENTS (DynamoDB)
     DialogState:
