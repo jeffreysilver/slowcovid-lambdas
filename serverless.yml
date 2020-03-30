@@ -149,10 +149,23 @@ resources:
             MinCapacity: 2
             SecondsUntilAutoPause: 300
 
+    # OUTBOUND SMS
     OutboundSMSQueue:
       Type: AWS::SQS::Queue
       Properties:
         QueueName: outbound-sms-${self:provider.stage}
+    
+    OutboundSMSIdempotencyCache:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: outbound-sms-idempotency-cache-${self:provider.stage}
+        KeySchema:
+          - AttributeName: idempotency_key
+            KeyType: HASH
+        BillingMode: PAY_PER_REQUEST
+        AttributeDefinitions:
+          - AttributeName: idempotency_key
+            AttributeType: S    
 
     # DIALOG STATE AND EVENTS (DynamoDB)
     DialogState:
