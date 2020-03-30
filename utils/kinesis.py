@@ -7,6 +7,6 @@ def get_payload_from_kinesis_record(record):
     return ast.literal_eval(payload_bytes.decode("UTF-8"))
 
 
-def get_payloads_from_kinesis_payload(kinesis_payload):
+def get_payloads_from_kinesis_event(kinesis_payload):
     records = kinesis_payload["Records"]
     return [get_payload_from_kinesis_record(record) for record in records]

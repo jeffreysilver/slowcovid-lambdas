@@ -1,6 +1,8 @@
 import os
 import boto3
 
+RDS = boto3.client("rds-data")
+
 
 def insert_message(
     twilio_message_id, body, from_phone, to_phone, status,
@@ -37,9 +39,7 @@ def insert_message(
     db_cluster_arn = os.environ.get("DB_CLUSTER_ARN")
     db_credentials_secret_arn = os.environ.get("DB_SECRET_ARN")
 
-    rds_client = boto3.client("rds-data")
-
-    return rds_client.execute_statement(
+    return RDS.execute_statement(
         secretArn=db_credentials_secret_arn,
         database="postgres",
         resourceArn=db_cluster_arn,
@@ -54,9 +54,7 @@ def update_message(twilio_message_id, status, from_phone):
     db_cluster_arn = os.environ.get("DB_CLUSTER_ARN")
     db_credentials_secret_arn = os.environ.get("DB_SECRET_ARN")
 
-    rds_client = boto3.client("rds-data")
-
-    return rds_client.execute_statement(
+    return RDS.execute_statement(
         secretArn=db_credentials_secret_arn,
         database="postgres",
         resourceArn=db_cluster_arn,
