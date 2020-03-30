@@ -12,7 +12,6 @@ def drill_from_dict(obj):
 class PromptSchema(Schema):
     slug = fields.String(required=True)
     messages = fields.List(fields.String(), required=True)
-    should_store_response = fields.Boolean(allow_none=True)
     response_user_profile_key = fields.String(allow_none=True)
     correct_response = fields.String(allow_none=True)
 
@@ -25,13 +24,11 @@ class Prompt:
     def __init__(self,
                  slug: str,
                  messages: List[str],
-                 should_store_response: Optional[bool] = False,
                  response_user_profile_key: Optional[str] = None,
                  correct_response: Optional[str] = None,
                  ):
         self.slug = slug
         self.messages = messages
-        self.should_store_response = should_store_response
         self.response_user_profile_key = response_user_profile_key
         self.correct_response = correct_response
         self.max_failures = 1
