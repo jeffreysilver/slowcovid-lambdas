@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-import uuid
 from time import sleep
 from typing import List
 

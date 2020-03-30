@@ -51,7 +51,7 @@ class UserProfile:
 
     def __str__(self):
         return (f"lang={self.language}, validated={self.validated}, "
-                f"name={self.name}, rating={self.self_rating}")
+                f"name={self.name}")
 
 
 class PromptStateSchema(Schema):
@@ -148,10 +148,18 @@ class DialogEventSchema(Schema):
     created_time = fields.DateTime(required=True)
     event_id = fields.UUID(required=True)
     event_type = EventTypeField(required=True)
+    user_profile = fields.Nested(UserProfileSchema, required=True)
 
 
 class DialogEvent(ABC):
-    def __init__(self, schema: Schema, event_type: DialogEventType, phone_number: str, **kwargs):
+    def __init__(
+            self,
+            schema: Schema,
+            event_type: DialogEventType,
+            phone_number: str,
+            user_profile: UserProfile,
+            **kwargs
+    ):
         self.schema = schema
         self.phone_number = phone_number
 
@@ -161,6 +169,7 @@ class DialogEvent(ABC):
         self.created_time = kwargs.get('created_time', datetime.datetime.now(datetime.timezone.utc))
         self.event_id = kwargs.get('event_id', uuid.uuid4())
         self.event_type = event_type
+        self.user_profile = user_profile
 
     @abstractmethod
     def apply_to(self, dialog_state: DialogState):
