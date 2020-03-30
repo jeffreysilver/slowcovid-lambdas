@@ -1,0 +1,21 @@
+
+{
+    "Records": [
+        {
+            "kinesis": {
+                "kinesisSchemaVersion": "1.0",
+                "partitionKey": "+14707190649",
+                "sequenceNumber": "49605580127467948727818985106596552159333226222465318946",
+                "data": "eyJ0eXBlIjogIlNUQVJUX0RSSUxMIiwgInBheWxvYWQiOiB7InBob25lX251bWJlciI6ICIrMTU1NTQzMzU1ODgiLCAiZHJpbGwiOiB7InByb21wdHMiOiBbeyJzbHVnIjogImhhbmQtd2FzaGluZyIsICJtZXNzYWdlcyI6IFsiYSkgaGVsbG8iLCAiYikgaG93IGFyZSB5b3U/Il0sICJzaG91bGRfc3RvcmVfcmVzcG9uc2UiOiB0cnVlLCAicmVzcG9uc2VfdXNlcl9wcm9maWxlX2tleSI6ICIrMTU1NTQzMzU1ODgiLCAiY29ycmVjdF9yZXNwb25zZSI6ICJhKSBoZWxsbyJ9XSwgIm5hbWUiOiAiSGFuZCB3YXNoaW5nIn19fQ==",
+                "approximateArrivalTimestamp": 1585511919.595
+            },
+            "eventSource": "aws:kinesis",
+            "eventVersion": "1.0",
+            "eventID": "shardId-000000000002:49605580127467948727818985106596552159333226222465318946",
+            "eventName": "aws:kinesis:record",
+            "invokeIdentityArn": "arn:aws:iam::696991354966:role/slowcovid-dev-us-east-1-lambdaRole",
+            "awsRegion": "us-east-1",
+            "eventSourceARN": "arn:aws:kinesis:us-east-1:696991354966:stream/command-stream-dev"
+        }
+    ]
+}
