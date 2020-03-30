@@ -50,7 +50,7 @@ DRILL = Drill(
                 "great and I teach others)",
                 "(Your answer will be kept private.)"
             ],
-            response_user_profile_key="self_rating"
+            response_user_profile_key="self_rating_1"
         ),
         Prompt(
             slug="q-bacteria",
