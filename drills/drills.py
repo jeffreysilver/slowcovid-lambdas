@@ -1,4 +1,3 @@
-import uuid
 from typing import Optional, List
 
 from marshmallow import Schema, fields, post_load
@@ -6,10 +5,13 @@ from marshmallow import Schema, fields, post_load
 from .response_check import is_correct_response
 
 
+def drill_from_dict(obj):
+    return DrillSchema().load(obj)
+
+
 class PromptSchema(Schema):
     slug = fields.String(required=True)
     messages = fields.List(fields.String(), required=True)
-    should_store_response = fields.Boolean(allow_none=True)
     response_user_profile_key = fields.String(allow_none=True)
     correct_response = fields.String(allow_none=True)
 
