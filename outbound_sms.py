@@ -1,5 +1,6 @@
 from serverless_sdk import tag_event
-from clients import twilio, kinesis
+
+from clients import twilio, kinesis, dynamo
 from utils.sqs import get_payloads_from_sqs_event
 
 
@@ -11,6 +12,15 @@ def send_message(event, context):
     twilio_responses = [
         twilio.send_message(message["To"], message["Body"]) for message in messages
     ]
+    twilio_responses = []
+    for message in messages:
+        idempotency_key = message["idempotency_key"]
+        if dynamo.outbound_sms_idempotency_key_exists(idempotency_key):
+            tag_event("send_message", "idempotency_key exists", message)
+            continue
+        response = twilio.send_message(message["To"], message["Body"])
+        dynamo.persist_outbound_sms_idempotency_key(idempotency_key)
+        twilio_responses.append(response)
 
     kinesis_response = kinesis.publish_log_outbound_sms(twilio_responses)
 
