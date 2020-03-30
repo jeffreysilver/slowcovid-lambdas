@@ -154,3 +154,44 @@ resources:
       Properties:
         QueueName: outbound-sms-${self:provider.stage}
 
+    # DIALOG STATE AND EVENTS (DynamoDB)
+    DialogState:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: dialog-state-${self:provider.stage}
+        KeySchema:
+          - AttributeName: phone_number
+            KeyType: HASH
+        AttributeDefinitions:
+          - AttributeName: phone_number
+            AttributeType: S
+        BillingMode: PAY_PER_REQUEST
+
+    DialogEvents:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: dialog-events-${self:provider.stage}
+        KeySchema:
+          - AttributeName: phone_number
+            KeyType: HASH
+          - AttributeName: event_id
+            KeyType: RANGE
+        AttributeDefinitions:
+          - AttributeName: phone_number
+            AttributeType: S
+          - AttributeName: event_id
+            AttributeType: S
+          - AttributeName: created_time
+            AttributeType: S
+        LocalSecondaryIndexes:
+          - IndexName: by_created_time
+            KeySchema:
+              - AttributeName: phone_number
+                KeyType: HASH
+              - AttributeName: created_time
+                KeyType: RANGE
+            Projection:
+              ProjectionType: ALL
+        StreamSpecification:
+          StreamViewType: NEW_IMAGE
+        BillingMode: PAY_PER_REQUEST
