@@ -12,7 +12,7 @@ def tokenize(text: str) -> List[str]:
     return [w for w in text.split(" ") if w != ""]
 
 
-def is_not_letter_answer(text: str) -> str:
+def is_not_letter_answer(text: str) -> bool:
     return re.match(r"^[a-zA-Z]$", text) is None
 
 

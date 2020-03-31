@@ -1,6 +1,6 @@
 from collections import OrderedDict
 import json
-from serverless_sdk import tag_event
+from serverless_sdk import tag_event  # type: ignore
 
 from stopcovid.clients import eslworks
 

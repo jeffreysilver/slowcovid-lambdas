@@ -1,4 +1,4 @@
-from serverless_sdk import tag_event
+from serverless_sdk import tag_event  # type: ignore
 import json
 
 from stopcovid.clients import twilio, kinesis, dynamo

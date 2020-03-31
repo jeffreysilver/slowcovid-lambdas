@@ -1,4 +1,4 @@
-from serverless_sdk import tag_event
+from serverless_sdk import tag_event  # type: ignore
 from stopcovid.utils.kinesis import get_payloads_from_kinesis_event
 
 from stopcovid.clients import rds

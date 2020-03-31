@@ -1,4 +1,4 @@
-name: Unit tests
+name: Type checking and unit tests
 
 on: push
 
@@ -23,6 +23,8 @@ jobs:
         AWS_SECRET_ACCESS_KEY: fakesecret
         AWS_DEFAULT_REGION: us-east-1
       run: |
+        npm install pyright
         python -m pip install --upgrade pip
         pip install -r requirements.txt
+        node_modules/.bin/pyright
         python -m unittest

@@ -49,14 +49,14 @@ class StartDrill(types.Command):
 
 
 class TriggerReminder(types.Command):
-    def __init__(self, phone_number: str, drill_id: uuid.UUID, prompt_slug: str):
+    def __init__(self, phone_number: str, drill_instance_id: uuid.UUID, prompt_slug: str):
         super().__init__(phone_number)
         self.prompt_slug = prompt_slug
-        self.drill_id = drill_id
+        self.drill_instance_id = drill_instance_id
 
     def execute(self, dialog_state: types.DialogState) -> List[types.DialogEvent]:
         drill = dialog_state.current_drill
-        if drill is None or drill.drill_id != self.drill_id:
+        if drill is None or dialog_state.drill_instance_id != self.drill_instance_id:
             return []
 
         prompt = dialog_state.current_prompt_state
@@ -107,7 +107,7 @@ class ProcessSMSMessage(types.Command):
                     phone_number=self.phone_number,
                     user_profile=dialog_state.user_profile,
                     prompt=prompt,
-                    drill_instance_id=dialog_state.drill_instance_id,
+                    drill_instance_id=dialog_state.drill_instance_id,  # type: ignore
                     response=self.content,
                 )
             )
@@ -120,7 +120,7 @@ class ProcessSMSMessage(types.Command):
                     user_profile=dialog_state.user_profile,
                     prompt=prompt,
                     response=self.content,
-                    drill_instance_id=dialog_state.drill_instance_id,
+                    drill_instance_id=dialog_state.drill_instance_id,  # type: ignore
                     abandoned=should_advance,
                 )
             )
@@ -133,7 +133,7 @@ class ProcessSMSMessage(types.Command):
                         phone_number=self.phone_number,
                         user_profile=dialog_state.user_profile,
                         prompt=next_prompt,
-                        drill_instance_id=dialog_state.drill_instance_id,
+                        drill_instance_id=dialog_state.drill_instance_id,  # type: ignore
                     )
                 )
                 if dialog_state.is_next_prompt_last():
@@ -142,7 +142,7 @@ class ProcessSMSMessage(types.Command):
                         DrillCompleted(
                             self.phone_number,
                             dialog_state.user_profile,
-                            dialog_state.drill_instance_id,
+                            dialog_state.drill_instance_id,  # type: ignore
                         )
                     )
         return events

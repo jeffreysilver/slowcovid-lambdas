@@ -40,12 +40,9 @@ class Prompt:
         self.max_failures = 1
 
     def should_advance_with_answer(self, answer: str) -> bool:
-        if not self.is_graded():
+        if self.correct_response is None:
             return True
         return is_correct_response(answer, self.correct_response)
-
-    def is_graded(self) -> bool:
-        return self.correct_response is not None
 
     def stores_answer(self) -> bool:
         return self.response_user_profile_key is not None
@@ -95,7 +92,7 @@ def get_drill(drill_key: str) -> Drill:
 
 def _populate_drill_cache():
     global DRILL_CACHE
-    DRILL_CACHE = defaultdict(dict)
+    DRILL_CACHE = defaultdict(dict)  # type:ignore
     with open(os.path.join(__location__, "drill_content/drills.json")) as f:
         data = f.read()
         raw_drills = json.loads(data)
