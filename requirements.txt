@@ -1,4 +1,5 @@
 requests
+requests-mock
 boto3
 Jinja2
 marshmallow

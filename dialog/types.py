@@ -2,7 +2,7 @@ import enum
 import uuid
 from abc import abstractmethod, ABC
 import datetime
-from typing import Optional, List, Dict
+from typing import Optional, List, Dict, Any
 
 from marshmallow import Schema, fields, post_load, EXCLUDE
 from drills import drills
@@ -12,6 +12,8 @@ class UserProfileSchema(Schema):
     validated = fields.Boolean(required=True)
     language = fields.Str(allow_none=True)
     name = fields.Str(allow_none=True)
+    account_info = fields.Mapping(keys=fields.Str(), allow_none=True)
+    is_demo = fields.Boolean()
     self_rating_1 = fields.Str(allow_none=True)
     self_rating_2 = fields.Str(allow_none=True)
     self_rating_3 = fields.Str(allow_none=True)
@@ -28,8 +30,10 @@ class UserProfileSchema(Schema):
 class UserProfile:
     def __init__(self,
                  validated: bool,
+                 is_demo: bool = False,
                  name: Optional[str] = None,
                  language: Optional[str] = None,
+                 account_info: Optional[Dict[str, Any]] = None,
                  self_rating_1: Optional[str] = None,
                  self_rating_2: Optional[str] = None,
                  self_rating_3: Optional[str] = None,
@@ -39,8 +43,10 @@ class UserProfile:
                  self_rating_7: Optional[str] = None,
                  ):
         self.language = language
+        self.is_demo = is_demo
         self.validated = validated
         self.name = name
+        self.account_info = account_info
         self.self_rating_1 = self_rating_1
         self.self_rating_2 = self_rating_2
         self.self_rating_3 = self_rating_3

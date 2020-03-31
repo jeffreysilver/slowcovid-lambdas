@@ -106,6 +106,7 @@ class TestSerialization(unittest.TestCase):
         original = UserValidated(
             "123456789",
             user_profile=UserProfile(True),
+            code_validation_payload=CodeValidationPayload(valid=True, is_demo=True)
         )
         serialized = original.to_dict()
         deserialized = event_from_dict(serialized)

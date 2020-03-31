@@ -51,6 +51,11 @@ functions:
 
   handleCommand:
     handler: command_stream.handle_command
+    environment:
+      DIALOG_TABLE_NAME_SUFFIX: ${self:provider.stage}
+      REGISTRATION_VALIDATION_URL: https://eslworks-api-production.herokuapp.com/slowcovid/lookup
+      REGISTRATION_VALIDATION_KEY: ${env:REGISTRATION_VALIDATION_KEY}
+
 
   logMessage:
     handler: message_log.log_message

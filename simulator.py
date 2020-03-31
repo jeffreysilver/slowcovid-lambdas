@@ -1,10 +1,12 @@
 # -*- coding: utf-8 -*-
+import sys
 from time import sleep
 from typing import List
 
 from dialog.dialog import (
     DialogRepository, process_command, StartDrill, ProcessSMSMessage
 )
+from dialog.registration import RegistrationValidator, CodeValidationPayload
 from dialog.types import DialogStateSchema, DialogEventType, DialogEvent, DialogState, UserProfile
 from drills.drills import get_drill
 from drills.localize import localize
@@ -12,7 +14,15 @@ from drills.localize import localize
 SEQ = 1
 TRY_AGAIN = "{{incorrect_answer}}"
 PHONE_NUMBER = "123456789"
-DRILL = get_drill("01-basics")
+DRILLS = {
+    "drill1": get_drill("01-basics"),
+    "drill2": get_drill("02-prevention"),
+    "drill3": get_drill("03-hand-washing-how"),
+    "drill4": get_drill("04-hand-sanitizer"),
+    "drill5": get_drill("05-disinfect-phone"),
+    "drill6": get_drill("06-hand-washing-when"),
+    "drill7": get_drill("07-sanitizing-surfaces"),
+}
 
 
 def fake_sms(
@@ -32,12 +42,15 @@ def fake_sms(
 
 
 class InMemoryRepository(DialogRepository):
-    def __init__(self):
+    def __init__(self, lang):
         self.repo = {}
+        self.lang = lang
 
     def fetch_dialog_state(self, phone_number: str) -> DialogState:
         if phone_number in self.repo:
-            return DialogStateSchema().loads(self.repo[phone_number])
+            state = DialogStateSchema().loads(self.repo[phone_number])
+            state.user_profile.language = self.lang
+            return state
         else:
             return DialogState(phone_number=phone_number, seq="0")
 
@@ -76,7 +89,7 @@ class InMemoryRepository(DialogRepository):
             elif event.event_type == DialogEventType.USER_VALIDATED:
                 should_start_drill = True
             elif event.event_type == DialogEventType.USER_VALIDATION_FAILED:
-                print("(try DRILL0)")
+                print("(try DRILL1, DRILL2, DRILL3, DRILL4, DRILL5, DRILL6, DRILL7)")
             elif event.event_type == DialogEventType.DRILL_STARTED:
                 fake_sms(event.phone_number, dialog_state.user_profile, event.first_prompt.messages)
             elif event.event_type == DialogEventType.DRILL_COMPLETED:
@@ -84,17 +97,36 @@ class InMemoryRepository(DialogRepository):
         if should_start_drill:
             global SEQ
             SEQ += 1
-            process_command(StartDrill(PHONE_NUMBER, DRILL), str(SEQ), repo=self)
+            process_command(
+                StartDrill(PHONE_NUMBER, DRILLS[dialog_state.user_profile.account_info["code"]]),
+                str(SEQ), repo=self
+            )
+
+
+class FakeRegistrationValidator(RegistrationValidator):
+    def validate_code(self, code) -> CodeValidationPayload:
+        if code in ["drill1", "drill2", "drill3", "drill4", "drill5", "drill6", "drill7"]:
+            return CodeValidationPayload(valid=True, account_info={"code": code})
+        return CodeValidationPayload(valid=False)
 
 
 def main():
     global SEQ
-    repo = InMemoryRepository()
+    if len(sys.argv) > 1:
+        lang = sys.argv[1]
+    else:
+        lang = "en"
+    repo = InMemoryRepository(lang)
+    validator = FakeRegistrationValidator()
     try:
         while True:
             message = input("> ")
             SEQ += 1
-            process_command(ProcessSMSMessage(PHONE_NUMBER, message), str(SEQ), repo=repo)
+            process_command(ProcessSMSMessage(
+                PHONE_NUMBER,
+                message,
+                registration_validator=validator,
+            ), str(SEQ), repo=repo)
     except EOFError:
         pass
     dialog_state = repo.fetch_dialog_state(PHONE_NUMBER)
