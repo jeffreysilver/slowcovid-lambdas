@@ -1,7 +1,19 @@
 import unittest
+import uuid
 
 from stopcovid.drills.drills import Prompt, Drill
-from stopcovid.dialog.dialog import *
+from stopcovid.dialog.dialog import (
+    AdvancedToNextPrompt,
+    CompletedPrompt,
+    FailedPrompt,
+    event_from_dict,
+    DrillCompleted,
+    DrillStarted,
+    ReminderTriggered,
+    CodeValidationPayload,
+    UserValidationFailed,
+    UserValidated,
+)
 from stopcovid.dialog.types import DialogEvent, UserProfile
 
 
