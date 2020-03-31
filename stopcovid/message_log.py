@@ -1,15 +1,10 @@
-from serverless_sdk import tag_event
 from stopcovid.utils.kinesis import get_payloads_from_kinesis_event
 
 from stopcovid.clients import rds
 
 
 def log_message(raw_event, context):
-    tag_event("log_message", "raw_event", raw_event)
-
     events = get_payloads_from_kinesis_event(raw_event)
-
-    tag_event("log_message", "events", events)
 
     for event in events:
         payload = event["payload"]

@@ -4,9 +4,9 @@ from abc import ABC, abstractmethod
 from typing import List
 
 import boto3
-from boto3.dynamodb.types import TypeSerializer, TypeDeserializer
 
 from .types import DialogState, DialogEvent, DialogStateSchema
+from utils import dynamodb as dynamodb_utils
 
 
 class DialogRepository(ABC):
@@ -46,7 +46,7 @@ class DynamoDBDialogRepository(DialogRepository):
         )
         if "Item" not in response:
             return DialogState(phone_number=phone_number, seq="0")
-        dialog_dict = _deserialize(response["Item"])
+        dialog_dict = dynamodb_utils.deserialize(response["Item"])
         return DialogStateSchema().load(dialog_dict)
 
     def fetch_dialog_event(self, phone_number: str, event_id: uuid.UUID) -> DialogEvent:
@@ -62,7 +62,7 @@ class DynamoDBDialogRepository(DialogRepository):
             },
             ConsistentRead=True
         )
-        dialog_dict = _deserialize(response['Item'])
+        dialog_dict = dynamodb_utils.deserialize(response['Item'])
         from .dialog import event_from_dict
         return event_from_dict(dialog_dict)
 
@@ -72,13 +72,13 @@ class DynamoDBDialogRepository(DialogRepository):
             write_items.append({
                 "Put": {
                     "TableName": self.events_table_name(),
-                    "Item": _serialize(event.to_dict())
+                    "Item": dynamodb_utils.serialize(event.to_dict())
                 }
             })
         write_items.append({
             "Put": {
                 "TableName": self.state_table_name(),
-                "Item": _serialize(dialog_state.to_dict())
+                "Item": dynamodb_utils.serialize(dialog_state.to_dict())
             }
         })
         self.dynamodb.transact_write_items(TransactItems=write_items)
@@ -153,12 +153,3 @@ class DynamoDBDialogRepository(DialogRepository):
         except Exception:
             # table already exists, most likely
             pass
-
-def _serialize(a_dict):
-    serializer = TypeSerializer()
-    return {k: serializer.serialize(v) for k, v in a_dict.items()}
-
-
-def _deserialize(a_dict):
-    deserializer = TypeDeserializer()
-    return {k: deserializer.deserialize(v) for k, v in a_dict.items()}

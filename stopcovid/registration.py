@@ -1,6 +1,5 @@
 from collections import OrderedDict
 import json
-from serverless_sdk import tag_event
 
 from stopcovid.clients import eslworks
 
@@ -40,12 +39,8 @@ def build_registration_payload(data):
 
 
 def handle_registration(event, context):
-    tag_event("registration", "raw_event", event)
-
     form_data = json.loads(event["body"])
     payload = build_registration_payload(form_data["data"])
-
-    tag_event("registration", "computed_payload", payload)
 
     eslworks.register(payload)
 
