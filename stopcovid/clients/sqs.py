@@ -4,8 +4,6 @@ import json
 from typing import List
 from dataclasses import dataclass
 
-from marshmallow import Schema, fields, post_load
-
 SQS = boto3.resource("sqs")
 
 
