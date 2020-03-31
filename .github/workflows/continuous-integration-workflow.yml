@@ -1,4 +1,4 @@
-name: Unit tests
+name: Type checking and unit tests
 
 on: push
 
