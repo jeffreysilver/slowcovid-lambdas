@@ -1,5 +1,5 @@
-from utils import dynamodb as dynamodb_utils
-from clients import sqs
+from stopcovid.utils import dynamodb as dynamodb_utils
+from stopcovid.clients import sqs
 
 
 def _get_outbound_sms_messages(dialog_events):

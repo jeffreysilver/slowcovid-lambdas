@@ -5,8 +5,8 @@ from typing import List
 
 import boto3
 
+from stopcovid.utils import dynamodb as dynamodb_utils
 from .types import DialogState, DialogEvent, DialogStateSchema
-from utils import dynamodb as dynamodb_utils
 
 
 class DialogRepository(ABC):
