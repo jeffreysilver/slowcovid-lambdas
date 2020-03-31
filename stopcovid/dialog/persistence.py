@@ -53,7 +53,7 @@ class DynamoDBDialogRepository(DialogRepository):
             Key={"phone_number": {"S": phone_number}, "event_id": {"S": str(event_id)}},
             ConsistentRead=True,
         )
-        dialog_dict = dynamodb_utils.deserialize(response['Item'])
+        dialog_dict = dynamodb_utils.deserialize(response["Item"])
         from .dialog import event_from_dict
 
         return event_from_dict(dialog_dict)
@@ -69,10 +69,12 @@ class DynamoDBDialogRepository(DialogRepository):
                     }
                 }
             )
-        write_items.append({
-            "Put": {
-                "TableName": self.state_table_name(),
-                "Item": dynamodb_utils.serialize(dialog_state.to_dict())
+        write_items.append(
+            {
+                "Put": {
+                    "TableName": self.state_table_name(),
+                    "Item": dynamodb_utils.serialize(dialog_state.to_dict()),
+                }
             }
         )
         self.dynamodb.transact_write_items(TransactItems=write_items)

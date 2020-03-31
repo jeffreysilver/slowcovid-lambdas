@@ -18,8 +18,7 @@ def _get_outbound_sms_messages(dialog_events):
 
 def distribute_dialog_events(event, context):
     dialog_events = [
-        dynamodb_utils.deserialize(record["dynamodb"]["NewImage"])
-        for record in event["Records"]
+        dynamodb_utils.deserialize(record["dynamodb"]["NewImage"]) for record in event["Records"]
     ]
 
     sqs.publish_outbound_sms_messages(_get_outbound_sms_messages(dialog_events))
