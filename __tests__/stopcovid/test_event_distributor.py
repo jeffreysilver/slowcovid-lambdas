@@ -29,4 +29,7 @@ class TestHandleCommand(unittest.TestCase):
         self.assertIsInstance(message_body["Body"], str)
 
         message_attributes = entries[0]["MessageAttributes"]
-        self.assertEqual(message_attributes["idempotency_key"]["StringValue"], "5e539115-07ac-4a53-809b-2280b2ce734b")
+        self.assertEqual(
+            message_attributes["idempotency_key"]["StringValue"],
+            "5e539115-07ac-4a53-809b-2280b2ce734b",
+        )
