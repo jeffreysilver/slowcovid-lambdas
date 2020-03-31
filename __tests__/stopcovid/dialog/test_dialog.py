@@ -1,8 +1,8 @@
 import unittest
 
 from stopcovid.drills.drills import Prompt, Drill
-from .dialog import *
-from .types import DialogEvent, UserProfile
+from stopcovid.dialog.dialog import *
+from stopcovid.dialog.types import DialogEvent, UserProfile
 
 
 class TestSerialization(unittest.TestCase):

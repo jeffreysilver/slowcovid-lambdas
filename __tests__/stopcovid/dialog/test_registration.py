@@ -2,7 +2,7 @@ import unittest
 
 import requests_mock
 
-from .registration import DefaultRegistrationValidator
+from stopcovid.dialog.registration import DefaultRegistrationValidator
 
 
 class TestRegistration(unittest.TestCase):

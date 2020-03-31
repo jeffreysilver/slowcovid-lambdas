@@ -1,6 +1,6 @@
 import unittest
 
-from . import drills
+from stopcovid.drills import drills
 
 
 class TestGetDrill(unittest.TestCase):
