@@ -2,12 +2,12 @@ import unittest
 from unittest.mock import patch
 import json
 
-from command_stream import handle_command
-from dialog.dialog import ProcessSMSMessage, TriggerReminder, StartDrill
+from stopcovid.command_stream import handle_command
+from stopcovid.dialog.dialog import ProcessSMSMessage, TriggerReminder, StartDrill
 
 
 class TestHandleCommand(unittest.TestCase):
-    @patch("command_stream.process_command")
+    @patch("stopcovid.command_stream.process_command")
     def test_inbound_sms(self, process_command_mock):
         with open("sample_events/inbound_sms_event.json") as f:
             mock_kinesis_event = json.load(f)
@@ -28,7 +28,7 @@ class TestHandleCommand(unittest.TestCase):
             args[1], mock_kinesis_event["Records"][0]["kinesis"]["sequenceNumber"]
         )
 
-    @patch("command_stream.process_command")
+    @patch("stopcovid.command_stream.process_command")
     def test_trigger_reminder(self, process_command_mock):
         with open("sample_events/trigger_reminder_command.json") as f:
             mock_kinesis_event = json.load(f)
@@ -49,7 +49,7 @@ class TestHandleCommand(unittest.TestCase):
             args[1], mock_kinesis_event["Records"][0]["kinesis"]["sequenceNumber"]
         )
 
-    @patch("command_stream.process_command")
+    @patch("stopcovid.command_stream.process_command")
     def test_start_drill(self, process_command_mock):
         with open("sample_events/start_drill_command.json") as f:
             mock_kinesis_event = json.load(f)
@@ -75,7 +75,7 @@ class TestHandleCommand(unittest.TestCase):
             args[1], mock_kinesis_event["Records"][0]["kinesis"]["sequenceNumber"]
         )
 
-    @patch("command_stream.process_command")
+    @patch("stopcovid.command_stream.process_command")
     def test_unknown_command(self, process_command_mock):
         with open("sample_events/unknown_command.json") as f:
             mock_kinesis_event = json.load(f)

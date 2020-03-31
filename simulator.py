@@ -3,13 +3,14 @@ import sys
 from time import sleep
 from typing import List
 
-from dialog.dialog import (
+from stopcovid.dialog.dialog import (
     DialogRepository, process_command, StartDrill, ProcessSMSMessage
 )
-from dialog.registration import RegistrationValidator, CodeValidationPayload
-from dialog.types import DialogStateSchema, DialogEventType, DialogEvent, DialogState, UserProfile
-from drills.drills import get_drill
-from drills.localize import localize
+from stopcovid.dialog.registration import RegistrationValidator, CodeValidationPayload
+from stopcovid.dialog.types import (DialogStateSchema, DialogEventType, DialogEvent, DialogState,
+                                    UserProfile)
+from stopcovid.drills.drills import get_drill
+from stopcovid.drills.localize import localize
 
 SEQ = 1
 TRY_AGAIN = "{{incorrect_answer}}"

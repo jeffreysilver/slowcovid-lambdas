@@ -1,10 +1,10 @@
 import unittest
 import uuid
 
-from dialog.dialog import CompletedPrompt, AdvancedToNextPrompt
-from dialog.persistence import DynamoDBDialogRepository
-from dialog.types import DialogState, UserProfile
-from drills.drills import Prompt
+from stopcovid.dialog.dialog import CompletedPrompt, AdvancedToNextPrompt
+from stopcovid.dialog.persistence import DynamoDBDialogRepository
+from stopcovid.dialog.types import DialogState, UserProfile
+from stopcovid.drills.drills import Prompt
 
 
 class TestPersistence(unittest.TestCase):

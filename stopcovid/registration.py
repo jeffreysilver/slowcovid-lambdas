@@ -2,7 +2,7 @@ from collections import OrderedDict
 import json
 from serverless_sdk import tag_event
 
-from clients import eslworks
+from stopcovid.clients import eslworks
 
 
 def get_labels(data):

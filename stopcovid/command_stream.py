@@ -1,13 +1,13 @@
 import logging
-from utils.kinesis import get_payload_from_kinesis_record
+from stopcovid.utils.kinesis import get_payload_from_kinesis_record
 
-from dialog.dialog import (
+from stopcovid.dialog.dialog import (
     process_command,
     ProcessSMSMessage,
     StartDrill,
     TriggerReminder,
 )
-from drills.drills import drill_from_dict
+from stopcovid.drills.drills import drill_from_dict
 
 
 def handle_command(raw_event, context):

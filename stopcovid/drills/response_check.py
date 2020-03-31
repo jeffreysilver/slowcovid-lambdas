@@ -2,7 +2,7 @@ import math
 import re
 from typing import List
 
-from utils import levenshtein
+from stopcovid.utils import levenshtein
 
 
 def tokenize(text: str) -> List[str]:

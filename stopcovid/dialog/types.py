@@ -5,7 +5,7 @@ import datetime
 from typing import Optional, List, Dict, Any
 
 from marshmallow import Schema, fields, post_load, EXCLUDE
-from drills import drills
+from stopcovid.drills import drills
 
 
 class UserProfileSchema(Schema):
