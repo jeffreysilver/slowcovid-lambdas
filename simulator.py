@@ -5,118 +5,29 @@ from typing import List
 from dialog.dialog import (
     DialogRepository, process_command, StartDrill, ProcessSMSMessage
 )
-from dialog.types import DialogStateSchema, DialogEventType, DialogEvent, DialogState
-from drills.drills import Drill, Prompt
-
+from dialog.types import DialogStateSchema, DialogEventType, DialogEvent, DialogState, UserProfile
+from drills.drills import get_drill
+from drills.localize import localize
 
 SEQ = 1
-TRY_AGAIN = "Sorry, not correct.\n\n*Try again one more time!*"
+TRY_AGAIN = "{{incorrect_answer}}"
 PHONE_NUMBER = "123456789"
-DRILL = Drill(
-    name="01 DEMO",
-    prompts=[
-        Prompt(
-            slug="language",
-            messages=[
-                "Welcome! Choose your language:\nen - English\nes - Español\n"
-                "fr - Français\npt - Português\nzh - Chinese 中文"
-            ],
-            response_user_profile_key="language"
-        ),
-        Prompt(
-            slug="begin-drill",
-            messages=[
-                "Thank you for dedicating your time to StopCovid training. "
-                "By completing one training everyday, you are helping prevent "
-                "the spread of Coronavirus.",
-                "Today's drill is: COVID-19 Basics. Text me the word GO "
-                "when you're ready to start."
-            ]
-        ),
-        Prompt(
-            slug="get-name",
-            messages=[
-                "What's your full name?\n(First and Last)"
-            ],
-            response_user_profile_key="name"
-        ),
-        Prompt(
-            slug="rate-knowledge",
-            messages=[
-                "Ok! Here we go! Let’s learn a little bit about you first.",
-                "On a scale of 1-10, how would you rate your current knowledge of "
-                "today's topic: COVID-19 Basics.\n\n(1 = I don't know anything, 10 = I'm "
-                "great and I teach others)",
-                "(Your answer will be kept private.)"
-            ],
-            response_user_profile_key="self_rating_1"
-        ),
-        Prompt(
-            slug="q-bacteria",
-            messages=["PRACTICE 1: True or false?\n\nCOVID-19 is a bacteria.\n\n"
-                      "a) true\nb) false"],
-            correct_response="b) false",
-        ),
-        Prompt(
-            slug="q-flu",
-            messages=["FACT:  COVID-19 is not a bacteria. It is a virus disease. If "
-                      "you hear someone say “coronavirus” or “novel coronavirus,” they are"
-                      " talking about the same thing.",
-                      "PRACTICE 2: Fill in the blank by choosing the best answer.\n\n"
-                      "COVID-19 is [---] the flu.\n\na) as contagious as\nb) less "
-                      "contagious than\nc) more contagious than"],
-            correct_response="c) more contagious than",
-        ),
-        Prompt(
-            slug="q-spread",
-            messages=["FACT: COVID-19 is more contagious and deadly than the flu. It is "
-                      "important that we all work together to control its spread and save "
-                      "lives.",
-                      "PRACTICE 3: Answer the question. \n\nHow is COVID-19 spread from "
-                      "person\nto person?\n\na) Contact with an infected person\nb) An "
-                      "infected person coughs or sneezes\nc) Touching a surface with "
-                      "COVID-19 on it, then touching your face\nd) All of the above"],
-            correct_response="d) All of the above",
-        ),
-        Prompt(
-            slug="q-symptoms",
-            messages=["FACT: It's possible for COVID-19 to be spread by people who don’t "
-                      "show symptoms. Keep your distance with other people + practice good "
-                      "hygiene all the time.",
-                      "PRACTICE 4: Answer the question.\n\nWhat are the most common symptoms "
-                      "of COVID-19?\n\na) Stomachache, nausea, diarrhea\nb) Fever, cough, "
-                      "shortness of breath\nc) Itchy rash\nd) Blurred vision"],
-            correct_response="b) Fever, cough, shortness of breath",
-        ),
-        Prompt(
-            slug="q-care",
-            messages=["Almost done!",
-                      "FACT: If you or someone near you has difficulty breathing, chest "
-                      "pain, confusion, or blue lips, get medical attention immediately.",
-                      "PRACTICE 5: If you think you may have symptoms of COVID-19, you should"
-                      " [---]. \n\na) stay home, except to get medical care\nb) don't take "
-                      "public transportation\nc) call your doctor before you visit \nd) all "
-                      "of the above"],
-            correct_response="d) all of the above",
-        ),
-        Prompt(
-            slug="conclusion",
-            messages=["FACT: If you are experiencing only mild symptoms, self isolate to"
-                      "control the spread of COVID-19.",
-                      "Congrats! Your training drill for today is complete.\n\nYou will get "
-                      "your next drill tomorrow afternoon!"]
-        )
-    ],
-)
+DRILL = get_drill("01-basics")
 
 
-def fake_sms(phone_number: str, messages: List[str], with_initial_pause=False):
+def fake_sms(
+        phone_number: str,
+        user_profile: UserProfile,
+        messages: List[str],
+        with_initial_pause=False,
+        **kwargs
+):
     first = True
     for message in messages:
         if with_initial_pause or not first:
-            sleep(2)
+            sleep(1)
         first = False
-        print(f"  -> {phone_number}: {message}")
+        print(f"  -> {phone_number}: {localize(message, user_profile.language, **kwargs)}")
         first = False
 
 
@@ -136,26 +47,38 @@ class InMemoryRepository(DialogRepository):
         should_start_drill = False
         for event in events:
             if event.event_type == DialogEventType.ADVANCED_TO_NEXT_PROMPT:
-                fake_sms(event.phone_number, event.prompt.messages, with_initial_pause=True)
+                fake_sms(
+                    event.phone_number,
+                    dialog_state.user_profile,
+                    event.prompt.messages,
+                    with_initial_pause=True
+                )
             elif event.event_type == DialogEventType.FAILED_PROMPT:
                 if not event.abandoned:
-                    fake_sms(event.phone_number, [TRY_AGAIN])
+                    fake_sms(
+                        event.phone_number,
+                        dialog_state.user_profile,
+                        [TRY_AGAIN]
+                    )
                 else:
-                    fake_sms(event.phone_number, [
-                        f"The correct answer is *{event.prompt.correct_response}*.\n\n"
-                        f"Lets move to the next one."
-                    ])
+                    fake_sms(
+                        event.phone_number,
+                        dialog_state.user_profile,
+                        ["{{corrected_answer}}"],
+                        correct_answer=localize(
+                            event.prompt.correct_response,
+                            dialog_state.user_profile.language,
+                        )
+                    )
             elif event.event_type == DialogEventType.COMPLETED_PROMPT:
                 if event.prompt.is_graded():
-                    fake_sms(event.phone_number, ["Correct!"])
-                elif event.prompt.stores_answer():
-                    fake_sms(event.phone_number, ["Thanks!"])
+                    fake_sms(event.phone_number, dialog_state.user_profile, ["{{right}}"])
             elif event.event_type == DialogEventType.USER_VALIDATED:
                 should_start_drill = True
             elif event.event_type == DialogEventType.USER_VALIDATION_FAILED:
                 print("(try DRILL0)")
             elif event.event_type == DialogEventType.DRILL_STARTED:
-                fake_sms(event.phone_number, event.first_prompt.messages)
+                fake_sms(event.phone_number, dialog_state.user_profile, event.first_prompt.messages)
             elif event.event_type == DialogEventType.DRILL_COMPLETED:
                 print("(The drill is complete. Type crtl-D to exit.)")
         if should_start_drill:

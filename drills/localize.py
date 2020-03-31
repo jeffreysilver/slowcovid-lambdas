@@ -1,10 +1,23 @@
 import json
 import os
 from collections import defaultdict
+from copy import copy
 from typing import Dict
+
+from jinja2 import Template
 
 CACHE = None
 __location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
+
+
+def localize(message: str, lang: str, **kwargs) -> str:
+    lang = lang or "en"
+    template = Template(message)
+    result = template.render(**localizations_for(lang))
+    if kwargs:
+        template = Template(result)
+        result = template.render(**kwargs)
+    return result
 
 
 def localizations_for(lang: str) -> Dict[str, str]:
