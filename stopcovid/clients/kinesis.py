@@ -28,4 +28,4 @@ def publish_log_outbound_sms(twilio_responses):
         for response in twilio_responses
     ]
 
-    return KINESIS.put_records(Records=records, StreamName=f"message-log-{stage}",)
+    return KINESIS.put_records(Records=records, StreamName=f"message-log-{stage}")

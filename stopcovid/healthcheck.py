@@ -1,4 +1,2 @@
 def healthcheck(event, context):
-    return {
-        "statusCode": 200,
-    }
+    return {"statusCode": 200}

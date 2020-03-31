@@ -4,9 +4,7 @@ import boto3
 RDS = boto3.client("rds-data")
 
 
-def insert_message(
-    twilio_message_id, body, from_phone, to_phone, status,
-):
+def insert_message(twilio_message_id, body, from_phone, to_phone, status):
     sql = """
         insert into
         message (
