@@ -2,7 +2,7 @@ import math
 import re
 from typing import List
 
-from Levenshtein import distance
+from utils import levenshtein
 
 
 def tokenize(text: str) -> List[str]:
@@ -44,7 +44,7 @@ def is_correct_response(user_response: str, correct_response: str) -> bool:
         w for w in clean_correct_response if is_not_letter_answer(w)
     ])
 
-    l_distance = distance(user_response_to_compare, correct_response_to_compare)
+    l_distance = levenshtein.distance(user_response_to_compare, correct_response_to_compare)
 
     if l_distance <= allowed_error:
         return True
