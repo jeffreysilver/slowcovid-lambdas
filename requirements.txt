@@ -2,5 +2,4 @@ requests
 boto3
 Jinja2
 marshmallow
-python-Levenshtein
 twilio
