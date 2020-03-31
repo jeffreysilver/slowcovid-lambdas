@@ -1,16 +1,19 @@
 # stopcovid-lambdas
-stopcovid.co
 
 
-# How to invoke lambdas locally
-`serverless invoke local -f routeInboundSMS -p sms_event.json`
+## Deployment
+We deploy from the command line using the serverless framework. Once you are a member of the serverless project you can deploy to  
+
+- dev: `serverless deploy -s dev --env development`
+- prod: `serverless deploy -s prod --env production`
+
+## CI
+We use [black](https://black.readthedocs.io/en/stable/) for code formatting and flake8 for linting, with a custom rule setting maximum line length to 100.
+- `black . -l 100`
+- `flake8`
 
 
-# Deploy to dev
-`serverless deploy -s dev --env development`
 
-# Deploy to prod
-`serverless deploy -s prod --env production`
-
-
-[Architecture overview](https://docs.google.com/drawings/d/18OmG9dzR2g8XuAYoUAFHrQ53Gxsg1CCak_YEe_6TUy8/edit)
+## Local development
+There are a series of [sample events](sample_events/) in the project. You can run them against dev:
+- `serverless invoke local -f sendMessage -p sample_events/send_message.json`
