@@ -15,9 +15,7 @@ def log_message(raw_event, context):
         payload = event["payload"]
 
         if event["type"] == "STATUS_UPDATE":
-            rds.update_message(
-                payload["MessageSid"], payload["MessageStatus"], payload["From"]
-            )
+            rds.update_message(payload["MessageSid"], payload["MessageStatus"], payload["From"])
         else:
             rds.insert_message(
                 payload["MessageSid"],

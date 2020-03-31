@@ -6,9 +6,7 @@ from stopcovid.clients import eslworks
 
 
 def get_labels(data):
-    labels = [
-        label.strip() for label in data.get("labels", "").split(",") if label.strip()
-    ]
+    labels = [label.strip() for label in data.get("labels", "").split(",") if label.strip()]
 
     # remove dups but preserve ordering
     return list(OrderedDict.fromkeys(labels))
@@ -32,11 +30,7 @@ def build_registration_payload(data):
 
     labels = get_labels(data)
 
-    return {
-        "company": company,
-        "owner": owner,
-        "labels": labels,
-    }
+    return {"company": company, "owner": owner, "labels": labels}
 
 
 def handle_registration(event, context):
@@ -49,6 +43,4 @@ def handle_registration(event, context):
 
     eslworks.register(payload)
 
-    return {
-        "statusCode": 200,
-    }
+    return {"statusCode": 200}
