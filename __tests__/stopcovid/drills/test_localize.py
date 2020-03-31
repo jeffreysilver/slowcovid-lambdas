@@ -1,6 +1,6 @@
 import unittest
 
-from . import localize
+from stopcovid.drills import localize
 
 
 class TestLocalize(unittest.TestCase):
