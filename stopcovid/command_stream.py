@@ -29,7 +29,7 @@ def handle_command(raw_event, context):
             process_command(
                 TriggerReminder(
                     phone_number=payload["phone_number"],
-                    drill_id=payload["drill_id"],
+                    drill_instance_id=payload["drill_instance_id"],
                     prompt_slug=payload["prompt_slug"],
                 ),
                 sequence_number,

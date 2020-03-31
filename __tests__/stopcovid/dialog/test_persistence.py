@@ -49,7 +49,7 @@ class TestPersistence(unittest.TestCase):
         self.assertEqual(dialog_state.user_profile.language, dialog_state2.user_profile.language)
 
         event1_retrieved = self.repo.fetch_dialog_event(self.phone_number, event1.event_id)
-        self.assertEqual(event1.response, event1_retrieved.response)
+        self.assertEqual(event1.response, event1_retrieved.response)  # type: ignore
 
         event2_retrieved = self.repo.fetch_dialog_event(self.phone_number, event2.event_id)
-        self.assertEqual(event2.prompt.slug, event2_retrieved.prompt.slug)
+        self.assertEqual(event2.prompt.slug, event2_retrieved.prompt.slug)  # type: ignore

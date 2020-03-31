@@ -26,8 +26,8 @@ class TestSerialization(unittest.TestCase):
         serialized = original.to_dict()
         deserialized = event_from_dict(serialized)
         self._make_base_assertions(original, deserialized)
-        self.assertEqual(original.prompt.slug, deserialized.prompt.slug)
-        self.assertEqual(original.drill_instance_id, deserialized.drill_instance_id)
+        self.assertEqual(original.prompt.slug, deserialized.prompt.slug)  # type: ignore
+        self.assertEqual(original.drill_instance_id, deserialized.drill_instance_id)  # type: ignore
 
     def test_completed_prompt(self):
         original = CompletedPrompt(
@@ -40,9 +40,9 @@ class TestSerialization(unittest.TestCase):
         serialized = original.to_dict()
         deserialized = event_from_dict(serialized)
         self._make_base_assertions(original, deserialized)
-        self.assertEqual(original.prompt.slug, deserialized.prompt.slug)
-        self.assertEqual(original.response, deserialized.response)
-        self.assertEqual(original.drill_instance_id, deserialized.drill_instance_id)
+        self.assertEqual(original.prompt.slug, deserialized.prompt.slug)  # type: ignore
+        self.assertEqual(original.response, deserialized.response)  # type: ignore
+        self.assertEqual(original.drill_instance_id, deserialized.drill_instance_id)  # type: ignore
 
     def test_failed_prompt(self):
         original = FailedPrompt(
@@ -56,10 +56,10 @@ class TestSerialization(unittest.TestCase):
         serialized = original.to_dict()
         deserialized = event_from_dict(serialized)
         self._make_base_assertions(original, deserialized)
-        self.assertEqual(original.prompt.slug, deserialized.prompt.slug)
-        self.assertEqual(original.response, deserialized.response)
-        self.assertEqual(original.abandoned, deserialized.abandoned)
-        self.assertEqual(original.drill_instance_id, deserialized.drill_instance_id)
+        self.assertEqual(original.prompt.slug, deserialized.prompt.slug)  # type: ignore
+        self.assertEqual(original.response, deserialized.response)  # type: ignore
+        self.assertEqual(original.abandoned, deserialized.abandoned)  # type: ignore
+        self.assertEqual(original.drill_instance_id, deserialized.drill_instance_id)  # type: ignore
 
     def test_drill_started(self):
         original = DrillStarted(
@@ -72,9 +72,9 @@ class TestSerialization(unittest.TestCase):
         serialized = original.to_dict()
         deserialized = event_from_dict(serialized)
         self._make_base_assertions(original, deserialized)
-        self.assertEqual(original.drill.name, deserialized.drill.name)
-        self.assertEqual(original.drill_instance_id, deserialized.drill_instance_id)
-        self.assertEqual(original.first_prompt.slug, deserialized.first_prompt.slug)
+        self.assertEqual(original.drill.name, deserialized.drill.name)  # type: ignore
+        self.assertEqual(original.drill_instance_id, deserialized.drill_instance_id)  # type: ignore
+        self.assertEqual(original.first_prompt.slug, deserialized.first_prompt.slug)  # type: ignore
 
     def test_drill_completed(self):
         original = DrillCompleted(
@@ -83,7 +83,7 @@ class TestSerialization(unittest.TestCase):
         serialized = original.to_dict()
         deserialized = event_from_dict(serialized)
         self._make_base_assertions(original, deserialized)
-        self.assertEqual(original.drill_instance_id, deserialized.drill_instance_id)
+        self.assertEqual(original.drill_instance_id, deserialized.drill_instance_id)  # type: ignore
 
     def test_reminder_triggered(self):
         original = ReminderTriggered("123456789", user_profile=UserProfile(True))

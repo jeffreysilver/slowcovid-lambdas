@@ -22,6 +22,8 @@ jobs:
         AWS_ACCESS_KEY_ID: fakekey
         AWS_SECRET_ACCESS_KEY: fakesecret
       run: |
+        npm install -g pyright
         python -m pip install --upgrade pip
         pip install -r requirements.txt
+        pyright
         python -m unittest

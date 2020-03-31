@@ -41,7 +41,7 @@ class TestHandleCommand(unittest.TestCase):
         command = args[0]
         self.assertTrue(isinstance(command, TriggerReminder))
         self.assertEqual(command.prompt_slug, "hand-washing")
-        self.assertEqual(command.drill_id, "1234-1234-1234-1234")
+        self.assertEqual(command.drill_instance_id, "1234-1234-1234-1234")
 
         self.assertEqual(args[1], mock_kinesis_event["Records"][0]["kinesis"]["sequenceNumber"])
 
