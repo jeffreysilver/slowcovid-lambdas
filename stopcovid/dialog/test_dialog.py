@@ -1,6 +1,6 @@
 import unittest
 
-from drills.drills import Prompt, Drill
+from stopcovid.drills.drills import Prompt, Drill
 from .dialog import *
 from .types import DialogEvent, UserProfile
 

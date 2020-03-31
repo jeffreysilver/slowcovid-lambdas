@@ -1,7 +1,6 @@
 import json
 import os
 from collections import defaultdict
-from copy import copy
 from typing import Dict
 
 from jinja2 import Template

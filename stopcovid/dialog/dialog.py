@@ -4,7 +4,7 @@ from typing import List, Dict, Any, Optional
 
 from marshmallow import fields, post_load
 
-from drills import drills
+from stopcovid.drills import drills
 from .persistence import DialogRepository, DynamoDBDialogRepository
 from . import types
 from .registration import (RegistrationValidator, DefaultRegistrationValidator,

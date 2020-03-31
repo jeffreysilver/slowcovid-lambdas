@@ -1,7 +1,7 @@
 from serverless_sdk import tag_event
 
-from clients import twilio, kinesis, dynamo
-from utils.sqs import get_payloads_from_sqs_event
+from stopcovid.clients import twilio, kinesis, dynamo
+from stopcovid.utils.sqs import get_payloads_from_sqs_event
 
 
 def send_message(event, context):
