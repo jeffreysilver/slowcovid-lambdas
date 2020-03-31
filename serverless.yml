@@ -158,11 +158,11 @@ resources:
         RedrivePolicy:
           deadLetterTargetArn:
             Fn::GetAtt:
-            - OutboundSMSDLQ
+            - OutboundSMSDeadLetterQueue
             - Arn
           maxReceiveCount: 3
 
-    OutboundSMSDLQ:
+    OutboundSMSDeadLetterQueue:
       Type: AWS::SQS::Queue
       Properties:
         QueueName: outbound-sms-dlq-${self:provider.stage}
