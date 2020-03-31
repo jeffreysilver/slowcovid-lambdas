@@ -65,17 +65,10 @@ class DynamoDBDialogRepository(DialogRepository):
                 {
                     "Put": {
                         "TableName": self.events_table_name(),
-                        "Item": _serialize(event.to_dict()),
+                        "Item": dynamodb_utils.serialize(event.to_dict()),
                     }
                 }
             )
-        write_items.append(
-            {
-                "Put": {
-                    "TableName": self.events_table_name(),
-                    "Item": dynamodb_utils.serialize(event.to_dict())
-                }
-            })
         write_items.append({
             "Put": {
                 "TableName": self.state_table_name(),
