@@ -155,6 +155,17 @@ resources:
       Type: AWS::SQS::Queue
       Properties:
         QueueName: outbound-sms-${self:provider.stage}
+        RedrivePolicy:
+          deadLetterTargetArn:
+            Fn::GetAtt:
+            - OutboundSMSDeadLetterQueue
+            - Arn
+          maxReceiveCount: 3
+
+    OutboundSMSDeadLetterQueue:
+      Type: AWS::SQS::Queue
+      Properties:
+        QueueName: outbound-sms-dlq-${self:provider.stage}
     
     OutboundSMSIdempotency:
       Type: AWS::DynamoDB::Table
