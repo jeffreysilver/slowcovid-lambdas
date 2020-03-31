@@ -17,8 +17,12 @@ class CodeValidationPayloadSchema(Schema):
 
 
 class CodeValidationPayload:
-    def __init__(self, valid: bool, is_demo: Optional[bool] = False,
-                 account_info: Optional[Dict[str, Any]] = None):
+    def __init__(
+        self,
+        valid: bool,
+        is_demo: Optional[bool] = False,
+        account_info: Optional[Dict[str, Any]] = None,
+    ):
         self.valid = valid
         self.is_demo = is_demo
         self.account_info = account_info
@@ -36,12 +40,7 @@ class DefaultRegistrationValidator(RegistrationValidator):
         key = kwargs.get("key", os.getenv("REGISTRATION_VALIDATION_KEY"))
         response = requests.post(
             url=url,
-            json={
-                "code": code
-            },
-            headers={
-                "authorization": f"Basic {key}",
-                "content-type": "application/json"
-            }
+            json={"code": code},
+            headers={"authorization": f"Basic {key}", "content-type": "application/json"},
         )
         return CodeValidationPayloadSchema().load(response.json())

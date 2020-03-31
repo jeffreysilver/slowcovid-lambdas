@@ -3,12 +3,15 @@ import sys
 from time import sleep
 from typing import List
 
-from stopcovid.dialog.dialog import (
-    DialogRepository, process_command, StartDrill, ProcessSMSMessage
-)
+from stopcovid.dialog.dialog import DialogRepository, process_command, StartDrill, ProcessSMSMessage
 from stopcovid.dialog.registration import RegistrationValidator, CodeValidationPayload
-from stopcovid.dialog.types import (DialogStateSchema, DialogEventType, DialogEvent, DialogState,
-                                    UserProfile)
+from stopcovid.dialog.types import (
+    DialogStateSchema,
+    DialogEventType,
+    DialogEvent,
+    DialogState,
+    UserProfile,
+)
 from stopcovid.drills.drills import get_drill
 from stopcovid.drills.localize import localize
 
@@ -27,11 +30,11 @@ DRILLS = {
 
 
 def fake_sms(
-        phone_number: str,
-        user_profile: UserProfile,
-        messages: List[str],
-        with_initial_pause=False,
-        **kwargs
+    phone_number: str,
+    user_profile: UserProfile,
+    messages: List[str],
+    with_initial_pause=False,
+    **kwargs,
 ):
     first = True
     for message in messages:
@@ -65,24 +68,19 @@ class InMemoryRepository(DialogRepository):
                     event.phone_number,
                     dialog_state.user_profile,
                     event.prompt.messages,
-                    with_initial_pause=True
+                    with_initial_pause=True,
                 )
             elif event.event_type == DialogEventType.FAILED_PROMPT:
                 if not event.abandoned:
-                    fake_sms(
-                        event.phone_number,
-                        dialog_state.user_profile,
-                        [TRY_AGAIN]
-                    )
+                    fake_sms(event.phone_number, dialog_state.user_profile, [TRY_AGAIN])
                 else:
                     fake_sms(
                         event.phone_number,
                         dialog_state.user_profile,
                         ["{{corrected_answer}}"],
                         correct_answer=localize(
-                            event.prompt.correct_response,
-                            dialog_state.user_profile.language,
-                        )
+                            event.prompt.correct_response, dialog_state.user_profile.language
+                        ),
                     )
             elif event.event_type == DialogEventType.COMPLETED_PROMPT:
                 if event.prompt.is_graded():
@@ -100,7 +98,8 @@ class InMemoryRepository(DialogRepository):
             SEQ += 1
             process_command(
                 StartDrill(PHONE_NUMBER, DRILLS[dialog_state.user_profile.account_info["code"]]),
-                str(SEQ), repo=self
+                str(SEQ),
+                repo=self,
             )
 
 
@@ -123,11 +122,11 @@ def main():
         while True:
             message = input("> ")
             SEQ += 1
-            process_command(ProcessSMSMessage(
-                PHONE_NUMBER,
-                message,
-                registration_validator=validator,
-            ), str(SEQ), repo=repo)
+            process_command(
+                ProcessSMSMessage(PHONE_NUMBER, message, registration_validator=validator),
+                str(SEQ),
+                repo=repo,
+            )
     except EOFError:
         pass
     dialog_state = repo.fetch_dialog_state(PHONE_NUMBER)

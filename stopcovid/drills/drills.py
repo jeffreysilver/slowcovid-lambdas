@@ -26,12 +26,13 @@ class PromptSchema(Schema):
 
 
 class Prompt:
-    def __init__(self,
-                 slug: str,
-                 messages: List[str],
-                 response_user_profile_key: Optional[str] = None,
-                 correct_response: Optional[str] = None,
-                 ):
+    def __init__(
+        self,
+        slug: str,
+        messages: List[str],
+        response_user_profile_key: Optional[str] = None,
+        correct_response: Optional[str] = None,
+    ):
         self.slug = slug
         self.messages = messages
         self.response_user_profile_key = response_user_profile_key

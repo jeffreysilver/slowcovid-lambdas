@@ -1,12 +1,7 @@
 import logging
 from stopcovid.utils.kinesis import get_payload_from_kinesis_record
 
-from stopcovid.dialog.dialog import (
-    process_command,
-    ProcessSMSMessage,
-    StartDrill,
-    TriggerReminder,
-)
+from stopcovid.dialog.dialog import process_command, ProcessSMSMessage, StartDrill, TriggerReminder
 from stopcovid.drills.drills import drill_from_dict
 
 
@@ -20,9 +15,7 @@ def handle_command(raw_event, context):
 
         if command_type == "INBOUND_SMS":
             process_command(
-                ProcessSMSMessage(
-                    phone_number=payload["From"], content=payload["Body"]
-                ),
+                ProcessSMSMessage(phone_number=payload["From"], content=payload["Body"]),
                 sequence_number,
             )
         elif command_type == "START_DRILL":

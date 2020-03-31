@@ -28,20 +28,21 @@ class UserProfileSchema(Schema):
 
 
 class UserProfile:
-    def __init__(self,
-                 validated: bool,
-                 is_demo: bool = False,
-                 name: Optional[str] = None,
-                 language: Optional[str] = None,
-                 account_info: Optional[Dict[str, Any]] = None,
-                 self_rating_1: Optional[str] = None,
-                 self_rating_2: Optional[str] = None,
-                 self_rating_3: Optional[str] = None,
-                 self_rating_4: Optional[str] = None,
-                 self_rating_5: Optional[str] = None,
-                 self_rating_6: Optional[str] = None,
-                 self_rating_7: Optional[str] = None,
-                 ):
+    def __init__(
+        self,
+        validated: bool,
+        is_demo: bool = False,
+        name: Optional[str] = None,
+        language: Optional[str] = None,
+        account_info: Optional[Dict[str, Any]] = None,
+        self_rating_1: Optional[str] = None,
+        self_rating_2: Optional[str] = None,
+        self_rating_3: Optional[str] = None,
+        self_rating_4: Optional[str] = None,
+        self_rating_5: Optional[str] = None,
+        self_rating_6: Optional[str] = None,
+        self_rating_7: Optional[str] = None,
+    ):
         self.language = language
         self.is_demo = is_demo
         self.validated = validated
@@ -56,8 +57,7 @@ class UserProfile:
         self.self_rating_7 = self_rating_7
 
     def __str__(self):
-        return (f"lang={self.language}, validated={self.validated}, "
-                f"name={self.name}")
+        return f"lang={self.language}, validated={self.validated}, " f"name={self.name}"
 
 
 class PromptStateSchema(Schema):
@@ -72,8 +72,13 @@ class PromptStateSchema(Schema):
 
 
 class PromptState:
-    def __init__(self, slug: str, start_time: datetime.datetime,
-                 reminder_triggered: bool = False, failures: int = 0):
+    def __init__(
+        self,
+        slug: str,
+        start_time: datetime.datetime,
+        reminder_triggered: bool = False,
+        failures: int = 0,
+    ):
         self.slug = slug
         self.failures = failures
         self.start_time = start_time
@@ -97,13 +102,15 @@ class DialogStateSchema(Schema):
 
 
 class DialogState:
-    def __init__(self,
-                 phone_number: str,
-                 seq: str,
-                 user_profile: Optional[UserProfile] = None,
-                 current_drill: Optional[drills.Drill] = None,
-                 drill_instance_id: Optional[uuid.UUID] = None,
-                 current_prompt_state: Optional[PromptState] = None):
+    def __init__(
+        self,
+        phone_number: str,
+        seq: str,
+        user_profile: Optional[UserProfile] = None,
+        current_drill: Optional[drills.Drill] = None,
+        drill_instance_id: Optional[uuid.UUID] = None,
+        current_prompt_state: Optional[PromptState] = None,
+    ):
         self.phone_number = phone_number
         self.seq = seq
         self.user_profile = user_profile or UserProfile(validated=False)
@@ -159,12 +166,12 @@ class DialogEventSchema(Schema):
 
 class DialogEvent(ABC):
     def __init__(
-            self,
-            schema: Schema,
-            event_type: DialogEventType,
-            phone_number: str,
-            user_profile: UserProfile,
-            **kwargs
+        self,
+        schema: Schema,
+        event_type: DialogEventType,
+        phone_number: str,
+        user_profile: UserProfile,
+        **kwargs,
     ):
         self.schema = schema
         self.phone_number = phone_number
@@ -172,8 +179,8 @@ class DialogEvent(ABC):
         # relying on created time to determine ordering. We should be fine and it's simpler than
         # sequence numbers. Events are processed in order by phone number and are relatively
         # infrequent. And the lambda environment has some clock guarantees.
-        self.created_time = kwargs.get('created_time', datetime.datetime.now(datetime.timezone.utc))
-        self.event_id = kwargs.get('event_id', uuid.uuid4())
+        self.created_time = kwargs.get("created_time", datetime.datetime.now(datetime.timezone.utc))
+        self.event_id = kwargs.get("event_id", uuid.uuid4())
         self.event_type = event_type
         self.user_profile = user_profile
 

@@ -7,14 +7,8 @@ from stopcovid.dialog.types import DialogEvent, UserProfile
 
 class TestSerialization(unittest.TestCase):
     def setUp(self) -> None:
-        self.prompt = Prompt(
-            slug='my-prompt',
-            messages=['one', 'two']
-        )
-        self.drill = Drill(
-            name="01 START",
-            prompts=[self.prompt]
-        )
+        self.prompt = Prompt(slug="my-prompt", messages=["one", "two"])
+        self.drill = Drill(name="01 START", prompts=[self.prompt])
 
     def _make_base_assertions(self, original: DialogEvent, deserialized: DialogEvent):
         self.assertEqual(original.event_id, deserialized.event_id)
@@ -57,7 +51,7 @@ class TestSerialization(unittest.TestCase):
             prompt=self.prompt,
             response="hello",
             abandoned=True,
-            drill_instance_id=uuid.uuid4()
+            drill_instance_id=uuid.uuid4(),
         )
         serialized = original.to_dict()
         deserialized = event_from_dict(serialized)
@@ -73,7 +67,7 @@ class TestSerialization(unittest.TestCase):
             user_profile=UserProfile(True),
             drill=self.drill,
             first_prompt=self.prompt,
-            drill_instance_id=uuid.uuid4()
+            drill_instance_id=uuid.uuid4(),
         )
         serialized = original.to_dict()
         deserialized = event_from_dict(serialized)
@@ -84,9 +78,7 @@ class TestSerialization(unittest.TestCase):
 
     def test_drill_completed(self):
         original = DrillCompleted(
-            phone_number="12345678",
-            user_profile=UserProfile(True),
-            drill_instance_id=uuid.uuid4()
+            phone_number="12345678", user_profile=UserProfile(True), drill_instance_id=uuid.uuid4()
         )
         serialized = original.to_dict()
         deserialized = event_from_dict(serialized)
@@ -94,10 +86,7 @@ class TestSerialization(unittest.TestCase):
         self.assertEqual(original.drill_instance_id, deserialized.drill_instance_id)
 
     def test_reminder_triggered(self):
-        original = ReminderTriggered(
-            "123456789",
-            user_profile=UserProfile(True),
-        )
+        original = ReminderTriggered("123456789", user_profile=UserProfile(True))
         serialized = original.to_dict()
         deserialized = event_from_dict(serialized)
         self._make_base_assertions(original, deserialized)
@@ -106,17 +95,14 @@ class TestSerialization(unittest.TestCase):
         original = UserValidated(
             "123456789",
             user_profile=UserProfile(True),
-            code_validation_payload=CodeValidationPayload(valid=True, is_demo=True)
+            code_validation_payload=CodeValidationPayload(valid=True, is_demo=True),
         )
         serialized = original.to_dict()
         deserialized = event_from_dict(serialized)
         self._make_base_assertions(original, deserialized)
 
     def test_user_validation_failed(self):
-        original = UserValidationFailed(
-            "123456789",
-            user_profile=UserProfile(True),
-        )
+        original = UserValidationFailed("123456789", user_profile=UserProfile(True))
         serialized = original.to_dict()
         deserialized = event_from_dict(serialized)
         self._make_base_assertions(original, deserialized)

@@ -24,6 +24,8 @@ SAMPLES = [
 class TestResponseCheck(unittest.TestCase):
     def test_all_samples(self):
         for user_supplied, correct, expected in SAMPLES:
-            self.assertEqual(expected, is_correct_response(user_supplied, correct),
-                             f"User-supplied: {user_supplied}, Correct: {correct},"
-                             f" Expected: {expected}")
+            self.assertEqual(
+                expected,
+                is_correct_response(user_supplied, correct),
+                f"User-supplied: {user_supplied}, Correct: {correct}," f" Expected: {expected}",
+            )

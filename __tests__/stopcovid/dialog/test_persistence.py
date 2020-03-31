@@ -14,8 +14,7 @@ class TestPersistence(unittest.TestCase):
 
     def setUp(self):
         self.repo = DynamoDBDialogRepository(
-            region_name="us-west-2",
-            endpoint_url="http://localhost:9000",
+            region_name="us-west-2", endpoint_url="http://localhost:9000"
         )
         self.repo.ensure_tables_exist()
         self.phone_number = "123456789"
@@ -27,27 +26,21 @@ class TestPersistence(unittest.TestCase):
         event1 = CompletedPrompt(
             phone_number=self.phone_number,
             user_profile=UserProfile(True),
-            prompt=Prompt(
-                slug="one",
-                messages=["one", "two"]
-            ),
+            prompt=Prompt(slug="one", messages=["one", "two"]),
             response="hi",
-            drill_instance_id=uuid.uuid4()
+            drill_instance_id=uuid.uuid4(),
         )
         event2 = AdvancedToNextPrompt(
             phone_number=self.phone_number,
             user_profile=UserProfile(True),
-            prompt=Prompt(
-                slug="two",
-                messages=["three", "four"]
-            ),
+            prompt=Prompt(slug="two", messages=["three", "four"]),
             drill_instance_id=event1.drill_instance_id,
         )
         dialog_state = DialogState(
             self.phone_number,
             "0",
             user_profile=UserProfile(validated=True, language="de"),
-            drill_instance_id=event1.drill_instance_id
+            drill_instance_id=event1.drill_instance_id,
         )
         self.repo.persist_dialog_state([event1, event2], dialog_state)
         dialog_state2 = self.repo.fetch_dialog_state(self.phone_number)
