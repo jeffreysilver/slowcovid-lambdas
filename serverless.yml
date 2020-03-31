@@ -68,8 +68,6 @@ functions:
             Fn::GetAtt:
               - DialogEvents
               - StreamArn
-          batchSize: 3
-          batchWindow: 1
           startingPosition: LATEST
 
   healthcheck:
