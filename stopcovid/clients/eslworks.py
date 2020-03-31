@@ -2,6 +2,8 @@ import requests
 from requests.auth import HTTPBasicAuth
 import os
 
+from serverless_sdk import tag_event
+
 BASE_URL = "https://eslworks-api-production.herokuapp.com/slowcovid"
 
 
@@ -13,5 +15,6 @@ def register(payload):
         ),
         json=payload,
     )
+    tag_event("eslworks_register_status", resp.status_code)
     resp.raise_for_status()
     return resp
