@@ -2,7 +2,7 @@ import requests
 from requests.auth import HTTPBasicAuth
 import os
 
-from serverless_sdk import tag_event
+from serverless_sdk import tag_event  # type: ignore
 
 BASE_URL = "https://eslworks-api-production.herokuapp.com/slowcovid"
 

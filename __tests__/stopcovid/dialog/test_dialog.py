@@ -24,7 +24,7 @@ class TestSerialization(unittest.TestCase):
             drill_instance_id=uuid.uuid4(),
         )
         serialized = original.to_dict()
-        deserialized = event_from_dict(serialized)
+        deserialized: AdvancedToNextPrompt = event_from_dict(serialized)  # type: ignore
         self._make_base_assertions(original, deserialized)
         self.assertEqual(original.prompt.slug, deserialized.prompt.slug)
         self.assertEqual(original.drill_instance_id, deserialized.drill_instance_id)
@@ -38,7 +38,7 @@ class TestSerialization(unittest.TestCase):
             drill_instance_id=uuid.uuid4(),
         )
         serialized = original.to_dict()
-        deserialized = event_from_dict(serialized)
+        deserialized: CompletedPrompt = event_from_dict(serialized)  # type: ignore
         self._make_base_assertions(original, deserialized)
         self.assertEqual(original.prompt.slug, deserialized.prompt.slug)
         self.assertEqual(original.response, deserialized.response)
@@ -54,7 +54,7 @@ class TestSerialization(unittest.TestCase):
             drill_instance_id=uuid.uuid4(),
         )
         serialized = original.to_dict()
-        deserialized = event_from_dict(serialized)
+        deserialized: FailedPrompt = event_from_dict(serialized)  # type: ignore
         self._make_base_assertions(original, deserialized)
         self.assertEqual(original.prompt.slug, deserialized.prompt.slug)
         self.assertEqual(original.response, deserialized.response)
@@ -70,7 +70,7 @@ class TestSerialization(unittest.TestCase):
             drill_instance_id=uuid.uuid4(),
         )
         serialized = original.to_dict()
-        deserialized = event_from_dict(serialized)
+        deserialized: DrillStarted = event_from_dict(serialized)  # type: ignore
         self._make_base_assertions(original, deserialized)
         self.assertEqual(original.drill.name, deserialized.drill.name)
         self.assertEqual(original.drill_instance_id, deserialized.drill_instance_id)
@@ -81,7 +81,7 @@ class TestSerialization(unittest.TestCase):
             phone_number="12345678", user_profile=UserProfile(True), drill_instance_id=uuid.uuid4()
         )
         serialized = original.to_dict()
-        deserialized = event_from_dict(serialized)
+        deserialized: DrillCompleted = event_from_dict(serialized)  # type: ignore
         self._make_base_assertions(original, deserialized)
         self.assertEqual(original.drill_instance_id, deserialized.drill_instance_id)
 

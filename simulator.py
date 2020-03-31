@@ -83,7 +83,7 @@ class InMemoryRepository(DialogRepository):
                         ),
                     )
             elif event.event_type == DialogEventType.COMPLETED_PROMPT:
-                if event.prompt.is_graded():
+                if event.prompt.correct_response is not None:
                     fake_sms(event.phone_number, dialog_state.user_profile, ["{{right}}"])
             elif event.event_type == DialogEventType.USER_VALIDATED:
                 should_start_drill = True
