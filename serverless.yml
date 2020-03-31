@@ -24,8 +24,6 @@ provider:
       - subnet-0534a0b05872cac2b
 
   environment:
-    AUTH_USERNAME: ${env:AUTH_USERNAME}
-    AUTH_PASSWORD: ${env:AUTH_PASSWORD}
     STAGE: ${self:provider.stage}
         
 plugins:
@@ -33,7 +31,7 @@ plugins:
   - serverless-dotenv-plugin
 functions:
   registration:
-    handler: stopcovid.registration.handle_registration
+    handler: stopcovid/registration.handle_registration
     events:
       - http:
           path: registration
@@ -41,7 +39,7 @@ functions:
           cors: true
 
   sendMessage:
-    handler: stopcovid.outbound_sms.send_message
+    handler: stopcovid/outbound_sms.send_message
     events:
       - sqs:
           arn:
@@ -50,7 +48,7 @@ functions:
               - Arn
 
   handleCommand:
-    handler: stopcovid.command_stream.handle_command
+    handler: stopcovid/command_stream.handle_command
     environment:
       DIALOG_TABLE_NAME_SUFFIX: ${self:provider.stage}
       REGISTRATION_VALIDATION_URL: https://eslworks-api-production.herokuapp.com/slowcovid/lookup
@@ -58,11 +56,22 @@ functions:
 
 
   logMessage:
-    handler: stopcovid.message_log.log_message
+    handler: stopcovid/message_log.log_message
     timeout: 20  # Give aurora cluster time to cold start
 
+  distributeDialogEvents:
+    handler: stopcovid/event_distributor.distribute_dialog_events
+    events:
+      - stream:
+          type: dynamodb
+          arn:
+            Fn::GetAtt:
+              - DialogEvents
+              - StreamArn
+          startingPosition: LATEST
+
   healthcheck:
-    handler: stopcovid.healthcheck.healthcheck
+    handler: stopcovid/healthcheck.healthcheck
     events:
       - http:
           path: /healthcheck

@@ -1,17 +1,25 @@
 {
   "Records": [
     {
-      "messageId": "e08aee4b-73e3-41d0-80f1-527e418eaddb",
-      "receiptHandle": "AQEB6KhzCnjN0/35ibSro8dvk9GjXEzjSQcEK0niS7vOrb+Y3RZPCL8IxOiXAjPF9KNYI8l+byUvSTWR4hrbhrW6gggWChAER8Gea8+G33N0s/xiIuUn5re5gC5RGa1//+anPrP80UO1TAjSwumbNel6Uw2/381hnkABJC6J+2+UyZcDPQjEEtV2kZxXCAOSDMkVEkW05HRiVyjjvCU/Tmp2Cy7DfoTgbp0cqHNOJ+TW2tPIryu5SfKfsH9CVhZe3jupshOV7cDeei9e5acb6lSLwGo2jTDUvEG7VqtHDRMFtYaXLXEIqf2CS3yREQehkU39msZJvkBJOPgsqndWZ9EQGQSLgPnmZ3KkPERp7KhunUsRDJQ15/jKg/dfnqxNEOL+uA0+FxghyoMO1KFiwAhTlg==",
-      "body": "{\"To\": \"+14802865415\", \"Body\": \"\\ud83d\\udc22\\ud83d\\udc22\"}",
+      "messageId": "28f06867-e435-4cc4-bd5e-ad14760f8d61",
+      "receiptHandle": "AQEBa0DOKX/qAU/vcFwEw1uWDeIgNcG/YUWIpNvIsOhMGbfiR9U9FMUYlt9bATq/kwy84y3SbPyizNgL9phu40okdZYfeEc13963sn6s5d8GPFwHMXeLbqgJxFkV1kL6R7gRni5MnVKvp8KENaqJFVly16e8OGnZ9R+7ziBTajCEJuPIRL9IV3qtyS+C981a9jD8PNS++Br/hJSst2O2TQacFYjYN+/O/ZWmjXnpNClT9aulbvB+Cyj/GpPCNPH/jxCMTzuGgu0KkJbDNfplXrAutMsC/a7ffP4IZSYttQFpaMrRDVLGAXsS+o5I31gudwvyeRgZN7dpvvR/Q9TarrdcxCH6VJOEzYxXlFmDqZGNw7VyOpMlXShqC49AENgf5xkp+0ENMyydo6cGdNo1vWedoQ==",
+      "body": "{\"To\": \"+14802865415\", \"Body\": \"USER_VALIDATION_FAILED\"}",
       "attributes": {
         "ApproximateReceiveCount": "1",
-        "SentTimestamp": "1585582265931",
-        "SenderId": "AROA2ER7MCBLLHUI44ECY:slowcovid-dev-handleCommand",
-        "ApproximateFirstReceiveTimestamp": "1585582265950"
+        "SentTimestamp": "1585689620687",
+        "SenderId": "AIDA2ER7MCBLI3NF2VX6H",
+        "ApproximateFirstReceiveTimestamp": "1585689620692"
       },
-      "messageAttributes": {},
-      "md5OfBody": "ccf127c77e8bc9c6f1e2f17451a8bf0f",
+      "messageAttributes": {
+        "idempotency_key": {
+          "stringValue": "92eb42bf-3fcd-4791-ae43-3f6b14a19c0ad",
+          "stringListValues": [],
+          "binaryListValues": [],
+          "dataType": "String"
+        }
+      },
+      "md5OfMessageAttributes": "1ef1f960678933725016211d56383cbd",
+      "md5OfBody": "fb3741694436f45674726223be23200e",
       "eventSource": "aws:sqs",
       "eventSourceARN": "arn:aws:sqs:us-east-1:696991354966:outbound-sms-dev",
       "awsRegion": "us-east-1"

@@ -1,20 +1,34 @@
 import boto3
 import os
 import json
-import uuid
+from typing import List
+from dataclasses import dataclass
 
 SQS = boto3.resource("sqs")
 
 
-def publish_outbound_sms_messages(payloads):
+@dataclass
+class OutboundSMS:
+    event_id: str
+    phone_number: str
+    body: str
+
+
+def publish_outbound_sms_messages(outbound_sms_messages: List[OutboundSMS]):
     queue_name = f"outbound-sms-{os.getenv('STAGE')}"
     queue = SQS.get_queue_by_name(QueueName=queue_name)
 
-    entries = []
-    for payload in payloads:
-        # TODO: use event_id once we have a callsite for this method
-        idempotency_key = str(uuid.uuid4())
-        payload["idempotency_key"] = idempotency_key
-        entries.append({"Id": idempotency_key, "MessageBody": json.dumps(payload)})
+    entries = [
+        {
+            "Id": outbound_sms.event_id,
+            "MessageBody": json.dumps(
+                {"To": outbound_sms.phone_number, "Body": outbound_sms.body,}
+            ),
+            "MessageAttributes": {
+                "idempotency_key": {"StringValue": outbound_sms.event_id, "DataType": "String",}
+            },
+        }
+        for outbound_sms in outbound_sms_messages
+    ]
 
     return queue.send_messages(Entries=entries)
