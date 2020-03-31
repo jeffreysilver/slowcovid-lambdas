@@ -26,7 +26,7 @@ def publish_outbound_sms_messages(outbound_sms_messages: List[OutboundSMS]):
             ),
             "MessageAttributes": {
                 "idempotency_key": {
-                    "StringValue": outbound_sms.event_id + "d",
+                    "StringValue": outbound_sms.event_id,
                     "DataType": "String",
                 }
             },

@@ -1,8 +1,6 @@
 from stopcovid.utils import dynamodb as dynamodb_utils
 from stopcovid.clients import sqs
 
-from serverless_sdk import tag_event
-
 
 def _get_outbound_sms_messages(dialog_events):
     # TODO: respond with the correct content
@@ -17,7 +15,6 @@ def _get_outbound_sms_messages(dialog_events):
 
 
 def distribute_dialog_events(event, context):
-    tag_event("event_distributor", "raw_event", event)
     dialog_events = [
         dynamodb_utils.deserialize(record["dynamodb"]["NewImage"])
         for record in event["Records"]
