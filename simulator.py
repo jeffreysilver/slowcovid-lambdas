@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import sys
 from time import sleep
 from typing import List
 
@@ -41,12 +42,15 @@ def fake_sms(
 
 
 class InMemoryRepository(DialogRepository):
-    def __init__(self):
+    def __init__(self, lang):
         self.repo = {}
+        self.lang = lang
 
     def fetch_dialog_state(self, phone_number: str) -> DialogState:
         if phone_number in self.repo:
-            return DialogStateSchema().loads(self.repo[phone_number])
+            state = DialogStateSchema().loads(self.repo[phone_number])
+            state.user_profile.language = self.lang
+            return state
         else:
             return DialogState(phone_number=phone_number, seq="0")
 
@@ -108,7 +112,11 @@ class FakeRegistrationValidator(RegistrationValidator):
 
 def main():
     global SEQ
-    repo = InMemoryRepository()
+    if len(sys.argv) > 1:
+        lang = sys.argv[1]
+    else:
+        lang = "en"
+    repo = InMemoryRepository(lang)
     validator = FakeRegistrationValidator()
     try:
         while True:
