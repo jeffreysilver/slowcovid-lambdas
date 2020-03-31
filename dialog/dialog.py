@@ -1,14 +1,14 @@
 import logging
 import uuid
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Optional
 
 from marshmallow import fields, post_load
 
 from drills import drills
 from .persistence import DialogRepository, DynamoDBDialogRepository
 from . import types
-
-VALID_OPT_IN_CODES = {"drill0"}
+from .registration import (RegistrationValidator, DefaultRegistrationValidator,
+                           CodeValidationPayloadSchema, CodeValidationPayload)
 
 
 def process_command(command: types.Command, seq: str, repo: DialogRepository = None):
@@ -66,15 +66,28 @@ class TriggerReminder(types.Command):
 
 
 class ProcessSMSMessage(types.Command):
-    def __init__(self, phone_number: str, content: str):
+    def __init__(
+            self,
+            phone_number: str,
+            content: str,
+            registration_validator: Optional[RegistrationValidator] = None
+    ):
         super().__init__(phone_number)
         self.content = content.strip()
         self.content_lower = self.content.lower()
+        if registration_validator is None:
+            registration_validator = DefaultRegistrationValidator()
+        self.registration_validator = registration_validator
 
     def execute(self, dialog_state: types.DialogState) -> List[types.DialogEvent]:
         if not dialog_state.user_profile.validated:
-            if self.content_lower in VALID_OPT_IN_CODES:
-                return [UserValidated(self.phone_number, dialog_state.user_profile)]
+            validation_payload = self.registration_validator.validate_code(self.content_lower)
+            if validation_payload.valid:
+                return [UserValidated(
+                    phone_number=self.phone_number,
+                    user_profile=dialog_state.user_profile,
+                    code_validation_payload=validation_payload
+                )]
             return [UserValidationFailed(self.phone_number, dialog_state.user_profile)]
 
         prompt = dialog_state.get_prompt()
@@ -180,13 +193,21 @@ class ReminderTriggered(types.DialogEvent):
 
 
 class UserValidatedSchema(types.DialogEventSchema):
+    code_validation_payload = fields.Nested(CodeValidationPayloadSchema, required=True)
+
     @post_load
     def make_user_created(self, data, **kwargs):
         return UserValidated(**{k: v for k, v in data.items() if k != "event_type"})
 
 
 class UserValidated(types.DialogEvent):
-    def __init__(self, phone_number: str, user_profile: types.UserProfile, **kwargs):
+    def __init__(
+            self,
+            phone_number: str,
+            user_profile: types.UserProfile,
+            code_validation_payload: CodeValidationPayload,
+            **kwargs
+    ):
         super().__init__(
             UserValidatedSchema(),
             types.DialogEventType.USER_VALIDATED,
@@ -194,9 +215,12 @@ class UserValidated(types.DialogEvent):
             user_profile,
             **kwargs
         )
+        self.code_validation_payload = code_validation_payload
 
     def apply_to(self, dialog_state: types.DialogState):
         dialog_state.user_profile.validated = True
+        dialog_state.user_profile.is_demo = self.code_validation_payload.is_demo
+        dialog_state.user_profile.account_info = self.code_validation_payload.account_info
 
 
 class UserValidationFailedSchema(types.DialogEventSchema):
