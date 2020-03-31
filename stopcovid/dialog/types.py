@@ -62,6 +62,7 @@ class PromptStateSchema(Schema):
 class PromptState:
     slug: str
     start_time: datetime.datetime
+    last_response_time: Optional[datetime.datetime] = None
     reminder_triggered: bool = False
     failures: int = 0
 
@@ -86,9 +87,7 @@ class DialogStateSchema(Schema):
 class DialogState:
     phone_number: str
     seq: str
-    user_profile: Optional[UserProfile] = field(
-        default_factory=lambda: UserProfile(validated=False)
-    )
+    user_profile: UserProfile = field(default_factory=lambda: UserProfile(validated=False))
     current_drill: Optional[drills.Drill] = None
     drill_instance_id: Optional[uuid.UUID] = None
     current_prompt_state: Optional[PromptState] = None

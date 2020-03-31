@@ -47,7 +47,10 @@ class StartDrill(types.Command):
     def execute(self, dialog_state: types.DialogState) -> List[types.DialogEvent]:
         return [
             DrillStarted(
-                self.phone_number, dialog_state.user_profile, self.drill, self.drill.first_prompt()
+                phone_number=self.phone_number,
+                user_profile=dialog_state.user_profile,
+                drill=self.drill,
+                first_prompt=self.drill.first_prompt(),
             )
         ]
 
@@ -338,6 +341,7 @@ class FailedPrompt(types.DialogEvent):
         if self.abandoned:
             dialog_state.current_prompt_state = None
         else:
+            dialog_state.current_prompt_state.last_response_time = self.created_time
             dialog_state.current_prompt_state.failures += 1
 
 
@@ -403,6 +407,7 @@ class DrillCompleted(types.DialogEvent):
     def apply_to(self, dialog_state: types.DialogState):
         dialog_state.current_drill = None
         dialog_state.drill_instance_id = None
+        dialog_state.current_prompt_state = None
 
 
 def event_from_dict(event_dict: Dict[str, Any]) -> types.DialogEvent:

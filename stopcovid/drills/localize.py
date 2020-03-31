@@ -1,7 +1,7 @@
 import json
 import os
 from collections import defaultdict
-from typing import Dict
+from typing import Dict, Optional
 
 from jinja2 import Template
 
@@ -12,7 +12,7 @@ __location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file
 SUPPORTED_LANGUAGES = {"en", "es", "fr", "pt", "zh"}
 
 
-def localize(message: str, lang: str, **kwargs) -> str:
+def localize(message: str, lang: Optional[str], **kwargs) -> str:
     lang = lang or "en"
     if lang not in SUPPORTED_LANGUAGES:
         lang = "en"

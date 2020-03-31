@@ -35,7 +35,7 @@ class Prompt:
     correct_response: Optional[str] = None
     max_failures: int = 1
 
-    def should_advance_with_answer(self, answer: str, lang: str) -> bool:
+    def should_advance_with_answer(self, answer: str, lang: Optional[str]) -> bool:
         if self.correct_response is None:
             return True
         return is_correct_response(answer, localize(self.correct_response, lang))

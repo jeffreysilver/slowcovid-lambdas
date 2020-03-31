@@ -1,5 +1,6 @@
 import os
 from abc import ABC, abstractmethod
+from dataclasses import dataclass
 from typing import Optional, Any, Dict
 
 import requests
@@ -16,16 +17,11 @@ class CodeValidationPayloadSchema(Schema):
         return CodeValidationPayload(**data)
 
 
+@dataclass
 class CodeValidationPayload:
-    def __init__(
-        self,
-        valid: bool,
-        is_demo: Optional[bool] = False,
-        account_info: Optional[Dict[str, Any]] = None,
-    ):
-        self.valid = valid
-        self.is_demo = is_demo
-        self.account_info = account_info
+    valid: bool
+    is_demo: bool = False
+    account_info: Optional[Dict[str, Any]] = None
 
 
 class RegistrationValidator(ABC):

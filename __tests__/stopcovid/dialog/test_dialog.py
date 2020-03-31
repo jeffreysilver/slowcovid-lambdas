@@ -3,7 +3,7 @@ import unittest
 
 from unittest.mock import MagicMock, patch, Mock
 
-from stopcovid.drills.drills import Prompt, Drill, get_drill
+from stopcovid.drills.drills import Prompt, Drill
 from stopcovid.dialog.dialog import *
 from stopcovid.dialog.types import (
     DialogEvent,
@@ -36,7 +36,8 @@ class TestDialogFlow(unittest.TestCase):
         self.repo.fetch_dialog_state = MagicMock(return_value=self.dialog_state)
         self.repo.persist_dialog_state = MagicMock()
         self.next_seq = 1
-        self.current_correct_response: Optional[str] = None
+        self.current_correct_response = "translated"  # produced by the mock localize method
+        self.now = datetime.datetime.now(datetime.timezone.utc)
         self.localization_patcher = patch(
             "stopcovid.drills.drills.localize", return_value="translated"
         )
@@ -59,10 +60,7 @@ class TestDialogFlow(unittest.TestCase):
     def _set_current_prompt(self, prompt_index: int):
         self.dialog_state.current_drill = self.drill
         prompt = self.drill.prompts[prompt_index]
-        self.dialog_state.current_prompt_state = PromptState(
-            slug=prompt.slug, start_time=datetime.datetime.now()
-        )
-        self.current_correct_response = "translated"  # produced by the mock localize method
+        self.dialog_state.current_prompt_state = PromptState(slug=prompt.slug, start_time=self.now)
 
     def test_skip_processed_sequence_numbers(self):
         command = Mock(wraps=ProcessSMSMessage(self.phone_number, "hey"))
@@ -118,10 +116,59 @@ class TestDialogFlow(unittest.TestCase):
         self.assertEqual(events[0].drill_instance_id, self.dialog_state.drill_instance_id)
 
     def test_advance_ignore(self):
-        pass
+        self.dialog_state.user_profile.validated = True
+        self._set_current_prompt(0)
+        command = ProcessSMSMessage(self.phone_number, "go")
+        events = self._process_command(command)
+        self._assert_event_types(
+            events, DialogEventType.COMPLETED_PROMPT, DialogEventType.ADVANCED_TO_NEXT_PROMPT
+        )
+        completed_event: CompletedPrompt = events[0]
+        self.assertEqual(completed_event.prompt, self.drill.prompts[0])
+        self.assertEqual(completed_event.response, "go")
+        self.assertEqual(completed_event.drill_instance_id, self.dialog_state.drill_instance_id)
+
+        advanced_event: AdvancedToNextPrompt = events[1]
+        self.assertEqual(self.drill.prompts[1], advanced_event.prompt)
+        self.assertEqual(self.dialog_state.drill_instance_id, advanced_event.drill_instance_id)
+
+        self.assertEqual(
+            PromptState(
+                slug=self.drill.prompts[1].slug,
+                start_time=advanced_event.created_time,
+                reminder_triggered=False,
+                failures=0,
+            ),
+            self.dialog_state.current_prompt_state,
+        )
 
     def test_advance_store_value(self):
-        pass
+        self.dialog_state.user_profile.validated = True
+        self._set_current_prompt(1)
+        command = ProcessSMSMessage(self.phone_number, "7")
+        events = self._process_command(command)
+        self._assert_event_types(
+            events, DialogEventType.COMPLETED_PROMPT, DialogEventType.ADVANCED_TO_NEXT_PROMPT
+        )
+        completed_event: CompletedPrompt = events[0]
+        self.assertEqual(completed_event.prompt, self.drill.prompts[1])
+        self.assertEqual(completed_event.response, "7")
+        self.assertEqual(completed_event.drill_instance_id, self.dialog_state.drill_instance_id)
+
+        advanced_event: AdvancedToNextPrompt = events[1]
+        self.assertEqual(self.drill.prompts[2], advanced_event.prompt)
+        self.assertEqual(self.dialog_state.drill_instance_id, advanced_event.drill_instance_id)
+
+        self.assertEqual(
+            PromptState(
+                slug=self.drill.prompts[2].slug,
+                start_time=advanced_event.created_time,
+                reminder_triggered=False,
+                failures=0,
+            ),
+            self.dialog_state.current_prompt_state,
+        )
+        self.assertEqual("7", self.dialog_state.user_profile.self_rating_1)
 
     def test_advance_graded_with_right_answer(self):
         self.dialog_state.user_profile.validated = True
@@ -151,19 +198,169 @@ class TestDialogFlow(unittest.TestCase):
         )
 
     def test_repeat_with_wrong_answer(self):
-        pass
+        self.dialog_state.user_profile.validated = True
+        self._set_current_prompt(2)
+        command = ProcessSMSMessage(self.phone_number, "completely wrong answer")
+        events = self._process_command(command)
+        self._assert_event_types(events, DialogEventType.FAILED_PROMPT)
+        failed_event: FailedPrompt = events[0]
+        self.assertEqual(failed_event.prompt, self.drill.prompts[2])
+        self.assertFalse(failed_event.abandoned)
+        self.assertEqual(failed_event.response, "completely wrong answer")
+        self.assertEqual(failed_event.drill_instance_id, self.dialog_state.drill_instance_id)
+
+        self.assertEqual(
+            PromptState(
+                slug=self.drill.prompts[2].slug,
+                start_time=self.now,
+                last_response_time=failed_event.created_time,
+                reminder_triggered=False,
+                failures=1,
+            ),
+            self.dialog_state.current_prompt_state,
+        )
 
     def test_advance_with_too_many_wrong_answers(self):
-        pass
+        self.dialog_state.user_profile.validated = True
+        self._set_current_prompt(2)
+        self.dialog_state.current_prompt_state.failures = 1
+
+        command = ProcessSMSMessage(self.phone_number, "completely wrong answer")
+        events = self._process_command(command)
+        self._assert_event_types(
+            events, DialogEventType.FAILED_PROMPT, DialogEventType.ADVANCED_TO_NEXT_PROMPT
+        )
+
+        failed_event: FailedPrompt = events[0]
+        self.assertEqual(failed_event.prompt, self.drill.prompts[2])
+        self.assertTrue(failed_event.abandoned)
+        self.assertEqual(failed_event.response, "completely wrong answer")
+        self.assertEqual(failed_event.drill_instance_id, self.dialog_state.drill_instance_id)
+
+        advanced_event: AdvancedToNextPrompt = events[1]
+        self.assertEqual(self.drill.prompts[3], advanced_event.prompt)
+        self.assertEqual(self.dialog_state.drill_instance_id, advanced_event.drill_instance_id)
+
+        self.assertEqual(
+            PromptState(
+                slug=self.drill.prompts[3].slug,
+                start_time=advanced_event.created_time,
+                reminder_triggered=False,
+                failures=0,
+            ),
+            self.dialog_state.current_prompt_state,
+        )
 
     def test_conclude_with_right_answer(self):
-        pass
+        self.dialog_state.user_profile.validated = True
+        self._set_current_prompt(3)
+        command = ProcessSMSMessage(self.phone_number, self.current_correct_response)
+        events = self._process_command(command)
+        self._assert_event_types(
+            events,
+            DialogEventType.COMPLETED_PROMPT,
+            DialogEventType.ADVANCED_TO_NEXT_PROMPT,
+            DialogEventType.DRILL_COMPLETED,
+        )
+        completed_event: CompletedPrompt = events[0]
+        self.assertEqual(completed_event.prompt, self.drill.prompts[3])
+        self.assertEqual(completed_event.response, self.current_correct_response)
+        self.assertEqual(completed_event.drill_instance_id, self.dialog_state.drill_instance_id)
+
+        advanced_event: AdvancedToNextPrompt = events[1]
+        self.assertEqual(self.drill.prompts[4], advanced_event.prompt)
+        self.assertEqual(self.dialog_state.drill_instance_id, advanced_event.drill_instance_id)
+
+        drill_completed_event: DrillCompleted = events[2]
+        self.assertEqual(
+            self.dialog_state.drill_instance_id, drill_completed_event.drill_instance_id
+        )
+
+        self.assertIsNone(self.dialog_state.current_drill)
+        self.assertIsNone(self.dialog_state.drill_instance_id)
+        self.assertIsNone(self.dialog_state.current_prompt_state)
 
     def test_concude_with_too_many_wrong_answers(self):
-        pass
+        self.dialog_state.user_profile.validated = True
+        self._set_current_prompt(3)
+        self.dialog_state.current_prompt_state.failures = 1
+
+        command = ProcessSMSMessage(self.phone_number, "completely wrong answer")
+        events = self._process_command(command)
+        self._assert_event_types(
+            events,
+            DialogEventType.FAILED_PROMPT,
+            DialogEventType.ADVANCED_TO_NEXT_PROMPT,
+            DialogEventType.DRILL_COMPLETED,
+        )
+
+        failed_event: FailedPrompt = events[0]
+        self.assertEqual(failed_event.prompt, self.drill.prompts[3])
+        self.assertTrue(failed_event.abandoned)
+        self.assertEqual(failed_event.response, "completely wrong answer")
+        self.assertEqual(failed_event.drill_instance_id, self.dialog_state.drill_instance_id)
+
+        advanced_event: AdvancedToNextPrompt = events[1]
+        self.assertEqual(self.drill.prompts[4], advanced_event.prompt)
+        self.assertEqual(self.dialog_state.drill_instance_id, advanced_event.drill_instance_id)
+
+        drill_completed_event: DrillCompleted = events[2]
+        self.assertEqual(
+            self.dialog_state.drill_instance_id, drill_completed_event.drill_instance_id
+        )
+
+        self.assertIsNone(self.dialog_state.current_drill)
+        self.assertIsNone(self.dialog_state.drill_instance_id)
+        self.assertIsNone(self.dialog_state.current_prompt_state)
 
     def test_trigger_reminder(self):
-        pass
+        self.dialog_state.user_profile.validated = True
+        self._set_current_prompt(2)
+        command = TriggerReminder(
+            phone_number=self.phone_number,
+            drill_instance_id=self.dialog_state.drill_instance_id,  # type:ignore
+            prompt_slug=self.drill.prompts[2].slug,
+        )
+        events = self._process_command(command)
+        self._assert_event_types(events, DialogEventType.REMINDER_TRIGGERED)
+
+        self.assertTrue(self.dialog_state.current_prompt_state.reminder_triggered)
+
+    def test_trigger_reminder_idempotence(self):
+        self.dialog_state.user_profile.validated = True
+        self._set_current_prompt(2)
+        self.dialog_state.current_prompt_state.reminder_triggered = True
+        command = TriggerReminder(
+            phone_number=self.phone_number,
+            drill_instance_id=self.dialog_state.drill_instance_id,  # type:ignore
+            prompt_slug=self.drill.prompts[2].slug,
+        )
+        events = self._process_command(command)
+        self.assertEqual(0, len(events))
+
+        self.assertTrue(self.dialog_state.current_prompt_state.reminder_triggered)
+
+    def test_trigger_late_reminder_later_prompt(self):
+        self.dialog_state.user_profile.validated = True
+        self._set_current_prompt(3)
+        command = TriggerReminder(
+            phone_number=self.phone_number,
+            drill_instance_id=self.dialog_state.drill_instance_id,  # type:ignore
+            prompt_slug=self.drill.prompts[2].slug,
+        )
+        events = self._process_command(command)
+        self.assertEqual(0, len(events))
+
+        self.assertFalse(self.dialog_state.current_prompt_state.reminder_triggered)
+
+    def test_trigger_late_reminder_later_drill(self):
+        self.dialog_state.user_profile.validated = True
+        self._set_current_prompt(2)
+        command = TriggerReminder(self.phone_number, uuid.uuid4(), self.drill.prompts[2].slug)
+        events = self._process_command(command)
+        self.assertEqual(0, len(events))
+
+        self.assertFalse(self.dialog_state.current_prompt_state.reminder_triggered)
 
 
 class TestSerialization(unittest.TestCase):
