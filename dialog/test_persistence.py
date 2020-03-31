@@ -26,6 +26,7 @@ class TestPersistence(unittest.TestCase):
 
         event1 = CompletedPrompt(
             phone_number=self.phone_number,
+            user_profile=UserProfile(True),
             prompt=Prompt(
                 slug="one",
                 messages=["one", "two"]
@@ -35,6 +36,7 @@ class TestPersistence(unittest.TestCase):
         )
         event2 = AdvancedToNextPrompt(
             phone_number=self.phone_number,
+            user_profile=UserProfile(True),
             prompt=Prompt(
                 slug="two",
                 messages=["three", "four"]

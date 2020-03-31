@@ -4,7 +4,7 @@ from abc import abstractmethod, ABC
 import datetime
 from typing import Optional, List, Dict
 
-from marshmallow import Schema, fields, post_load
+from marshmallow import Schema, fields, post_load, EXCLUDE
 from drills import drills
 
 
@@ -12,7 +12,13 @@ class UserProfileSchema(Schema):
     validated = fields.Boolean(required=True)
     language = fields.Str(allow_none=True)
     name = fields.Str(allow_none=True)
-    self_rating = fields.Str(allow_none=True)
+    self_rating_1 = fields.Str(allow_none=True)
+    self_rating_2 = fields.Str(allow_none=True)
+    self_rating_3 = fields.Str(allow_none=True)
+    self_rating_4 = fields.Str(allow_none=True)
+    self_rating_5 = fields.Str(allow_none=True)
+    self_rating_6 = fields.Str(allow_none=True)
+    self_rating_7 = fields.Str(allow_none=True)
 
     @post_load
     def make_user_profile(self, data, **kwargs):
@@ -24,16 +30,28 @@ class UserProfile:
                  validated: bool,
                  name: Optional[str] = None,
                  language: Optional[str] = None,
-                 self_rating: Optional[str] = None
+                 self_rating_1: Optional[str] = None,
+                 self_rating_2: Optional[str] = None,
+                 self_rating_3: Optional[str] = None,
+                 self_rating_4: Optional[str] = None,
+                 self_rating_5: Optional[str] = None,
+                 self_rating_6: Optional[str] = None,
+                 self_rating_7: Optional[str] = None,
                  ):
         self.language = language
         self.validated = validated
         self.name = name
-        self.self_rating = self_rating
+        self.self_rating_1 = self_rating_1
+        self.self_rating_2 = self_rating_2
+        self.self_rating_3 = self_rating_3
+        self.self_rating_4 = self_rating_4
+        self.self_rating_5 = self_rating_5
+        self.self_rating_6 = self_rating_6
+        self.self_rating_7 = self_rating_7
 
     def __str__(self):
         return (f"lang={self.language}, validated={self.validated}, "
-                f"name={self.name}, rating={self.self_rating}")
+                f"name={self.name}")
 
 
 class PromptStateSchema(Schema):
@@ -130,10 +148,18 @@ class DialogEventSchema(Schema):
     created_time = fields.DateTime(required=True)
     event_id = fields.UUID(required=True)
     event_type = EventTypeField(required=True)
+    user_profile = fields.Nested(UserProfileSchema, required=True)
 
 
 class DialogEvent(ABC):
-    def __init__(self, schema: Schema, event_type: DialogEventType, phone_number: str, **kwargs):
+    def __init__(
+            self,
+            schema: Schema,
+            event_type: DialogEventType,
+            phone_number: str,
+            user_profile: UserProfile,
+            **kwargs
+    ):
         self.schema = schema
         self.phone_number = phone_number
 
@@ -143,6 +169,7 @@ class DialogEvent(ABC):
         self.created_time = kwargs.get('created_time', datetime.datetime.now(datetime.timezone.utc))
         self.event_id = kwargs.get('event_id', uuid.uuid4())
         self.event_type = event_type
+        self.user_profile = user_profile
 
     @abstractmethod
     def apply_to(self, dialog_state: DialogState):

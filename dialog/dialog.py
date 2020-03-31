@@ -35,7 +35,12 @@ class StartDrill(types.Command):
         self.drill = drill
 
     def execute(self, dialog_state: types.DialogState) -> List[types.DialogEvent]:
-        return [DrillStarted(self.phone_number, self.drill)]
+        return [DrillStarted(
+            self.phone_number,
+            dialog_state.user_profile,
+            self.drill,
+            self.drill.first_prompt()
+        )]
 
 
 class TriggerReminder(types.Command):
@@ -57,7 +62,7 @@ class TriggerReminder(types.Command):
             # to ensure idempotence
             return []
 
-        return [ReminderTriggered(self.phone_number)]
+        return [ReminderTriggered(self.phone_number, dialog_state.user_profile)]
 
 
 class ProcessSMSMessage(types.Command):
@@ -69,8 +74,8 @@ class ProcessSMSMessage(types.Command):
     def execute(self, dialog_state: types.DialogState) -> List[types.DialogEvent]:
         if not dialog_state.user_profile.validated:
             if self.content_lower in VALID_OPT_IN_CODES:
-                return [UserValidated(self.phone_number)]
-            return [UserValidationFailed(self.phone_number)]
+                return [UserValidated(self.phone_number, dialog_state.user_profile)]
+            return [UserValidationFailed(self.phone_number, dialog_state.user_profile)]
 
         prompt = dialog_state.get_prompt()
         if prompt is None:
@@ -79,6 +84,7 @@ class ProcessSMSMessage(types.Command):
         if prompt.should_advance_with_answer(self.content_lower):
             events.append(CompletedPrompt(
                 phone_number=self.phone_number,
+                user_profile=dialog_state.user_profile,
                 prompt=prompt,
                 drill_instance_id=dialog_state.drill_instance_id,
                 response=self.content
@@ -88,6 +94,7 @@ class ProcessSMSMessage(types.Command):
             should_advance = dialog_state.current_prompt_state.failures >= prompt.max_failures
             events.append(FailedPrompt(
                 phone_number=self.phone_number,
+                user_profile=dialog_state.user_profile,
                 prompt=prompt,
                 response=self.content,
                 drill_instance_id=dialog_state.drill_instance_id,
@@ -99,18 +106,24 @@ class ProcessSMSMessage(types.Command):
             if next_prompt is not None:
                 events.append(AdvancedToNextPrompt(
                     phone_number=self.phone_number,
+                    user_profile=dialog_state.user_profile,
                     prompt=next_prompt,
                     drill_instance_id=dialog_state.drill_instance_id
                 ))
                 if dialog_state.is_next_prompt_last():
                     # assume the last prompt doesn't wait for an answer
-                    events.append(DrillCompleted(self.phone_number, dialog_state.current_drill))
+                    events.append(DrillCompleted(
+                        self.phone_number,
+                        dialog_state.user_profile,
+                        dialog_state.drill_instance_id,
+                    ))
         return events
 
 
 class DrillStartedSchema(types.DialogEventSchema):
     drill = fields.Nested(drills.DrillSchema, required=True)
     drill_instance_id = fields.UUID(required=True)
+    first_prompt = fields.Nested(drills.PromptSchema, required=True)
 
     @post_load
     def make_drill_started(self, data, **kwargs):
@@ -118,22 +131,30 @@ class DrillStartedSchema(types.DialogEventSchema):
 
 
 class DrillStarted(types.DialogEvent):
-    def __init__(self, phone_number: str, drill: drills.Drill, **kwargs):
+    def __init__(
+            self,
+            phone_number: str,
+            user_profile: types.UserProfile,
+            drill: drills.Drill,
+            first_prompt: drills.Prompt,
+            **kwargs
+    ):
         super().__init__(
             DrillStartedSchema(),
             types.DialogEventType.DRILL_STARTED,
             phone_number,
+            user_profile,
             **kwargs
         )
         self.drill = drill
-        self.prompt = drill.first_prompt()
+        self.first_prompt = first_prompt
         self.drill_instance_id = kwargs.get('drill_instance_id', uuid.uuid4())
 
     def apply_to(self, dialog_state: types.DialogState):
         dialog_state.current_drill = self.drill
         dialog_state.drill_instance_id = self.drill_instance_id
         dialog_state.current_prompt_state = types.PromptState(
-            self.prompt.slug,
+            self.first_prompt.slug,
             start_time=self.created_time
         )
 
@@ -145,11 +166,12 @@ class ReminderTriggeredSchema(types.DialogEventSchema):
 
 
 class ReminderTriggered(types.DialogEvent):
-    def __init__(self, phone_number: str, **kwargs):
+    def __init__(self, phone_number: str, user_profile: types.UserProfile, **kwargs):
         super().__init__(
             ReminderTriggeredSchema(),
             types.DialogEventType.REMINDER_TRIGGERED,
             phone_number,
+            user_profile,
             **kwargs
         )
 
@@ -164,11 +186,12 @@ class UserValidatedSchema(types.DialogEventSchema):
 
 
 class UserValidated(types.DialogEvent):
-    def __init__(self, phone_number: str, **kwargs):
+    def __init__(self, phone_number: str, user_profile: types.UserProfile, **kwargs):
         super().__init__(
             UserValidatedSchema(),
             types.DialogEventType.USER_VALIDATED,
             phone_number,
+            user_profile,
             **kwargs
         )
 
@@ -183,11 +206,12 @@ class UserValidationFailedSchema(types.DialogEventSchema):
 
 
 class UserValidationFailed(types.DialogEvent):
-    def __init__(self, phone_number: str, **kwargs):
+    def __init__(self, phone_number: str, user_profile: types.UserProfile, **kwargs):
         super().__init__(
             UserValidationFailedSchema(),
             types.DialogEventType.USER_VALIDATION_FAILED,
             phone_number,
+            user_profile,
             **kwargs
         )
 
@@ -209,6 +233,7 @@ class CompletedPrompt(types.DialogEvent):
     def __init__(
             self,
             phone_number: str,
+            user_profile: types.UserProfile,
             prompt: drills.Prompt,
             drill_instance_id: uuid.UUID,
             response: str,
@@ -218,6 +243,7 @@ class CompletedPrompt(types.DialogEvent):
             CompletedPromptSchema(),
             types.DialogEventType.COMPLETED_PROMPT,
             phone_number,
+            user_profile,
             **kwargs
         )
         self.prompt = prompt
@@ -245,6 +271,7 @@ class FailedPrompt(types.DialogEvent):
     def __init__(
             self,
             phone_number: str,
+            user_profile: types.UserProfile,
             prompt: drills.Prompt,
             drill_instance_id: uuid.UUID,
             response: str,
@@ -255,6 +282,7 @@ class FailedPrompt(types.DialogEvent):
             FailedPromptSchema(),
             types.DialogEventType.FAILED_PROMPT,
             phone_number,
+            user_profile,
             **kwargs
         )
         self.prompt = prompt
@@ -282,6 +310,7 @@ class AdvancedToNextPrompt(types.DialogEvent):
     def __init__(
             self,
             phone_number: str,
+            user_profile: types.UserProfile,
             prompt: drills.Prompt,
             drill_instance_id: uuid.UUID,
             **kwargs
@@ -290,6 +319,7 @@ class AdvancedToNextPrompt(types.DialogEvent):
             AdvancedToNextPromptSchema(),
             types.DialogEventType.ADVANCED_TO_NEXT_PROMPT,
             phone_number,
+            user_profile,
             **kwargs
         )
         self.prompt = prompt
@@ -311,11 +341,18 @@ class DrillCompletedSchema(types.DialogEventSchema):
 
 
 class DrillCompleted(types.DialogEvent):
-    def __init__(self, phone_number: str, drill_instance_id: uuid.UUID, **kwargs):
+    def __init__(
+            self,
+            phone_number: str,
+            user_profile: types.UserProfile,
+            drill_instance_id: uuid.UUID,
+            **kwargs
+    ):
         super().__init__(
             DrillCompletedSchema(),
             types.DialogEventType.DRILL_COMPLETED,
             phone_number,
+            user_profile,
             **kwargs
         )
         self.drill_instance_id = drill_instance_id
