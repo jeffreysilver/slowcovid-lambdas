@@ -4,7 +4,7 @@ from abc import abstractmethod, ABC
 import datetime
 from typing import Optional, List, Dict, Any
 
-from marshmallow import Schema, fields, post_load, EXCLUDE
+from marshmallow import Schema, fields, post_load
 from stopcovid.drills import drills
 
 

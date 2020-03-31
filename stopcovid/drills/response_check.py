@@ -21,7 +21,7 @@ def is_correct_response(user_response: str, correct_response: str) -> bool:
     clean_correct_response = tokenize(correct_response)
     allowed_error = (
         math.floor(len("".join([w for w in clean_correct_response if is_not_letter_answer(w)])) / 4)
-        or 1
+        or 1  # noqa: W503
     )
 
     # if first token is a single letter and matches, user is correct

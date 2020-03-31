@@ -21,11 +21,9 @@ def publish_outbound_sms_messages(outbound_sms_messages: List[OutboundSMS]):
     entries = [
         {
             "Id": outbound_sms.event_id,
-            "MessageBody": json.dumps(
-                {"To": outbound_sms.phone_number, "Body": outbound_sms.body,}
-            ),
+            "MessageBody": json.dumps({"To": outbound_sms.phone_number, "Body": outbound_sms.body}),
             "MessageAttributes": {
-                "idempotency_key": {"StringValue": outbound_sms.event_id, "DataType": "String",}
+                "idempotency_key": {"StringValue": outbound_sms.event_id, "DataType": "String"}
             },
         }
         for outbound_sms in outbound_sms_messages

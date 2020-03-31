@@ -58,7 +58,9 @@ class InMemoryRepository(DialogRepository):
         else:
             return DialogState(phone_number=phone_number, seq="0")
 
-    def persist_dialog_state(self, events: List[DialogEvent], dialog_state: DialogState):
+    def persist_dialog_state(  # noqa: C901
+        self, events: List[DialogEvent], dialog_state: DialogState
+    ):
         self.repo[dialog_state.phone_number] = DialogStateSchema().dumps(dialog_state)
 
         should_start_drill = False
