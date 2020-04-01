@@ -46,6 +46,7 @@ class Prompt:
 
 class DrillSchema(Schema):
     name = fields.String(required=True)
+    slug = fields.String(required=True)
     prompts = fields.List(fields.Nested(PromptSchema), required=True)
 
     @post_load
@@ -55,6 +56,7 @@ class DrillSchema(Schema):
 
 @dataclass
 class Drill:
+    slug: str
     name: str
     prompts: List[Prompt]
 
