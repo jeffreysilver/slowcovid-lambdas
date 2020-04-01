@@ -79,7 +79,7 @@ def get_messages_for_command(event: DialogEvent):  # noqa: C901
         pass
 
     else:
-        logging.info(f"Uknkown event type: {event.event_type}")
+        logging.info(f"Unknown event type: {event.event_type}")
 
     return []
 
