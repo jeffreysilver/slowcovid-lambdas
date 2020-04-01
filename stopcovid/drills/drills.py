@@ -78,6 +78,9 @@ class Drill:
                 return_next = True
         return None
 
+    def to_dict(self):
+        return DrillSchema().dump(self)
+
 
 DRILL_CACHE: Optional[Dict[str, Drill]] = None
 
