@@ -4,8 +4,6 @@ import json
 from typing import List
 from dataclasses import dataclass
 
-SQS = boto3.resource("sqs")
-
 
 @dataclass
 class OutboundSMS:
@@ -15,8 +13,10 @@ class OutboundSMS:
 
 
 def publish_outbound_sms_messages(outbound_sms_messages: List[OutboundSMS]):
+    sqs = boto3.resource("sqs")
+
     queue_name = f"outbound-sms-{os.getenv('STAGE')}"
-    queue = SQS.get_queue_by_name(QueueName=queue_name)
+    queue = sqs.get_queue_by_name(QueueName=queue_name)
 
     entries = [
         {
