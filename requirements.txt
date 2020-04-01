@@ -4,3 +4,5 @@ boto3
 Jinja2
 marshmallow
 twilio
+sqlalchemy-aurora-data-api
+SQLAlchemy

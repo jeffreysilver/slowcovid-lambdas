@@ -1,5 +1,6 @@
 import os
 import boto3
+from sqlalchemy import create_engine
 
 RDS = boto3.client("rds-data")
 
@@ -57,4 +58,14 @@ def update_message(twilio_message_id, status, from_phone):
         database="postgres",
         resourceArn=db_cluster_arn,
         sql=sql,
+    )
+
+
+def get_sqlalchemy_engine():
+    cluster_arn = os.environ.get("DB_CLUSTER_ARN")
+    secret_arn = os.environ.get("DB_SECRET_ARN")
+    return create_engine(
+        "postgresql+auroradataapi://:@/postgres",
+        echo=True,
+        connect_args=dict(aurora_cluster_arn=cluster_arn, secret_arn=secret_arn),
     )
