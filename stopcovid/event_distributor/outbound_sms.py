@@ -24,7 +24,7 @@ USER_VALIDATION_FAILED_COPY = (
 # We should template these for localization
 CORRECT_ANSWER_COPY = "Correct!"
 
-DELAY_BETWEEN_MESSAGE_IN_SECONDS = 3
+DELAY_BETWEEN_MESSAGES_IN_SECONDS = 3
 
 
 @dataclass
@@ -40,14 +40,14 @@ def get_localized_messages(
 ) -> List[OutboundSMS]:
     language = dialog_event.user_profile.language
 
-    initial_pause_seconds = DELAY_BETWEEN_MESSAGE_IN_SECONDS if with_initial_pause else 0
+    initial_pause_seconds = DELAY_BETWEEN_MESSAGES_IN_SECONDS if with_initial_pause else 0
 
     return [
         OutboundSMS(
             event_id=dialog_event.event_id,
             phone_number=dialog_event.phone_number,
             body=localize(message, language, **kwargs),
-            delay_seconds=initial_pause_seconds + (i * DELAY_BETWEEN_MESSAGE_IN_SECONDS),
+            delay_seconds=initial_pause_seconds + (i * DELAY_BETWEEN_MESSAGES_IN_SECONDS),
         )
         for i, message in enumerate(messages)
     ]
