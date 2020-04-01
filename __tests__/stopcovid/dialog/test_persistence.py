@@ -14,7 +14,10 @@ class TestPersistence(unittest.TestCase):
 
     def setUp(self):
         self.repo = DynamoDBDialogRepository(
-            region_name="us-west-2", endpoint_url="http://localhost:9000"
+            region_name="us-west-2",
+            endpoint_url="http://localhost:9000",
+            aws_access_key_id="fake-key",
+            aws_secret_access_key="fake-secret",
         )
         self.repo.ensure_tables_exist()
         self.phone_number = "123456789"
