@@ -66,9 +66,12 @@ class TestProcessCommand(unittest.TestCase):
         self.localization_patcher.stop()
 
     def _process_command(self, command):
+        persist_dialog_call_count = self.repo.persist_dialog_state.call_count
         process_command(command, str(self.next_seq), repo=self.repo)
         self.next_seq += 1
-        self.repo.persist_dialog_state.assert_called_once()
+        self.assertEqual(
+            persist_dialog_call_count + 1, len(self.repo.persist_dialog_state.call_args_list)
+        )
         return self.repo.persist_dialog_state.call_args[0][0]
 
     def _assert_event_types(self, events: List[DialogEvent], *args: DialogEventType):
@@ -112,6 +115,49 @@ class TestProcessCommand(unittest.TestCase):
         events = self._process_command(command)
         self._assert_event_types(events, DialogEventType.USER_VALIDATED)
         self.assertEqual(validation_payload, events[0].code_validation_payload)
+
+    def test_revalidate_demo_user(self):
+        validator = MagicMock()
+        validation_payload = CodeValidationPayload(valid=True, is_demo=True)
+        validator.validate_code = MagicMock(return_value=validation_payload)
+        self.assertFalse(self.dialog_state.user_profile.validated)
+        command = ProcessSMSMessage(self.phone_number, "hey", registration_validator=validator)
+
+        events = self._process_command(command)
+        self._assert_event_types(events, DialogEventType.USER_VALIDATED)
+
+        command = StartDrill(self.phone_number, self.drill)
+        self._process_command(command)
+
+        validation_payload = CodeValidationPayload(valid=True, account_info={"company": "WeWork"})
+        validator.validate_code = MagicMock(return_value=validation_payload)
+        command = ProcessSMSMessage(self.phone_number, "hey", registration_validator=validator)
+
+        events = self._process_command(command)
+        self._assert_event_types(events, DialogEventType.USER_VALIDATED)
+
+    def test_advance_demo_user(self):
+        validator = MagicMock()
+        validation_payload = CodeValidationPayload(valid=True, is_demo=True)
+        validator.validate_code = MagicMock(return_value=validation_payload)
+        self.assertFalse(self.dialog_state.user_profile.validated)
+        command = ProcessSMSMessage(self.phone_number, "hey", registration_validator=validator)
+
+        events = self._process_command(command)
+        self._assert_event_types(events, DialogEventType.USER_VALIDATED)
+
+        command = StartDrill(self.phone_number, self.drill)
+        self._process_command(command)
+
+        # the user's next message isn't a validation code - so we just keep going
+        validation_payload = CodeValidationPayload(valid=False)
+        validator.validate_code = MagicMock(return_value=validation_payload)
+        command = ProcessSMSMessage(self.phone_number, "hey", registration_validator=validator)
+
+        events = self._process_command(command)
+        self._assert_event_types(
+            events, DialogEventType.COMPLETED_PROMPT, DialogEventType.ADVANCED_TO_NEXT_PROMPT
+        )
 
     def test_first_message_does_not_validate_user(self):
         validator = MagicMock()

@@ -15,6 +15,8 @@ from .registration import (
     CodeValidationPayload,
 )
 
+DEFAULT_REGISTRATION_VALIDATOR = DefaultRegistrationValidator()
+
 
 def process_command(command: types.Command, seq: str, repo: DialogRepository = None):
     if repo is None:
@@ -88,11 +90,11 @@ class ProcessSMSMessage(types.Command):
         self.content = content.strip()
         self.content_lower = self.content.lower()
         if registration_validator is None:
-            registration_validator = DefaultRegistrationValidator()
+            registration_validator = DEFAULT_REGISTRATION_VALIDATOR
         self.registration_validator = registration_validator
 
     def execute(self, dialog_state: types.DialogState) -> List[types.DialogEvent]:
-        if not dialog_state.user_profile.validated:
+        if dialog_state.user_profile.is_demo or not dialog_state.user_profile.validated:
             validation_payload = self.registration_validator.validate_code(self.content_lower)
             if validation_payload.valid:
                 return [
@@ -102,7 +104,8 @@ class ProcessSMSMessage(types.Command):
                         code_validation_payload=validation_payload,
                     )
                 ]
-            return [UserValidationFailed(self.phone_number, dialog_state.user_profile)]
+            if not dialog_state.user_profile.validated:
+                return [UserValidationFailed(self.phone_number, dialog_state.user_profile)]
 
         prompt = dialog_state.get_prompt()
         if prompt is None:
