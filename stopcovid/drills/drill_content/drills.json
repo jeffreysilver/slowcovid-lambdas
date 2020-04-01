@@ -1,5 +1,6 @@
 {
   "01-basics": {
+    "slug": "01-basics",
     "name": "01. COVID19: Basics",
     "prompts": [
       {
@@ -83,6 +84,7 @@
     ]
   },
   "02-prevention": {
+    "slug": "02-prevention",
     "name": "02. COVID19: Prevention",
     "prompts": [
       {
@@ -149,6 +151,7 @@
     ]
   },
   "03-hand-washing-how": {
+    "slug": "03-hand-washing-how",
     "name": "03. How to wash your hands",
     "prompts": [
       {
@@ -216,6 +219,7 @@
     ]
   },
   "04-hand-sanitizer": {
+    "slug": "04-hand-sanitizer",
     "name": "04. Hand sanitizer best practices",
     "prompts": [
       {
@@ -282,6 +286,7 @@
     ]
   },
   "05-disinfect-phone": {
+    "slug": "05-disinfect-phone",
     "name": "05. How to disinfect your phone",
     "prompts": [
       {
@@ -349,6 +354,7 @@
     ]
   },
   "06-hand-washing-when": {
+    "slug": "06-hand-washing-when",
     "name": "06. When to wash your hands",
     "prompts": [
       {
@@ -421,6 +427,7 @@
     ]
   },
   "07-sanitizing-surfaces": {
+    "slug": "07-sanitizing-surfaces",
     "name": "07. Sanitizing high-contact surfaces",
     "prompts": [
       {

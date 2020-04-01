@@ -32,6 +32,7 @@ from stopcovid.dialog.types import (
 
 DRILL = Drill(
     name="test-drill",
+    slug="test-drill",
     prompts=[
         Prompt(slug="ignore-response-1", messages=["{{msg1}}"]),
         Prompt(
@@ -481,7 +482,7 @@ class TestDrillCompleted(unittest.TestCase):
 class TestSerialization(unittest.TestCase):
     def setUp(self) -> None:
         self.prompt = Prompt(slug="my-prompt", messages=["one", "two"])
-        self.drill = Drill(name="01 START", prompts=[self.prompt])
+        self.drill = Drill(name="01 START", slug="01-start", prompts=[self.prompt])
 
     def _make_base_assertions(self, original: DialogEvent, deserialized: DialogEvent):
         self.assertEqual(original.event_id, deserialized.event_id)

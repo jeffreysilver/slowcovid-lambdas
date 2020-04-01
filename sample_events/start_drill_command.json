@@ -6,7 +6,7 @@
                 "kinesisSchemaVersion": "1.0",
                 "partitionKey": "+14707190649",
                 "sequenceNumber": "49605580127467948727818985106596552159333226222465318946",
-                "data": "eyJ0eXBlIjogIlNUQVJUX0RSSUxMIiwgInBheWxvYWQiOiB7InBob25lX251bWJlciI6ICIrMTU1NTQzMzU1ODgiLCAiZHJpbGwiOiB7InByb21wdHMiOiBbeyJzbHVnIjogImhhbmQtd2FzaGluZyIsICJtZXNzYWdlcyI6IFsiYSkgaGVsbG8iLCAiYikgaG93IGFyZSB5b3U/Il0sICJyZXNwb25zZV91c2VyX3Byb2ZpbGVfa2V5IjogIisxNTU1NDMzNTU4OCIsICJjb3JyZWN0X3Jlc3BvbnNlIjogImEpIGhlbGxvIn1dLCAibmFtZSI6ICJIYW5kIHdhc2hpbmcifX19",
+                "data": "eyJ0eXBlIjogIlNUQVJUX0RSSUxMIiwgInBheWxvYWQiOiB7InBob25lX251bWJlciI6ICIrMTU1NTQzMzU1ODgiLCAiZHJpbGwiOiB7InByb21wdHMiOiBbeyJzbHVnIjogImhhbmQtd2FzaGluZyIsICJtZXNzYWdlcyI6IFsiYSkgaGVsbG8iLCAiYikgaG93IGFyZSB5b3U/Il0sICJyZXNwb25zZV91c2VyX3Byb2ZpbGVfa2V5IjogIisxNTU1NDMzNTU4OCIsICJjb3JyZWN0X3Jlc3BvbnNlIjogImEpIGhlbGxvIn1dLCAibmFtZSI6ICJIYW5kIHdhc2hpbmciLCAic2x1ZyI6ICJoYW5kLXdhc2hpbmcifX19",
                 "approximateArrivalTimestamp": 1585511919.595
             },
             "eventSource": "aws:kinesis",
