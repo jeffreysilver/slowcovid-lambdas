@@ -85,7 +85,7 @@ def get_messages_for_event(event: DialogEvent):  # noqa: C901
         return get_localized_messages(event, [DRILL_COMPLETED_COPY])
 
     else:
-        logging.info(f"Uknkown event type: {event.event_type}")
+        logging.info(f"Unknown event type: {event.event_type}")
 
     return []
 
