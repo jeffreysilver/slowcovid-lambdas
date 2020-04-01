@@ -53,10 +53,13 @@ class InMemoryRepository(DialogRepository):
     def fetch_dialog_state(self, phone_number: str) -> DialogState:
         if phone_number in self.repo:
             state = DialogStateSchema().loads(self.repo[phone_number])
-            state.user_profile.language = self.lang
             return state
         else:
-            return DialogState(phone_number=phone_number, seq="0")
+            return DialogState(
+                phone_number=phone_number,
+                seq="0",
+                user_profile=UserProfile(False, language=self.lang),
+            )
 
     def persist_dialog_state(  # noqa: C901
         self, events: List[DialogEvent], dialog_state: DialogState

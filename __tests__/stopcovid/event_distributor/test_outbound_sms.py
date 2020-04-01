@@ -231,7 +231,7 @@ class TestHandleCommand(unittest.TestCase):
             name="Test Drill",
             slug="test-drill",
             prompts=[
-                Prompt(slug="ignore-response-1", messages=["hello", "hola", "bonjour", "aloha"]),
+                Prompt(slug="ignore-response-1", messages=["hello", "hola", "bonjour", "aloha"])
             ],
         )
 
