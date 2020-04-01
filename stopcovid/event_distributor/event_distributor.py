@@ -1,3 +1,4 @@
+from stopcovid.event_distributor.initiation import trigger_initiation_if_needed
 from stopcovid.utils import dynamodb as dynamodb_utils
 
 
@@ -14,5 +15,6 @@ def distribute_dialog_events(event, context):
     ]
 
     distribute_outbound_sms_events(dialog_events)
+    trigger_initiation_if_needed(dialog_events)
 
     return {"statusCode": 200}
