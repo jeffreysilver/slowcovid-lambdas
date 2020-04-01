@@ -3,10 +3,8 @@ import uuid
 from typing import List
 
 from stopcovid.event_distributor.outbound_sms import (
-    get_outbound_sms_events,
+    get_outbound_sms_commands,
     USER_VALIDATION_FAILED_COPY,
-    USER_VALIDATED_COPY,
-    DRILL_COMPLETED_COPY,
     CORRECT_ANSWER_COPY,
 )
 from stopcovid.dialog.types import UserProfileSchema, DialogEvent
@@ -37,7 +35,7 @@ class TestHandleCommand(unittest.TestCase):
         dialog_events: List[DialogEvent] = [
             UserValidationFailed(self.phone, self.non_validated_user_profile)
         ]
-        outbound_messages = get_outbound_sms_events(dialog_events)
+        outbound_messages = get_outbound_sms_commands(dialog_events)
         self.assertEqual(len(outbound_messages), 1)
         message = outbound_messages[0]
         self.assertEqual(message.phone_number, self.phone)
@@ -49,23 +47,15 @@ class TestHandleCommand(unittest.TestCase):
         dialog_events: List[DialogEvent] = [
             UserValidated(self.phone, self.validated_user_profile, code_validation_payload)
         ]
-        outbound_messages = get_outbound_sms_events(dialog_events)
-        self.assertEqual(len(outbound_messages), 1)
-        message = outbound_messages[0]
-        self.assertEqual(message.phone_number, self.phone)
-        self.assertEqual(message.event_id, dialog_events[0].event_id)
-        self.assertEqual(message.body, USER_VALIDATED_COPY)
+        outbound_messages = get_outbound_sms_commands(dialog_events)
+        self.assertEqual(len(outbound_messages), 0)
 
     def test_drill_completed_event(self):
         dialog_events: List[DialogEvent] = [
             DrillCompleted(self.phone, self.validated_user_profile, drill_instance_id=uuid.uuid4())
         ]
-        outbound_messages = get_outbound_sms_events(dialog_events)
-        self.assertEqual(len(outbound_messages), 1)
-        message = outbound_messages[0]
-        self.assertEqual(message.phone_number, self.phone)
-        self.assertEqual(message.event_id, dialog_events[0].event_id)
-        self.assertEqual(message.body, DRILL_COMPLETED_COPY)
+        outbound_messages = get_outbound_sms_commands(dialog_events)
+        self.assertEqual(len(outbound_messages), 0)
 
     def test_drill_started_event(self):
         drill = Drill(
@@ -91,7 +81,7 @@ class TestHandleCommand(unittest.TestCase):
                 self.phone, self.validated_user_profile, drill=drill, first_prompt=drill.prompts[0]
             )
         ]
-        outbound_messages = get_outbound_sms_events(dialog_events)
+        outbound_messages = get_outbound_sms_commands(dialog_events)
         self.assertEqual(len(outbound_messages), 1)
         message = outbound_messages[0]
         self.assertEqual(message.phone_number, self.phone)
@@ -122,7 +112,7 @@ class TestHandleCommand(unittest.TestCase):
                 drill_instance_id=uuid.uuid4(),
             )
         ]
-        outbound_messages = get_outbound_sms_events(dialog_events)
+        outbound_messages = get_outbound_sms_commands(dialog_events)
         self.assertEqual(len(outbound_messages), 1)
         message = outbound_messages[0]
         self.assertEqual(message.phone_number, self.phone)
@@ -154,7 +144,7 @@ class TestHandleCommand(unittest.TestCase):
                 abandoned=True,
             )
         ]
-        outbound_messages = get_outbound_sms_events(dialog_events)
+        outbound_messages = get_outbound_sms_commands(dialog_events)
         self.assertEqual(len(outbound_messages), 1)
         message = outbound_messages[0]
         self.assertEqual(message.phone_number, self.phone)
@@ -186,7 +176,7 @@ class TestHandleCommand(unittest.TestCase):
                 abandoned=False,
             )
         ]
-        outbound_messages = get_outbound_sms_events(dialog_events)
+        outbound_messages = get_outbound_sms_commands(dialog_events)
         self.assertEqual(len(outbound_messages), 1)
         message = outbound_messages[0]
         self.assertEqual(message.phone_number, self.phone)
@@ -220,7 +210,7 @@ class TestHandleCommand(unittest.TestCase):
                 drill_instance_id=uuid.uuid4(),
             )
         ]
-        outbound_messages = get_outbound_sms_events(dialog_events)
+        outbound_messages = get_outbound_sms_commands(dialog_events)
         self.assertEqual(len(outbound_messages), 2)
         expected_messages = drill.prompts[1].messages
         for expected_message, outbound_message in zip(expected_messages, outbound_messages):

@@ -20,10 +20,8 @@ TRY_AGAIN = "{{incorrect_answer}}"
 USER_VALIDATION_FAILED_COPY = (
     "Invalid Code. Check with your administrator and make sure you have the right code."
 )
-USER_VALIDATED_COPY = "You're all set! You should get your first drill soon."
 
 # We should template these for localization
-DRILL_COMPLETED_COPY = "Drill complete!"
 CORRECT_ANSWER_COPY = "Correct!"
 
 
@@ -48,7 +46,7 @@ def get_localized_messages(
     ]
 
 
-def get_messages_for_event(event: DialogEvent):  # noqa: C901
+def get_messages_for_command(event: DialogEvent):  # noqa: C901
     if isinstance(event, AdvancedToNextPrompt):
         return get_localized_messages(event, event.prompt.messages)
 
@@ -61,9 +59,6 @@ def get_messages_for_event(event: DialogEvent):  # noqa: C901
                 ["{{corrected_answer}}"],
                 correct_answer=localize(event.prompt.correct_response, event.user_profile.language),
             )
-        else:
-            # What do we do here?
-            pass
 
     elif isinstance(event, CompletedPrompt):
         if event.prompt.correct_response is not None:
@@ -73,7 +68,8 @@ def get_messages_for_event(event: DialogEvent):  # noqa: C901
             pass
 
     elif isinstance(event, UserValidated):
-        return get_localized_messages(event, [USER_VALIDATED_COPY])
+        # User validated events will cause the scheduler to kick off a drill
+        pass
 
     elif isinstance(event, UserValidationFailed):
         return get_localized_messages(event, [USER_VALIDATION_FAILED_COPY])
@@ -82,7 +78,8 @@ def get_messages_for_event(event: DialogEvent):  # noqa: C901
         return get_localized_messages(event, event.first_prompt.messages)
 
     elif isinstance(event, DrillCompleted):
-        return get_localized_messages(event, [DRILL_COMPLETED_COPY])
+        # Drills include a drill completed message
+        pass
 
     else:
         logging.info(f"Uknkown event type: {event.event_type}")
@@ -90,11 +87,11 @@ def get_messages_for_event(event: DialogEvent):  # noqa: C901
     return []
 
 
-def get_outbound_sms_events(dialog_events: List[DialogEvent]) -> List[OutboundSMS]:
+def get_outbound_sms_commands(dialog_events: List[DialogEvent]) -> List[OutboundSMS]:
     outbound_messages = []
 
     for event in dialog_events:
-        outbound_messages.extend(get_messages_for_event(event))
+        outbound_messages.extend(get_messages_for_command(event))
 
     return outbound_messages
 
@@ -102,5 +99,5 @@ def get_outbound_sms_events(dialog_events: List[DialogEvent]) -> List[OutboundSM
 def distribute_outbound_sms_events(dialog_events: List[DialogEvent]):
     from stopcovid.clients import sqs
 
-    outbound_messages = get_outbound_sms_events(dialog_events)
+    outbound_messages = get_outbound_sms_commands(dialog_events)
     sqs.publish_outbound_sms_messages(outbound_messages)
