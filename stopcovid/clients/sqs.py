@@ -17,7 +17,7 @@ def publish_outbound_sms_messages(outbound_sms_messages: List[OutboundSMS]):
 
     entries = [
         {
-            "Id": str(outbound_sms.event_id),
+            "Id": f"{str(outbound_sms.event_id)}-{i}",
             "MessageBody": json.dumps({"To": outbound_sms.phone_number, "Body": outbound_sms.body}),
             "MessageAttributes": {
                 "delay_seconds": {
