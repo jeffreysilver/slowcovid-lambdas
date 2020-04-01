@@ -7,6 +7,9 @@ from stopcovid.event_distributor.outbound_sms import OutboundSMS
 
 
 def publish_outbound_sms_messages(outbound_sms_messages: List[OutboundSMS]):
+    if not outbound_sms_messages:
+        return
+
     sqs = boto3.resource("sqs")
 
     queue_name = f"outbound-sms-{os.getenv('STAGE')}.fifo"
@@ -22,10 +25,10 @@ def publish_outbound_sms_messages(outbound_sms_messages: List[OutboundSMS]):
                     "DataType": "Number",
                 }
             },
-            "MessageDeduplicationId": str(outbound_sms.event_id),
+            "MessageDeduplicationId": f"{str(outbound_sms.event_id)}-{i}",
             "MessageGroupId": outbound_sms.phone_number,
         }
-        for outbound_sms in outbound_sms_messages
+        for i, outbound_sms in enumerate(outbound_sms_messages)
     ]
 
     return queue.send_messages(Entries=entries)

@@ -50,13 +50,15 @@ functions:
           cors: true
 
   sendMessage:
-    handler: stopcovid/outbound_sms.send_message
+    handler: stopcovid/send_sms.send_sms
     events:
       - sqs:
           arn:
             Fn::GetAtt:
               - OutboundSMSFifoQueue
               - Arn
+          # punt on idempotently sending messages to Twilio
+          batchSize: 1
 
   handleCommand:
     handler: stopcovid/command_stream.handle_command
