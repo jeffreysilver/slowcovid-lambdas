@@ -1,19 +1,8 @@
 import json
 import uuid
-from dataclasses import dataclass
-import datetime
-from typing import Any, Dict, List, Optional
 
 from stopcovid.clients import rds
-from stopcovid.dialog.dialog import (
-    UserValidated,
-    DrillStarted,
-    DrillCompleted,
-    CompletedPrompt,
-    FailedPrompt,
-    AdvancedToNextPrompt,
-)
-from stopcovid.dialog.types import UserProfile, DialogEvent
+from stopcovid.dialog.types import UserProfile
 
 ALL_DRILL_SLUGS = [
     "01-basics",
