@@ -1,15 +1,11 @@
-name: Type checking and unit tests
+name: Type checking
 
 on: push
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    services:
-      dynamodb-local:
-        image: amazon/dynamodb-local
-        ports:
-          - 9000:8000
+  
     steps:
     - uses: actions/checkout@v2
     - uses: actions/setup-python@v1
@@ -17,14 +13,9 @@ jobs:
         python-version: '3.7'
         architecture: 'x64'
 
-    - name: Run a multi-line script
-      env:
-        AWS_ACCESS_KEY_ID: fakekey
-        AWS_SECRET_ACCESS_KEY: fakesecret
-        AWS_DEFAULT_REGION: us-east-1
+    - name: Run unit tests
       run: |
         npm install pyright
         python -m pip install --upgrade pip
         pip install -r requirements.txt
         node_modules/.bin/pyright
-        python -m unittest
