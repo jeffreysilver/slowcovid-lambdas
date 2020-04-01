@@ -63,9 +63,6 @@ def get_messages_for_command(event: DialogEvent):  # noqa: C901
     elif isinstance(event, CompletedPrompt):
         if event.prompt.correct_response is not None:
             return get_localized_messages(event, [CORRECT_ANSWER_COPY])
-        else:
-            # What do we do here?
-            pass
 
     elif isinstance(event, UserValidated):
         # User validated events will cause the scheduler to kick off a drill
