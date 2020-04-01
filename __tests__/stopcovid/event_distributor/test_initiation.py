@@ -1,10 +1,11 @@
 import os
 import unittest
+from typing import List
 from unittest.mock import patch, MagicMock
 
 from stopcovid.dialog.dialog import UserValidated, DrillStarted
 from stopcovid.dialog.registration import CodeValidationPayload
-from stopcovid.dialog.types import UserProfile
+from stopcovid.dialog.types import UserProfile, DialogEvent
 from stopcovid.drills.drills import Drill, Prompt
 from stopcovid.event_distributor.initiation import trigger_initiation_if_needed
 
@@ -40,7 +41,7 @@ class TestInitiation(unittest.TestCase):
             self.assertEqual("command-stream-test", kwargs["StreamName"])
 
     def test_publish_none(self):
-        events = [self.drill_started]
+        events: List[DialogEvent] = [self.drill_started]
         with patch("stopcovid.event_distributor.initiation.boto3.client") as boto3_mock:
             kinesis_mock = MagicMock
             boto3_mock.return_value = kinesis_mock
