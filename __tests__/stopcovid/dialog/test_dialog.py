@@ -1,10 +1,27 @@
 import datetime
 import unittest
+import uuid
+from typing import List
 
 from unittest.mock import MagicMock, patch, Mock
 
+from stopcovid.dialog.registration import CodeValidationPayload
 from stopcovid.drills.drills import Prompt, Drill
-from stopcovid.dialog.dialog import *
+from stopcovid.dialog.dialog import (
+    process_command,
+    ProcessSMSMessage,
+    StartDrill,
+    CompletedPrompt,
+    AdvancedToNextPrompt,
+    FailedPrompt,
+    DrillCompleted,
+    TriggerReminder,
+    event_from_dict,
+    DrillStarted,
+    ReminderTriggered,
+    UserValidationFailed,
+    UserValidated,
+)
 from stopcovid.dialog.types import (
     DialogEvent,
     UserProfile,
