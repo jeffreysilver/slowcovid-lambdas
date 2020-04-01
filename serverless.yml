@@ -2,6 +2,17 @@ service: slowcovid
 app: slowcovid
 org: jeffreysilver
 
+custom:
+  pythonRequirements:
+    slim: true
+    slimPatterns:
+      - __tests__/**
+      - .github/**
+      - dynamodb_local/**
+      - sample_events/**
+      - env/***
+      - node_modules/**
+
 provider:
   name: aws
   profile: eslworks

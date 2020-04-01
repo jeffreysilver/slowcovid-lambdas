@@ -46,3 +46,18 @@ class TestRegistration(unittest.TestCase):
         self.assertTrue(payload.valid)
         self.assertFalse(payload.is_demo)
         self.assertEqual({"employer_id": 165, "unit_id": 429}, payload.account_info)
+
+    def test_cache_results(self):
+        with requests_mock.Mocker() as m:
+            m.post(
+                self.url,
+                json={
+                    "valid": True,
+                    "is_demo": False,
+                    "account_info": {"employer_id": 165, "unit_id": 429},
+                },
+            )
+            validator = DefaultRegistrationValidator()
+            validator.validate_code("foo", url=self.url, key=self.key)
+            validator.validate_code("foo", url=self.url, key=self.key)
+            self.assertEqual(1, m.call_count)

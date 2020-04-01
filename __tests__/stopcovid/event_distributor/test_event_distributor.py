@@ -38,6 +38,4 @@ class TestHandleCommand(unittest.TestCase):
             entries[0]["MessageDeduplicationId"], "5e539115-07ac-4a53-809b-2280b2ce734b"
         )
 
-        self.assertEqual(
-            entries[0]["MessageGroupId"], "+14802865415",
-        )
+        self.assertEqual(entries[0]["MessageGroupId"], "+14802865415")
