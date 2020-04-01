@@ -61,6 +61,9 @@ def get_messages_for_event(event: DialogEvent):  # noqa: C901
                 ["{{corrected_answer}}"],
                 correct_answer=localize(event.prompt.correct_response, event.user_profile.language),
             )
+        else:
+            # What do we do here?
+            pass
 
     elif isinstance(event, CompletedPrompt):
         if event.prompt.correct_response is not None:
@@ -99,5 +102,4 @@ def get_outbound_sms_events(dialog_events: List[DialogEvent]) -> List[OutboundSM
 def distribute_outbound_sms_events(dialog_events: List[DialogEvent]):
     outbound_messages = get_outbound_sms_events(dialog_events)
     from stopcovid.clients import sqs
-
     sqs.publish_outbound_sms_messages(outbound_messages)
