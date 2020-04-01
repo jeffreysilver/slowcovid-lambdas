@@ -35,7 +35,7 @@ class TestHandleCommand(unittest.TestCase):
         self.assertIsInstance(message_body["Body"], str)
 
         self.assertEqual(
-            entries[0]["MessageDeduplicationId"], "5e539115-07ac-4a53-809b-2280b2ce734b"
+            entries[0]["MessageDeduplicationId"], "5e539115-07ac-4a53-809b-2280b2ce734b-0"
         )
 
         self.assertEqual(entries[0]["MessageGroupId"], "+14802865415")
