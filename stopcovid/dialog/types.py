@@ -2,6 +2,7 @@ import enum
 import uuid
 from abc import abstractmethod, ABC
 import datetime
+from dataclasses import dataclass, field
 from typing import Optional, List, Dict, Any
 
 from marshmallow import Schema, fields, post_load
@@ -27,34 +28,20 @@ class UserProfileSchema(Schema):
         return UserProfile(**data)
 
 
+@dataclass
 class UserProfile:
-    def __init__(
-        self,
-        validated: bool,
-        is_demo: bool = False,
-        name: Optional[str] = None,
-        language: Optional[str] = None,
-        account_info: Optional[Dict[str, Any]] = None,
-        self_rating_1: Optional[str] = None,
-        self_rating_2: Optional[str] = None,
-        self_rating_3: Optional[str] = None,
-        self_rating_4: Optional[str] = None,
-        self_rating_5: Optional[str] = None,
-        self_rating_6: Optional[str] = None,
-        self_rating_7: Optional[str] = None,
-    ):
-        self.language = language
-        self.is_demo = is_demo
-        self.validated = validated
-        self.name = name
-        self.account_info = account_info
-        self.self_rating_1 = self_rating_1
-        self.self_rating_2 = self_rating_2
-        self.self_rating_3 = self_rating_3
-        self.self_rating_4 = self_rating_4
-        self.self_rating_5 = self_rating_5
-        self.self_rating_6 = self_rating_6
-        self.self_rating_7 = self_rating_7
+    validated: bool
+    is_demo: bool = False
+    name: Optional[str] = None
+    language: Optional[str] = None
+    account_info: Optional[Dict[str, Any]] = None
+    self_rating_1: Optional[str] = None
+    self_rating_2: Optional[str] = None
+    self_rating_3: Optional[str] = None
+    self_rating_4: Optional[str] = None
+    self_rating_5: Optional[str] = None
+    self_rating_6: Optional[str] = None
+    self_rating_7: Optional[str] = None
 
     def __str__(self):
         return f"lang={self.language}, validated={self.validated}, " f"name={self.name}"
@@ -71,18 +58,13 @@ class PromptStateSchema(Schema):
         return PromptState(**data)
 
 
+@dataclass
 class PromptState:
-    def __init__(
-        self,
-        slug: str,
-        start_time: datetime.datetime,
-        reminder_triggered: bool = False,
-        failures: int = 0,
-    ):
-        self.slug = slug
-        self.failures = failures
-        self.start_time = start_time
-        self.reminder_triggered = reminder_triggered
+    slug: str
+    start_time: datetime.datetime
+    last_response_time: Optional[datetime.datetime] = None
+    reminder_triggered: bool = False
+    failures: int = 0
 
 
 class DialogStateSchema(Schema):
@@ -101,22 +83,14 @@ class DialogStateSchema(Schema):
         return DialogState(**data)
 
 
+@dataclass
 class DialogState:
-    def __init__(
-        self,
-        phone_number: str,
-        seq: str,
-        user_profile: Optional[UserProfile] = None,
-        current_drill: Optional[drills.Drill] = None,
-        drill_instance_id: Optional[uuid.UUID] = None,
-        current_prompt_state: Optional[PromptState] = None,
-    ):
-        self.phone_number = phone_number
-        self.seq = seq
-        self.user_profile = user_profile or UserProfile(validated=False)
-        self.current_drill = current_drill
-        self.drill_instance_id = drill_instance_id
-        self.current_prompt_state = current_prompt_state
+    phone_number: str
+    seq: str
+    user_profile: UserProfile = field(default_factory=lambda: UserProfile(validated=False))
+    current_drill: Optional[drills.Drill] = None
+    drill_instance_id: Optional[uuid.UUID] = None
+    current_prompt_state: Optional[PromptState] = None
 
     def get_prompt(self) -> Optional[drills.Prompt]:
         if self.current_drill is None or self.current_prompt_state is None:

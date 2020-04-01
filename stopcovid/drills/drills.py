@@ -1,10 +1,12 @@
 import json
 import os
 from collections import defaultdict
+from dataclasses import dataclass
 from typing import Optional, List, Dict
 
 from marshmallow import Schema, fields, post_load
 
+from .localize import localize
 from .response_check import is_correct_response
 
 __location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
@@ -25,24 +27,18 @@ class PromptSchema(Schema):
         return Prompt(**data)
 
 
+@dataclass
 class Prompt:
-    def __init__(
-        self,
-        slug: str,
-        messages: List[str],
-        response_user_profile_key: Optional[str] = None,
-        correct_response: Optional[str] = None,
-    ):
-        self.slug = slug
-        self.messages = messages
-        self.response_user_profile_key = response_user_profile_key
-        self.correct_response = correct_response
-        self.max_failures = 1
+    slug: str
+    messages: List[str]
+    response_user_profile_key: Optional[str] = None
+    correct_response: Optional[str] = None
+    max_failures: int = 1
 
-    def should_advance_with_answer(self, answer: str) -> bool:
+    def should_advance_with_answer(self, answer: str, lang: Optional[str]) -> bool:
         if self.correct_response is None:
             return True
-        return is_correct_response(answer, self.correct_response)
+        return is_correct_response(answer, localize(self.correct_response, lang))
 
     def stores_answer(self) -> bool:
         return self.response_user_profile_key is not None
@@ -57,10 +53,10 @@ class DrillSchema(Schema):
         return Drill(**data)
 
 
+@dataclass
 class Drill:
-    def __init__(self, name: str, prompts: List[Prompt]):
-        self.name = name
-        self.prompts = prompts
+    name: str
+    prompts: List[Prompt]
 
     def first_prompt(self) -> Prompt:
         return self.prompts[0]

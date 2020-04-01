@@ -1,5 +1,6 @@
 import logging
 import uuid
+from copy import deepcopy
 from typing import List, Dict, Any, Optional
 
 from marshmallow import fields, post_load
@@ -30,7 +31,10 @@ def process_command(command: types.Command, seq: str, repo: DialogRepository = N
 
     events = command.execute(dialog_state)
     for event in events:
-        event.apply_to(dialog_state)
+        # deep copying the event so that modifications to the dialog_state don't have
+        # side effects on the events that we're persisting. The user_profile on the event
+        # should reflect the user_profile *before* the event is applied to the dialog_state.
+        deepcopy(event).apply_to(dialog_state)
     dialog_state.seq = seq
     repo.persist_dialog_state(events, dialog_state)
 
@@ -43,7 +47,10 @@ class StartDrill(types.Command):
     def execute(self, dialog_state: types.DialogState) -> List[types.DialogEvent]:
         return [
             DrillStarted(
-                self.phone_number, dialog_state.user_profile, self.drill, self.drill.first_prompt()
+                phone_number=self.phone_number,
+                user_profile=dialog_state.user_profile,
+                drill=self.drill,
+                first_prompt=self.drill.first_prompt(),
             )
         ]
 
@@ -101,7 +108,9 @@ class ProcessSMSMessage(types.Command):
         if prompt is None:
             return []
         events = []
-        if prompt.should_advance_with_answer(self.content_lower):
+        if prompt.should_advance_with_answer(
+            self.content_lower, dialog_state.user_profile.language
+        ):
             events.append(
                 CompletedPrompt(
                     phone_number=self.phone_number,
@@ -332,6 +341,7 @@ class FailedPrompt(types.DialogEvent):
         if self.abandoned:
             dialog_state.current_prompt_state = None
         else:
+            dialog_state.current_prompt_state.last_response_time = self.created_time
             dialog_state.current_prompt_state.failures += 1
 
 
@@ -397,6 +407,7 @@ class DrillCompleted(types.DialogEvent):
     def apply_to(self, dialog_state: types.DialogState):
         dialog_state.current_drill = None
         dialog_state.drill_instance_id = None
+        dialog_state.current_prompt_state = None
 
 
 def event_from_dict(event_dict: Dict[str, Any]) -> types.DialogEvent:
