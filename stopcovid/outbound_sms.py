@@ -1,7 +1,7 @@
 from serverless_sdk import tag_event  # type: ignore
 import json
 
-from stopcovid.clients import twilio, kinesis, dynamo
+from stopcovid.clients import twilio, kinesis
 
 
 def send_message(event, context):
@@ -10,13 +10,7 @@ def send_message(event, context):
     twilio_responses = []
     for record in event["Records"]:
         message = json.loads(record["body"])
-        idempotency_key = record["messageAttributes"]["idempotency_key"]["stringValue"]
-
-        if dynamo.outbound_sms_idempotency_key_exists(idempotency_key):
-            tag_event("send_message", "idempotency_key exists", message)
-            continue
         response = twilio.send_message(message["To"], message["Body"])
-        dynamo.persist_outbound_sms_idempotency_key(idempotency_key)
         twilio_responses.append(response)
 
     if twilio_responses:
