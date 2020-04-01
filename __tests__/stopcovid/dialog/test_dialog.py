@@ -84,6 +84,14 @@ class TestDialogFlow(unittest.TestCase):
         process_command(command, "0", repo=self.repo)
         self.assertFalse(command.execute.called)
 
+    def test_advance_sequence_numbers(self):
+        validator = MagicMock()
+        validation_payload = CodeValidationPayload(valid=True, account_info={"company": "WeWork"})
+        validator.validate_code = MagicMock(return_value=validation_payload)
+        command = ProcessSMSMessage(self.phone_number, "hey", registration_validator=validator)
+        process_command(command, "1", repo=self.repo)
+        self.assertEqual("1", self.dialog_state.seq)
+
     def test_first_message_validates_user(self):
         validator = MagicMock()
         validation_payload = CodeValidationPayload(valid=True, account_info={"company": "WeWork"})
