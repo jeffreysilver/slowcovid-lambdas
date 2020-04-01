@@ -6,10 +6,17 @@ def _get_outbound_sms_messages(dialog_events):
     # TODO: respond with the correct content
     return [
         sqs.OutboundSMS(
-            event_id=event["event_id"], phone_number=event["phone_number"], body=event["event_type"]
+            event_id=event["event_id"],
+            phone_number=event["phone_number"],
+            body=event["event_type"],
         )
         for event in dialog_events
     ]
+
+
+def _distribute_outbound_sms(dialog_events):
+    if dialog_events:
+        sqs.publish_outbound_sms_messages(_get_outbound_sms_messages(dialog_events))
 
 
 def distribute_dialog_events(event, context):
@@ -19,7 +26,10 @@ def distribute_dialog_events(event, context):
         if record["dynamodb"].get("NewImage")
     ]
 
-    if dialog_events:
-        sqs.publish_outbound_sms_messages(_get_outbound_sms_messages(dialog_events))
+    _distribute_outbound_sms(dialog_events)
+
+    # distribute analytics events
+
+    # distribute scheduler events
 
     return {"statusCode": 200}

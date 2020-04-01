@@ -44,7 +44,7 @@ functions:
       - sqs:
           arn:
             Fn::GetAtt:
-              - OutboundSMSQueue
+              - OutboundSMSFifoQueue
               - Arn
 
   handleCommand:
@@ -165,38 +165,24 @@ resources:
             SecondsUntilAutoPause: 300
 
     # OUTBOUND SMS
-    OutboundSMSQueue:
+    OutboundSMSFifoQueue:
       Type: AWS::SQS::Queue
       Properties:
-        QueueName: outbound-sms-${self:provider.stage}
+        QueueName: outbound-sms-${self:provider.stage}.fifo
+        FifoQueue: true
         RedrivePolicy:
           deadLetterTargetArn:
             Fn::GetAtt:
-            - OutboundSMSDeadLetterQueue
+            - OutboundSMSDeadLetterFifoQueue
             - Arn
           maxReceiveCount: 3
 
-    OutboundSMSDeadLetterQueue:
+    OutboundSMSDeadLetterFifoQueue:
       Type: AWS::SQS::Queue
       Properties:
-        QueueName: outbound-sms-dlq-${self:provider.stage}
-    
-    OutboundSMSIdempotency:
-      Type: AWS::DynamoDB::Table
-      Properties:
-        TableName: outbound-sms-idempotency-${self:provider.stage}
-        KeySchema:
-          - AttributeName: idempotency_key
-            KeyType: HASH
-        BillingMode: PAY_PER_REQUEST
-        AttributeDefinitions:
-          - AttributeName: idempotency_key
-            AttributeType: S
-        TimeToLiveSpecification:
-            Enabled: true
-            AttributeName: expire_at
-
-
+        FifoQueue: true
+        QueueName: outbound-sms-dlq-${self:provider.stage}.fifo
+  
     # DIALOG STATE AND EVENTS (DynamoDB)
     DialogState:
       Type: AWS::DynamoDB::Table

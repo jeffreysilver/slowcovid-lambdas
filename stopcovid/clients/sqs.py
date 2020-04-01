@@ -15,16 +15,15 @@ class OutboundSMS:
 def publish_outbound_sms_messages(outbound_sms_messages: List[OutboundSMS]):
     sqs = boto3.resource("sqs")
 
-    queue_name = f"outbound-sms-{os.getenv('STAGE')}"
+    queue_name = f"outbound-sms-{os.getenv('STAGE')}.fifo"
     queue = sqs.get_queue_by_name(QueueName=queue_name)
 
     entries = [
         {
             "Id": outbound_sms.event_id,
             "MessageBody": json.dumps({"To": outbound_sms.phone_number, "Body": outbound_sms.body}),
-            "MessageAttributes": {
-                "idempotency_key": {"StringValue": outbound_sms.event_id, "DataType": "String"}
-            },
+            "MessageDeduplicationId": outbound_sms.event_id,
+            "MessageGroupId": outbound_sms.phone_number,
         }
         for outbound_sms in outbound_sms_messages
     ]
