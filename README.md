@@ -9,7 +9,7 @@ We deploy from the command line using the serverless framework. Once you are a m
 
 ## CI
 We use [black](https://black.readthedocs.io/en/stable/) for code formatting and flake8 for linting, with a custom rule setting maximum line length to 100.
-- `black . -l 100`
+- `black --config black.toml .`
 - `flake8`
 
 
