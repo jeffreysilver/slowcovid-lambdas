@@ -244,6 +244,9 @@ class UserValidated(types.DialogEvent):
         self.code_validation_payload = code_validation_payload
 
     def apply_to(self, dialog_state: types.DialogState):
+        dialog_state.drill_instance_id = None
+        dialog_state.current_prompt_state = None
+        dialog_state.current_drill = None
         dialog_state.user_profile.validated = True
         dialog_state.user_profile.is_demo = self.code_validation_payload.is_demo
         dialog_state.user_profile.account_info = self.code_validation_payload.account_info
