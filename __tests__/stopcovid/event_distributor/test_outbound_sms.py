@@ -1,5 +1,6 @@
 import unittest
 import uuid
+from typing import List
 
 from stopcovid.event_distributor.outbound_sms import (
     get_outbound_sms_events,
@@ -8,7 +9,7 @@ from stopcovid.event_distributor.outbound_sms import (
     DRILL_COMPLETED_COPY,
     CORRECT_ANSWER_COPY,
 )
-from stopcovid.dialog.types import UserProfileSchema
+from stopcovid.dialog.types import UserProfileSchema, DialogEvent
 from stopcovid.dialog.dialog import (
     UserValidationFailed,
     UserValidated,
@@ -33,7 +34,9 @@ class TestHandleCommand(unittest.TestCase):
         )
 
     def test_user_validation_failed_event(self):
-        dialog_events = [UserValidationFailed(self.phone, self.non_validated_user_profile)]
+        dialog_events: List[DialogEvent] = [
+            UserValidationFailed(self.phone, self.non_validated_user_profile)
+        ]
         outbound_messages = get_outbound_sms_events(dialog_events)
         self.assertEqual(len(outbound_messages), 1)
         message = outbound_messages[0]
@@ -43,7 +46,7 @@ class TestHandleCommand(unittest.TestCase):
 
     def test_user_validated_event(self):
         code_validation_payload = CodeValidationPayload(valid=True, is_demo=False)
-        dialog_events = [
+        dialog_events: List[DialogEvent] = [
             UserValidated(self.phone, self.validated_user_profile, code_validation_payload)
         ]
         outbound_messages = get_outbound_sms_events(dialog_events)
@@ -54,7 +57,7 @@ class TestHandleCommand(unittest.TestCase):
         self.assertEqual(message.body, USER_VALIDATED_COPY)
 
     def test_drill_completed_event(self):
-        dialog_events = [
+        dialog_events: List[DialogEvent] = [
             DrillCompleted(self.phone, self.validated_user_profile, drill_instance_id=uuid.uuid4())
         ]
         outbound_messages = get_outbound_sms_events(dialog_events)
@@ -83,7 +86,7 @@ class TestHandleCommand(unittest.TestCase):
             ],
         )
 
-        dialog_events = [
+        dialog_events: List[DialogEvent] = [
             DrillStarted(
                 self.phone, self.validated_user_profile, drill=drill, first_prompt=drill.prompts[0]
             )
@@ -110,7 +113,7 @@ class TestHandleCommand(unittest.TestCase):
             ],
         )
 
-        dialog_events = [
+        dialog_events: List[DialogEvent] = [
             CompletedPrompt(
                 self.phone,
                 self.validated_user_profile,
@@ -141,7 +144,7 @@ class TestHandleCommand(unittest.TestCase):
             ],
         )
 
-        dialog_events = [
+        dialog_events: List[DialogEvent] = [
             FailedPrompt(
                 self.phone,
                 self.validated_user_profile,
@@ -173,7 +176,7 @@ class TestHandleCommand(unittest.TestCase):
             ],
         )
 
-        dialog_events = [
+        dialog_events: List[DialogEvent] = [
             FailedPrompt(
                 self.phone,
                 self.validated_user_profile,
@@ -209,7 +212,7 @@ class TestHandleCommand(unittest.TestCase):
             ],
         )
 
-        dialog_events = [
+        dialog_events: List[DialogEvent] = [
             AdvancedToNextPrompt(
                 self.phone,
                 self.validated_user_profile,

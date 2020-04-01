@@ -3,7 +3,15 @@ from typing import List
 from dataclasses import dataclass
 
 from stopcovid.dialog.types import DialogEvent
-from stopcovid.dialog.types import DialogEventType
+from stopcovid.dialog.dialog import (
+    DrillCompleted,
+    AdvancedToNextPrompt,
+    FailedPrompt,
+    CompletedPrompt,
+    UserValidated,
+    DrillStarted,
+    UserValidationFailed,
+)
 from stopcovid.drills.localize import localize
 
 
@@ -26,7 +34,9 @@ class OutboundSMS:
     body: str
 
 
-def get_localized_messages(dialog_event: DialogEvent, messages: List[str], **kwargs):
+def get_localized_messages(
+    dialog_event: DialogEvent, messages: List[str], **kwargs
+) -> List[OutboundSMS]:
     language = dialog_event.user_profile.language
     return [
         OutboundSMS(
@@ -38,48 +48,51 @@ def get_localized_messages(dialog_event: DialogEvent, messages: List[str], **kwa
     ]
 
 
-def get_messages_for_event(event: DialogEvent):
-    if event.event_type == DialogEventType.ADVANCED_TO_NEXT_PROMPT:
+def get_messages_for_event(event: DialogEvent):  # noqa: C901
+    if isinstance(event, AdvancedToNextPrompt):
         return get_localized_messages(event, event.prompt.messages)
 
-    elif event.event_type == DialogEventType.FAILED_PROMPT:
+    elif isinstance(event, FailedPrompt):
         if not event.abandoned:
             return get_localized_messages(event, [TRY_AGAIN])
-        else:
+        elif event.prompt.correct_response:
             return get_localized_messages(
                 event,
                 ["{{corrected_answer}}"],
                 correct_answer=localize(event.prompt.correct_response, event.user_profile.language),
             )
 
-    elif event.event_type == DialogEventType.COMPLETED_PROMPT:
+    elif isinstance(event, CompletedPrompt):
         if event.prompt.correct_response is not None:
             return get_localized_messages(event, [CORRECT_ANSWER_COPY])
         else:
             # What do we do here?
             pass
 
-    elif event.event_type == DialogEventType.USER_VALIDATED:
+    elif isinstance(event, UserValidated):
         return get_localized_messages(event, [USER_VALIDATED_COPY])
 
-    elif event.event_type == DialogEventType.USER_VALIDATION_FAILED:
+    elif isinstance(event, UserValidationFailed):
         return get_localized_messages(event, [USER_VALIDATION_FAILED_COPY])
 
-    elif event.event_type == DialogEventType.DRILL_STARTED:
+    elif isinstance(event, DrillStarted):
         return get_localized_messages(event, event.first_prompt.messages)
 
-    elif event.event_type == DialogEventType.DRILL_COMPLETED:
+    elif isinstance(event, DrillCompleted):
         return get_localized_messages(event, [DRILL_COMPLETED_COPY])
 
     else:
         logging.info(f"Uknkown event type: {event.event_type}")
 
+    return []
 
-def get_outbound_sms_events(dialog_events: List[DialogEvent]):
+
+def get_outbound_sms_events(dialog_events: List[DialogEvent]) -> List[OutboundSMS]:
     outbound_messages = []
 
     for event in dialog_events:
         outbound_messages.extend(get_messages_for_event(event))
+
     return outbound_messages
 
 
