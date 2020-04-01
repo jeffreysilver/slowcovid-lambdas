@@ -2,14 +2,8 @@ import boto3
 import os
 import json
 from typing import List
-from dataclasses import dataclass
 
-
-@dataclass
-class OutboundSMS:
-    event_id: str
-    phone_number: str
-    body: str
+from stopcovid.event_distributor.outbound_sms import OutboundSMS
 
 
 def publish_outbound_sms_messages(outbound_sms_messages: List[OutboundSMS]):
@@ -20,9 +14,9 @@ def publish_outbound_sms_messages(outbound_sms_messages: List[OutboundSMS]):
 
     entries = [
         {
-            "Id": outbound_sms.event_id,
+            "Id": str(outbound_sms.event_id),
             "MessageBody": json.dumps({"To": outbound_sms.phone_number, "Body": outbound_sms.body}),
-            "MessageDeduplicationId": outbound_sms.event_id,
+            "MessageDeduplicationId": str(outbound_sms.event_id),
             "MessageGroupId": outbound_sms.phone_number,
         }
         for outbound_sms in outbound_sms_messages

@@ -2,7 +2,7 @@ import unittest
 from unittest.mock import patch, MagicMock
 import json
 
-from stopcovid.event_distributor import distribute_dialog_events
+from stopcovid.event_distributor.event_distributor import distribute_dialog_events
 
 
 class TestHandleCommand(unittest.TestCase):
