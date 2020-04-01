@@ -6,9 +6,7 @@ def _get_outbound_sms_messages(dialog_events):
     # TODO: respond with the correct content
     return [
         sqs.OutboundSMS(
-            event_id=event["event_id"],
-            phone_number=event["phone_number"],
-            body=event["event_type"],
+            event_id=event["event_id"], phone_number=event["phone_number"], body=event["event_type"]
         )
         for event in dialog_events
     ]
