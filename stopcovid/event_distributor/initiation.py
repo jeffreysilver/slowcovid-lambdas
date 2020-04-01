@@ -9,7 +9,7 @@ from stopcovid.dialog.dialog import UserValidated
 from stopcovid.dialog.types import DialogEvent
 from stopcovid.drills.drills import get_drill
 
-FIRST_DRILL = get_drill("01-basics")
+FIRST_DRILL = get_drill("01-basics").to_dict()
 
 
 def trigger_initiation_if_needed(dialog_events: List[DialogEvent]):
