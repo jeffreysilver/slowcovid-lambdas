@@ -39,3 +39,7 @@ class TestHandleCommand(unittest.TestCase):
         )
 
         self.assertEqual(entries[0]["MessageGroupId"], "+14802865415")
+        self.assertEqual(
+            entries[0]["MessageAttributes"]["delay_seconds"],
+            {"StringValue": "0", "DataType": "Number"},
+        )
