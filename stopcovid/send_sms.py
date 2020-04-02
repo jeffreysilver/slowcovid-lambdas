@@ -4,7 +4,7 @@ from serverless_sdk import tag_event  # type: ignore
 
 from stopcovid.clients import twilio, kinesis
 
-DELAY_SECONDS_BETWEEN_MESSAGES = 2
+DELAY_SECONDS_BETWEEN_MESSAGES = 3
 
 
 def _send_batch(record):

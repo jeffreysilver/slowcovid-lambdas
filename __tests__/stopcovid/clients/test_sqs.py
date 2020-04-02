@@ -59,7 +59,6 @@ class TestPublishOutboundSMS(unittest.TestCase):
             ),
         )
         self.assertEqual(entry["MessageGroupId"], phone_number)
-        self.assertEqual(entry["Id"], phone_number[1:])
 
     def test_sends_messages_to_one_phone_number_for_multiple_events(self, boto_mock):
         send_messages_mock = self._get_mocked_send_messages(boto_mock)
@@ -94,7 +93,6 @@ class TestPublishOutboundSMS(unittest.TestCase):
             ),
         )
         self.assertEqual(entry["MessageGroupId"], phone_number)
-        self.assertEqual(entry["Id"], phone_number[1:])
 
     def test_sends_messages_to_multiple_phone_numbers_for_one_event_each(self, boto_mock):
         send_messages_mock = self._get_mocked_send_messages(boto_mock)
@@ -124,7 +122,6 @@ class TestPublishOutboundSMS(unittest.TestCase):
             ),
         )
         self.assertEqual(entry["MessageGroupId"], phone_number_1)
-        self.assertEqual(entry["Id"], phone_number_1[1:])
 
         # second entry
         entry = entries[1]
@@ -134,7 +131,6 @@ class TestPublishOutboundSMS(unittest.TestCase):
             json.dumps({"to": phone_number_2, "messages": [{"body": "message 3"}]}),
         )
         self.assertEqual(entry["MessageGroupId"], phone_number_2)
-        self.assertEqual(entry["Id"], phone_number_2[1:])
 
     def test_sends_messages_to_multiple_phone_numbers_for_multiple_events_each(self, boto_mock):
         send_messages_mock = self._get_mocked_send_messages(boto_mock)

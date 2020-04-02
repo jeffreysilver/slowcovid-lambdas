@@ -1,7 +1,7 @@
 import boto3
 import os
 import json
-import re
+import uuid
 
 from typing import List
 from collections import defaultdict
@@ -28,7 +28,7 @@ def publish_outbound_sms_messages(outbound_sms_messages: List[OutboundSMS]):
 
     entries = [
         {
-            "Id": re.sub("[^0-9]", "", phone),
+            "Id": str(uuid.uuid4()),
             "MessageBody": json.dumps(
                 {"to": phone, "messages": [{"body": message.body} for message in messages]}
             ),
