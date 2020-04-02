@@ -76,81 +76,81 @@ class PhoneNumber:
     id: UUID = field(default_factory=uuid.uuid4)
 
 
-def create_or_update_user(
-    phone_number: str, profile: UserProfile, engine_factory=db.get_sqlalchemy_engine
-) -> UUID:
-    engine = engine_factory()
+class UserRepository:
+    def __init__(self, engine_factory=db.get_sqlalchemy_engine):
+        self.engine_factory = engine_factory
+        self.engine = engine_factory()
 
-    with engine.connect() as connection:
-        with connection.begin():
-            result = connection.execute(
-                select([phone_numbers]).where(phone_numbers.c.phone_number == phone_number)
-            )
-            row = result.fetchone()
-            if row is None:
-                user_record = User(account_info=profile.account_info)
-                phone_number_record = PhoneNumber(
-                    phone_number=phone_number, user_id=user_record.user_id
+    def create_or_update_user(self, phone_number: str, profile: UserProfile) -> UUID:
+
+        with self.engine.connect() as connection:
+            with connection.begin():
+                result = connection.execute(
+                    select([phone_numbers]).where(phone_numbers.c.phone_number == phone_number)
                 )
-                connection.execute(
-                    users.insert().values(
-                        user_id=str(user_record.user_id), account_info=user_record.account_info
+                row = result.fetchone()
+                if row is None:
+                    user_record = User(account_info=profile.account_info)
+                    phone_number_record = PhoneNumber(
+                        phone_number=phone_number, user_id=user_record.user_id
                     )
-                )
-                connection.execute(
-                    phone_numbers.insert().values(
-                        id=str(phone_number_record.id),
-                        user_id=str(phone_number_record.user_id),
-                        is_primary=phone_number_record.is_primary,
-                        phone_number=phone_number_record.phone_number,
-                    )
-                )
-                for i, slug in enumerate(ALL_DRILL_SLUGS):
                     connection.execute(
-                        drill_statuses.insert().values(
-                            id=str(uuid.uuid4()),
-                            user_id=str(user_record.user_id),
-                            drill_slug=slug,
-                            place_in_sequence=i,
+                        users.insert().values(
+                            user_id=str(user_record.user_id), account_info=user_record.account_info
                         )
                     )
-                return user_record.user_id
-            phone_number_record = PhoneNumber(**row)
-            connection.execute(
-                users.update()
-                .where(users.c.user_id == func.uuid(str(phone_number_record.user_id)))
-                .values(account_info=profile.account_info)
-            )
-            return phone_number_record.user_id
+                    connection.execute(
+                        phone_numbers.insert().values(
+                            id=str(phone_number_record.id),
+                            user_id=str(phone_number_record.user_id),
+                            is_primary=phone_number_record.is_primary,
+                            phone_number=phone_number_record.phone_number,
+                        )
+                    )
+                    for i, slug in enumerate(ALL_DRILL_SLUGS):
+                        connection.execute(
+                            drill_statuses.insert().values(
+                                id=str(uuid.uuid4()),
+                                user_id=str(user_record.user_id),
+                                drill_slug=slug,
+                                place_in_sequence=i,
+                            )
+                        )
+                    return user_record.user_id
+                phone_number_record = PhoneNumber(**row)
+                connection.execute(
+                    users.update()
+                    .where(users.c.user_id == func.uuid(str(phone_number_record.user_id)))
+                    .values(account_info=profile.account_info)
+                )
+                return phone_number_record.user_id
 
+    def get_user(self, user_id: UUID) -> Optional[User]:
+        result = self.engine.execute(
+            select([users]).where(users.c.user_id == func.uuid(str(user_id)))
+        )
+        row = result.fetchone()
+        if row is None:
+            return None
+        return User(
+            user_id=uuid.UUID(row["user_id"]),
+            account_info=row["account_info"],
+            last_interacted_time=row["last_interacted_time"],
+        )
 
-def get_user(user_id: UUID, engine_factory=db.get_sqlalchemy_engine):
-    engine = engine_factory()
-    result = engine.execute(select([users]).where(users.c.user_id == func.uuid(str(user_id))))
-    row = result.fetchone()
-    if row is None:
-        return None
-    return User(
-        user_id=uuid.UUID(row["user_id"]),
-        account_info=row["account_info"],
-        last_interacted_time=row["last_interacted_time"],
-    )
-
-
-def drop_and_recreate_tables_testing_only(engine_factory):
-    if engine_factory == db.get_sqlalchemy_engine:
-        raise ValueError("This function should not be called against databases in RDS")
-    engine = engine_factory()
-    try:
-        drill_statuses.drop(bind=engine)
-    except DatabaseError:
-        pass
-    try:
-        phone_numbers.drop(bind=engine)
-    except DatabaseError:
-        pass
-    try:
-        users.drop(bind=engine)
-    except DatabaseError:
-        pass
-    metadata.create_all(bind=engine)
+    def drop_and_recreate_tables_testing_only(self):
+        if self.engine_factory == db.get_sqlalchemy_engine:
+            raise ValueError("This function should not be called against databases in RDS")
+        try:
+            drill_statuses.drop(bind=self.engine)
+        except DatabaseError:
+            pass
+        try:
+            phone_numbers.drop(bind=self.engine)
+        except DatabaseError:
+            pass
+        try:
+            users.drop(bind=self.engine)
+        except DatabaseError:
+            pass
+        metadata.create_all(bind=self.engine)

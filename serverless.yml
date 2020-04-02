@@ -8,7 +8,7 @@ custom:
     slimPatterns:
       - __tests__/**
       - .github/**
-      - dynamodb_local/**
+      - db_local/**
       - sample_events/**
       - env/***
       - node_modules/**
