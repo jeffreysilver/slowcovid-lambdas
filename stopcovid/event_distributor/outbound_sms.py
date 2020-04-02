@@ -14,7 +14,6 @@ from stopcovid.dialog.dialog import (
 )
 from stopcovid.drills.localize import localize
 
-
 TRY_AGAIN = "{{incorrect_answer}}"
 
 USER_VALIDATION_FAILED_COPY = (
@@ -40,13 +39,21 @@ def get_localized_messages(
 ) -> List[OutboundSMS]:
     language = dialog_event.user_profile.language
 
+    additional_args = {
+        "company": dialog_event.user_profile.account_info.get("company", "your company"),
+        "name": "",
+    }
+    if dialog_event.user_profile.name is not None:
+        additional_args["name"] = dialog_event.user_profile.name.split(" ")[0]
+    additional_args.update(kwargs)
+
     initial_pause_seconds = DELAY_BETWEEN_MESSAGES_IN_SECONDS if with_initial_pause else 0
 
     return [
         OutboundSMS(
             event_id=dialog_event.event_id,
             phone_number=dialog_event.phone_number,
-            body=localize(message, language, **kwargs),
+            body=localize(message, language, **additional_args),
             delay_seconds=initial_pause_seconds + (i * DELAY_BETWEEN_MESSAGES_IN_SECONDS),
         )
         for i, message in enumerate(messages)
