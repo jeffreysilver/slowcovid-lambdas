@@ -34,7 +34,7 @@ class UserProfile:
     is_demo: bool = False
     name: Optional[str] = None
     language: Optional[str] = None
-    account_info: Optional[Dict[str, Any]] = None
+    account_info: Dict[str, Any] = field(default_factory=lambda: {})
     self_rating_1: Optional[str] = None
     self_rating_2: Optional[str] = None
     self_rating_3: Optional[str] = None
