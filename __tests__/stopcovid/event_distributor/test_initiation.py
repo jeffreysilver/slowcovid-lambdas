@@ -6,7 +6,7 @@ from unittest.mock import patch, MagicMock
 from stopcovid.dialog.dialog import UserValidated, DrillStarted
 from stopcovid.dialog.registration import CodeValidationPayload
 from stopcovid.dialog.types import UserProfile, DialogEvent
-from stopcovid.drills.drills import Drill, Prompt
+from stopcovid.drills.drills import Drill, Prompt, PromptMessage
 from stopcovid.event_distributor.initiation import trigger_initiation_if_needed
 
 
@@ -23,7 +23,7 @@ class TestInitiation(unittest.TestCase):
             self.phone_number,
             user_profile=self.user_profile,
             drill=Drill(slug="test", name="test", prompts=[]),
-            first_prompt=Prompt(slug="test", messages=["foo"]),
+            first_prompt=Prompt(slug="test", messages=[PromptMessage(text="foo")]),
         )
         os.environ["STAGE"] = "test"
 

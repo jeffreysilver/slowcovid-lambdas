@@ -64,7 +64,9 @@ class TestHandleCommand(unittest.TestCase):
         self.assertEqual(len(command.drill.prompts), 1)
         prompt = command.drill.prompts[0]
         self.assertEqual(prompt.slug, "hand-washing")
-        self.assertEqual(prompt.messages, ["a) hello", "b) how are you?"])
+        self.assertEqual(
+            [message.text for message in prompt.messages], ["a) hello", "b) how are you?"]
+        )
         self.assertEqual(prompt.correct_response, "a) hello")
 
         self.assertEqual(args[1], mock_kinesis_event["Records"][0]["kinesis"]["sequenceNumber"])

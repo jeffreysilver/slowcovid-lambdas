@@ -5,7 +5,7 @@ import uuid
 from unittest.mock import MagicMock, patch, Mock
 
 from stopcovid.dialog.registration import CodeValidationPayload
-from stopcovid.drills.drills import Prompt, Drill
+from stopcovid.drills.drills import Prompt, Drill, PromptMessage
 from stopcovid.dialog.dialog import (
     process_command,
     ProcessSMSMessage,
@@ -34,13 +34,23 @@ DRILL = Drill(
     name="test-drill",
     slug="test-drill",
     prompts=[
-        Prompt(slug="ignore-response-1", messages=["{{msg1}}"]),
+        Prompt(slug="ignore-response-1", messages=[PromptMessage(text="{{msg1}}")]),
         Prompt(
-            slug="store-response", messages=["{{msg1}}"], response_user_profile_key="self_rating_1"
+            slug="store-response",
+            messages=[PromptMessage(text="{{msg1}}")],
+            response_user_profile_key="self_rating_1",
         ),
-        Prompt(slug="graded-response-1", messages=["{{msg1}}"], correct_response="{{response1}}"),
-        Prompt(slug="graded-response-2", messages=["{{msg1}}"], correct_response="{{response1}}"),
-        Prompt(slug="ignore-response-2", messages=["{{msg1}}"]),
+        Prompt(
+            slug="graded-response-1",
+            messages=[PromptMessage(text="{{msg1}}")],
+            correct_response="{{response1}}",
+        ),
+        Prompt(
+            slug="graded-response-2",
+            messages=[PromptMessage(text="{{msg1}}")],
+            correct_response="{{response1}}",
+        ),
+        Prompt(slug="ignore-response-2", messages=[PromptMessage(text="{{msg1}}")]),
     ],
 )
 
@@ -545,7 +555,13 @@ class TestDrillCompleted(unittest.TestCase):
 
 class TestSerialization(unittest.TestCase):
     def setUp(self) -> None:
-        self.prompt = Prompt(slug="my-prompt", messages=["one", "two"])
+        self.prompt = Prompt(
+            slug="my-prompt",
+            messages=[
+                PromptMessage(text="one", media_url="giphy.com/puppies/1"),
+                PromptMessage(text="two"),
+            ],
+        )
         self.drill = Drill(name="01 START", slug="01-start", prompts=[self.prompt])
 
     def _make_base_assertions(self, original: DialogEvent, deserialized: DialogEvent):
@@ -595,6 +611,11 @@ class TestSerialization(unittest.TestCase):
         deserialized: FailedPrompt = event_from_dict(serialized)  # type: ignore
         self._make_base_assertions(original, deserialized)
         self.assertEqual(original.prompt.slug, deserialized.prompt.slug)
+        for original_message, deserialized_message in zip(
+            original.prompt.messages, deserialized.prompt.messages
+        ):
+            self.assertEqual(original_message.text, deserialized_message.text)
+            self.assertEqual(original_message.media_url, deserialized_message.media_url)
         self.assertEqual(original.response, deserialized.response)
         self.assertEqual(original.abandoned, deserialized.abandoned)
         self.assertEqual(original.drill_instance_id, deserialized.drill_instance_id)

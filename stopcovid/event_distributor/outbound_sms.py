@@ -31,7 +31,7 @@ class OutboundSMS:
 
 
 def get_localized_messages(
-    dialog_event: DialogEvent, messages: List[str], with_initial_pause: bool = False, **kwargs
+    dialog_event: DialogEvent, messages: List[str], **kwargs
 ) -> List[OutboundSMS]:
     language = dialog_event.user_profile.language
 
@@ -55,7 +55,7 @@ def get_localized_messages(
 
 def get_messages_for_command(event: DialogEvent):  # noqa: C901
     if isinstance(event, AdvancedToNextPrompt):
-        return get_localized_messages(event, event.prompt.messages, with_initial_pause=True)
+        return get_localized_messages(event, [message.text for message in event.prompt.messages])
 
     elif isinstance(event, FailedPrompt):
         if not event.abandoned:
@@ -79,7 +79,9 @@ def get_messages_for_command(event: DialogEvent):  # noqa: C901
         return get_localized_messages(event, [USER_VALIDATION_FAILED_COPY])
 
     elif isinstance(event, DrillStarted):
-        return get_localized_messages(event, event.first_prompt.messages)
+        return get_localized_messages(
+            event, [message.text for message in event.first_prompt.messages]
+        )
 
     elif isinstance(event, DrillCompleted):
         # Drills include a drill completed message

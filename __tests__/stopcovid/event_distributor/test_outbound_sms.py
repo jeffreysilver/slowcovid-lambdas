@@ -18,7 +18,7 @@ from stopcovid.dialog.dialog import (
     FailedPrompt,
     AdvancedToNextPrompt,
 )
-from stopcovid.drills.drills import Drill, Prompt
+from stopcovid.drills.drills import Drill, Prompt, PromptMessage
 from stopcovid.dialog.registration import CodeValidationPayload
 
 
@@ -30,6 +30,24 @@ class TestHandleCommand(unittest.TestCase):
         )
         self.non_validated_user_profile = UserProfileSchema().load(
             {"validated": False, "language": "en", "name": "Luigi", "is_demo": False}
+        )
+
+        self.drill = Drill(
+            name="Test Drill",
+            slug="test-drill",
+            prompts=[
+                Prompt(slug="ignore-response-1", messages=[PromptMessage(text="Hello")]),
+                Prompt(
+                    slug="graded-response-1",
+                    messages=[PromptMessage(text="Intro!"), PromptMessage(text="Question 1")],
+                    correct_response="a",
+                ),
+                Prompt(
+                    slug="graded-response-2",
+                    messages=[PromptMessage(text="Question 2")],
+                    correct_response="b",
+                ),
+            ],
         )
 
     def test_user_validation_failed_event(self):
@@ -59,27 +77,12 @@ class TestHandleCommand(unittest.TestCase):
         self.assertEqual(len(outbound_messages), 0)
 
     def test_drill_started_event(self):
-        drill = Drill(
-            name="Test Drill",
-            slug="test-drill",
-            prompts=[
-                Prompt(slug="ignore-response-1", messages=["Hello"]),
-                Prompt(
-                    slug="graded-response-1",
-                    messages=["Question 1"],
-                    correct_response="{{response1}}",
-                ),
-                Prompt(
-                    slug="graded-response-2",
-                    messages=["Question 2"],
-                    correct_response="{{response1}}",
-                ),
-            ],
-        )
-
         dialog_events: List[DialogEvent] = [
             DrillStarted(
-                self.phone, self.validated_user_profile, drill=drill, first_prompt=drill.prompts[0]
+                self.phone,
+                self.validated_user_profile,
+                drill=self.drill,
+                first_prompt=self.drill.prompts[0],
             )
         ]
         outbound_messages = get_outbound_sms_commands(dialog_events)
@@ -90,25 +93,11 @@ class TestHandleCommand(unittest.TestCase):
         self.assertEqual(message.body, "Hello")
 
     def test_completed_prompt_event(self):
-        drill = Drill(
-            name="Test Drill",
-            slug="test-drill",
-            prompts=[
-                Prompt(slug="ignore-response-1", messages=["Hello"]),
-                Prompt(slug="graded-response-1", messages=["Question 1"], correct_response="a"),
-                Prompt(
-                    slug="graded-response-2",
-                    messages=["Question 2"],
-                    correct_response="{{response1}}",
-                ),
-            ],
-        )
-
         dialog_events: List[DialogEvent] = [
             CompletedPrompt(
                 self.phone,
                 self.validated_user_profile,
-                prompt=drill.prompts[1],
+                prompt=self.drill.prompts[1],
                 response="a",
                 drill_instance_id=uuid.uuid4(),
             )
@@ -121,25 +110,12 @@ class TestHandleCommand(unittest.TestCase):
         self.assertEqual(message.body, localize(CORRECT_ANSWER_COPY, "en", emojis=""))
 
     def test_abandoned_failed_prompt_event(self):
-        drill = Drill(
-            name="Test Drill",
-            slug="test-drill",
-            prompts=[
-                Prompt(slug="ignore-response-1", messages=["Hello"]),
-                Prompt(slug="graded-response-1", messages=["Question 1"], correct_response="a"),
-                Prompt(
-                    slug="graded-response-2",
-                    messages=["Question 2"],
-                    correct_response="{{response1}}",
-                ),
-            ],
-        )
 
         dialog_events: List[DialogEvent] = [
             FailedPrompt(
                 self.phone,
                 self.validated_user_profile,
-                prompt=drill.prompts[1],
+                prompt=self.drill.prompts[1],
                 response="a",
                 drill_instance_id=uuid.uuid4(),
                 abandoned=True,
@@ -153,25 +129,11 @@ class TestHandleCommand(unittest.TestCase):
         self.assertEqual(message.body, "🤖 The correct answer is *a*.\n\nLets move to the next one.")
 
     def test_non_abandoned_failed_prompt_event(self):
-        drill = Drill(
-            name="Test Drill",
-            slug="test-drill",
-            prompts=[
-                Prompt(slug="ignore-response-1", messages=["Hello"]),
-                Prompt(slug="graded-response-1", messages=["Question 1"], correct_response="a"),
-                Prompt(
-                    slug="graded-response-2",
-                    messages=["Question 2"],
-                    correct_response="{{response1}}",
-                ),
-            ],
-        )
-
         dialog_events: List[DialogEvent] = [
             FailedPrompt(
                 self.phone,
                 self.validated_user_profile,
-                prompt=drill.prompts[1],
+                prompt=self.drill.prompts[1],
                 response="a",
                 drill_instance_id=uuid.uuid4(),
                 abandoned=False,
@@ -185,35 +147,17 @@ class TestHandleCommand(unittest.TestCase):
         self.assertEqual(message.body, "🤖 Sorry, not correct. 🤔\n\n*Try again one more time!*")
 
     def test_advance_to_next_prompt_event(self):
-        drill = Drill(
-            name="Test Drill",
-            slug="test-drill",
-            prompts=[
-                Prompt(slug="ignore-response-1", messages=["Hello"]),
-                Prompt(
-                    slug="graded-response-1",
-                    messages=["Let's start question 1", "Here is question 1"],
-                    correct_response="a",
-                ),
-                Prompt(
-                    slug="graded-response-2",
-                    messages=["Question 2"],
-                    correct_response="{{response1}}",
-                ),
-            ],
-        )
-
         dialog_events: List[DialogEvent] = [
             AdvancedToNextPrompt(
                 self.phone,
                 self.validated_user_profile,
-                prompt=drill.prompts[1],
+                prompt=self.drill.prompts[1],
                 drill_instance_id=uuid.uuid4(),
             )
         ]
         outbound_messages = get_outbound_sms_commands(dialog_events)
         self.assertEqual(len(outbound_messages), 2)
-        expected_messages = drill.prompts[1].messages
+        expected_messages = [message.text for message in self.drill.prompts[1].messages]
 
         self.assertEqual(outbound_messages[0].phone_number, self.phone)
         self.assertEqual(outbound_messages[0].event_id, dialog_events[0].event_id)
