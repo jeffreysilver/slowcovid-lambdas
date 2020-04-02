@@ -16,9 +16,24 @@ def drill_from_dict(obj):
     return DrillSchema().load(obj)
 
 
+class PromptMessageSchema(Schema):
+    text = fields.String(required=True)
+    media_url = fields.String(allow_none=True)
+
+    @post_load
+    def make_prompt_message(self, data, **kwargs):
+        return PromptMessage(**data)
+
+
+@dataclass
+class PromptMessage:
+    text: str
+    media_url: Optional[str] = None
+
+
 class PromptSchema(Schema):
     slug = fields.String(required=True)
-    messages = fields.List(fields.String(), required=True)
+    messages = fields.List(fields.Nested(PromptMessageSchema), required=True)
     response_user_profile_key = fields.String(allow_none=True)
     correct_response = fields.String(allow_none=True)
 
@@ -30,7 +45,7 @@ class PromptSchema(Schema):
 @dataclass
 class Prompt:
     slug: str
-    messages: List[str]
+    messages: List[PromptMessage]
     response_user_profile_key: Optional[str] = None
     correct_response: Optional[str] = None
     max_failures: int = 1
