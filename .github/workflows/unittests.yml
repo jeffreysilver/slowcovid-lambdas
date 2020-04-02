@@ -14,7 +14,7 @@ jobs:
         image: postgres:10
         ports:
           - 6543:5432
-        environment:
+        env:
           POSTGRES_PASSWORD: testing
         options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
     steps:
