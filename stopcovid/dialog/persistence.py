@@ -1,12 +1,11 @@
 import os
 import uuid
 from abc import ABC, abstractmethod
-from typing import List
 
 import boto3
 
 from stopcovid.utils import dynamodb as dynamodb_utils
-from .types import DialogState, DialogEvent, DialogStateSchema
+from .types import DialogState, DialogStateSchema, DialogEventBatch
 
 
 class DialogRepository(ABC):
@@ -15,7 +14,7 @@ class DialogRepository(ABC):
         pass
 
     @abstractmethod
-    def persist_dialog_state(self, events: List[DialogEvent], dialog_state: DialogState):
+    def persist_dialog_state(self, event_batch: DialogEventBatch, dialog_state: DialogState):
         pass
 
 
@@ -26,9 +25,11 @@ class DynamoDBDialogRepository(DialogRepository):
             table_name_suffix = os.getenv("DIALOG_TABLE_NAME_SUFFIX", "")
         self.table_name_suffix = table_name_suffix
 
-    def events_table_name(self):
+    def event_batch_table_name(self):
         return (
-            f"dialog-events-{self.table_name_suffix}" if self.table_name_suffix else "dialog-events"
+            f"dialog-event-batches-{self.table_name_suffix}"
+            if self.table_name_suffix
+            else "dialog-event-batches"
         )
 
     def state_table_name(self):
@@ -47,51 +48,48 @@ class DynamoDBDialogRepository(DialogRepository):
         dialog_dict = dynamodb_utils.deserialize(response["Item"])
         return DialogStateSchema().load(dialog_dict)
 
-    def fetch_dialog_event(self, phone_number: str, event_id: uuid.UUID) -> DialogEvent:
+    def fetch_dialog_event_batch(self, phone_number: str, batch_id: uuid.UUID) -> DialogEventBatch:
         response = self.dynamodb.get_item(
-            TableName=self.events_table_name(),
-            Key={"phone_number": {"S": phone_number}, "event_id": {"S": str(event_id)}},
+            TableName=self.event_batch_table_name(),
+            Key={"phone_number": {"S": phone_number}, "batch_id": {"S": str(batch_id)}},
             ConsistentRead=True,
         )
         dialog_dict = dynamodb_utils.deserialize(response["Item"])
-        from .dialog import event_from_dict
+        from .dialog import batch_from_dict
 
-        return event_from_dict(dialog_dict)
+        return batch_from_dict(dialog_dict)
 
-    def persist_dialog_state(self, events: List[DialogEvent], dialog_state: DialogState):
-        write_items = []
-        for event in events:
-            write_items.append(
-                {
-                    "Put": {
-                        "TableName": self.events_table_name(),
-                        "Item": dynamodb_utils.serialize(event.to_dict()),
-                    }
+    def persist_dialog_state(self, event_batch: DialogEventBatch, dialog_state: DialogState):
+        write_items = [
+            {
+                "Put": {
+                    "TableName": self.event_batch_table_name(),
+                    "Item": dynamodb_utils.serialize(event_batch.to_dict()),
                 }
-            )
-        write_items.append(
+            },
             {
                 "Put": {
                     "TableName": self.state_table_name(),
                     "Item": dynamodb_utils.serialize(dialog_state.to_dict()),
                 }
-            }
-        )
+            },
+        ]
         self.dynamodb.transact_write_items(TransactItems=write_items)
 
     def ensure_tables_exist(self):
         # useful for testing but will likely be duplicated elsewhere
 
+        # noinspection PyBroadException
         try:
             self.dynamodb.create_table(
-                TableName=self.events_table_name(),
+                TableName=self.event_batch_table_name(),
                 KeySchema=[
                     {"AttributeName": "phone_number", "KeyType": "HASH"},
-                    {"AttributeName": "event_id", "KeyType": "RANGE"},
+                    {"AttributeName": "batch_id", "KeyType": "RANGE"},
                 ],
                 AttributeDefinitions=[
                     {"AttributeName": "phone_number", "AttributeType": "S"},
-                    {"AttributeName": "event_id", "AttributeType": "S"},
+                    {"AttributeName": "batch_id", "AttributeType": "S"},
                     {"AttributeName": "created_time", "AttributeType": "S"},
                 ],
                 LocalSecondaryIndexes=[

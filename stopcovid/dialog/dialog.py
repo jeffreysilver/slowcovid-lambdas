@@ -3,7 +3,7 @@ import uuid
 from copy import deepcopy
 from typing import List, Dict, Any, Optional
 
-from marshmallow import fields, post_load
+from marshmallow import fields, post_load, utils
 
 from stopcovid.drills import drills
 from .persistence import DialogRepository, DynamoDBDialogRepository
@@ -14,6 +14,7 @@ from .registration import (
     CodeValidationPayloadSchema,
     CodeValidationPayload,
 )
+from .types import DialogEventBatch
 
 DEFAULT_REGISTRATION_VALIDATOR = DefaultRegistrationValidator()
 
@@ -38,7 +39,9 @@ def process_command(command: types.Command, seq: str, repo: DialogRepository = N
         # should reflect the user_profile *before* the event is applied to the dialog_state.
         deepcopy(event).apply_to(dialog_state)
     dialog_state.seq = seq
-    repo.persist_dialog_state(events, dialog_state)
+    repo.persist_dialog_state(
+        DialogEventBatch(events=events, phone_number=command.phone_number), dialog_state
+    )
 
 
 class StartDrill(types.Command):
@@ -435,3 +438,12 @@ def event_from_dict(event_dict: Dict[str, Any]) -> types.DialogEvent:
     if event_type == types.DialogEventType.REMINDER_TRIGGERED:
         return ReminderTriggeredSchema().load(event_dict)
     raise ValueError(f"unknown event type {event_type}")
+
+
+def batch_from_dict(batch_dict: Dict[str, Any]) -> types.DialogEventBatch:
+    return DialogEventBatch(
+        batch_id=uuid.UUID(batch_dict["batch_id"]),
+        phone_number=batch_dict["phone_number"],
+        created_time=utils.from_iso_datetime(batch_dict["created_time"]),
+        events=[event_from_dict(event_dict) for event_dict in batch_dict["events"]],
+    )
