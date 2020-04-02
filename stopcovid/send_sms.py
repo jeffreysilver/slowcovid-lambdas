@@ -4,21 +4,32 @@ from serverless_sdk import tag_event  # type: ignore
 
 from stopcovid.clients import twilio, kinesis
 
-
-def _get_delay_seconds(record):
-    return int(record["messageAttributes"].get("delay_seconds", {}).get("stringValue", "0"))
+DELAY_SECONDS_BETWEEN_MESSAGES = 2
 
 
-def _send_message_to_twilio(record):
-    message = json.loads(record["body"])
-    delay_seconds = _get_delay_seconds(record)
-    if delay_seconds:
-        sleep(delay_seconds)
-    return twilio.send_message(message["To"], message["Body"])
+def _send_batch(record):
+    payload = json.loads(record["body"])
+    phone = payload["to"]
+    messages = payload["messages"]
+
+    twilio_responses = []
+    for i, message in enumerate(messages):
+        res = twilio.send_message(phone, message["body"])
+        twilio_responses.append(res)
+
+        if 0 < i < len(messages):
+            sleep(DELAY_SECONDS_BETWEEN_MESSAGES)
+
+    return twilio_responses
 
 
 def send_sms(event, context):
-    twilio_responses = [_send_message_to_twilio(record) for record in event["Records"]]
+    batches = [_send_batch(record) for record in event["Records"]]
+
+    twilio_responses = []
+    for batch in batches:
+        for response in batch:
+            twilio_responses.append(response)
     try:
         kinesis.publish_log_outbound_sms(twilio_responses)
     except Exception:

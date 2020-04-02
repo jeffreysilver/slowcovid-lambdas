@@ -6,6 +6,11 @@
       "language": "en"
     },
     {
+      "label": "hands",
+      "translation": "hands",
+      "language": "en"
+    },
+    {
       "label": "almost_done",
       "translation": "Almost done! ⬇️",
       "language": "en"
@@ -361,6 +366,11 @@
       "language": "en"
     },
     {
+      "label": "hands",
+      "translation": "los manos",
+      "language": "es"
+    },
+    {
       "label": "audio_instructions_full_wa",
       "translation": "\n🎤 *Usa WhatsApp para enviar tu mensaje de voz!* 🎤\n\n1. Mantén presionado el micrófono ↘\n2. Comienza a hablar.\n3. Cuando termines, retira tu dedo del micrófono.\n4. Tu voz se enviará automáticamente.",
       "language": "es"
@@ -624,6 +634,11 @@
       "label": "transfer8",
       "translation": "*Tarea*: ¡Aquí tienes un consejo! Escriba las nuevas palabras que aprendió en un trozo de papel, pegalo en tu casillero y ¡Practica cada vez que cambies tu uniforme!",
       "language": "es"
+    },
+    {
+      "label": "hands",
+      "translation": "Les mains",
+      "language": "fr"
     },
     {
       "label": "audio_instructions_full_wa",
@@ -1049,6 +1064,21 @@
       "label": "match_correct_answer",
       "translation": "🤖 ¡Correcto! {{emojis}}",
       "language": "es"
+    },
+    {
+      "label": "never",
+      "translation": "never",
+      "language": "en"
+    },
+    {
+      "label": "never",
+      "translation": "nunca",
+      "language": "es"
+    },
+    {
+      "label": "never",
+      "translation": "jamais",
+      "language": "fr"
     },
     {
       "label": "self_eval",
@@ -1481,6 +1511,11 @@
       "language": "pt"
     },
     {
+      "label": "hands",
+      "translation": "mãos",
+      "language": "pt"
+    },
+    {
       "label": "hi",
       "translation": "Oi 👋",
       "language": "pt"
@@ -1508,6 +1543,11 @@
     {
       "label": "nano_celebration",
       "translation": "{{audio_word}}! 👍",
+      "language": "pt"
+    },
+    {
+      "label": "never",
+      "translation": "nunca",
       "language": "pt"
     },
     {
@@ -1939,6 +1979,16 @@
       "label": "drill_when_to_practice_4",
       "translation": "Il doit se laver les mains car [---]\n\na) il a toussé dans ses mains\nb) il a été dehors\nc) il a plus de 30 ans\n",
       "language": "fr"
+    },
+    {
+      "label": "yes",
+      "translation": "sí",
+      "language": "es"
+    },
+    {
+      "label": "off_and_unplugged",
+      "translation": "off and unplugged",
+      "language": "en"
     },
     {
       "label": "ready_for_hotline",
@@ -2444,6 +2494,16 @@
       "label": "covid_prev_fact_3",
       "translation": "LES FAITS: Le COVID-19 peut être transmis par des personnes qui n’ont pas de symptômes et ne se sentent pas malades. Pratiquez la distanciation sociale pour éviter d’être porteur et de le transmettre à d’autres.",
       "language": "fr"
+    },
+    {
+      "label": "at_least_sixty_percent",
+      "translation": "at least 60%",
+      "language": "en"
+    },
+    {
+      "label": "yes",
+      "translation": "yes",
+      "language": "en"
     },
     {
       "label": "covid_prev_fact_4",
@@ -3032,11 +3092,6 @@
     },
     {
       "label": "covid_2_title",
-      "translation": "COVID-19 Prevención",
-      "language": "es"
-    },
-    {
-      "label": "covid_2_title",
       "translation": "2019 新型冠状病毒(COVID-19)：预防措施",
       "language": "zh"
     },
@@ -3107,8 +3162,8 @@
     },
     {
       "label": "covid_2_title",
-      "translation": "COVID-19 Prevention",
-      "language": "en"
+      "translation": "Éviter la propagation du COVID-19",
+      "language": "fr"
     },
     {
       "label": "covid_1_title",
@@ -3186,11 +3241,6 @@
       "language": "pt"
     },
     {
-      "label": "covid_2_title",
-      "translation": "COVID-19 Prévention",
-      "language": "fr"
-    },
-    {
       "label": "covid_1_title",
       "translation": "Ce qu’il faut savoir sur le COVID-19",
       "language": "fr"
@@ -3201,9 +3251,29 @@
       "language": "en"
     },
     {
+      "label": "yes",
+      "translation": "verdadeiro",
+      "language": "pt"
+    },
+    {
       "label": "covid_1_practice_3",
       "translation": "Responda a pergunta. \n\nComo o COVID-19 é transmitido de pessoa para pessoa?\n\na) Contato próximo com uma pessoa infectada\nb) Respiratório cai no ar quando uma pessoa doente tosse ou espirra\nc) Ao tocar uma superfície com o vírus e depois tocar no rosto\nd) Todas acima\n",
       "language": "pt"
+    },
+    {
+      "label": "covid_2_title",
+      "translation": "Preventing the spread of COVID-19",
+      "language": "en"
+    },
+    {
+      "label": "hands",
+      "translation": "手部接触传播",
+      "language": "zh"
+    },
+    {
+      "label": "covid_2_title",
+      "translation": "Prevención de la propagación de COVID-19",
+      "language": "es"
     },
     {
       "label": "covid_1_title",
@@ -3211,13 +3281,13 @@
       "language": "es"
     },
     {
-      "label": "covid_2_title",
-      "translation": "Covid-19 Prevenção",
+      "label": "drill_complete_congrats",
+      "translation": "Parabéns {{name}}! Você concluiu seu treinamento hoje. \n\nInformaremos {{company}} que você terminou.",
       "language": "pt"
     },
     {
-      "label": "drill_complete_congrats",
-      "translation": "Parabéns {{name}}! Você concluiu seu treinamento hoje. \n\nInformaremos {{company}} que você terminou.",
+      "label": "covid_2_title",
+      "translation": "Impedindo a propagação do COVID-19",
       "language": "pt"
     },
     {
@@ -3384,6 +3454,11 @@
       "label": "hand_sani_practice_1",
       "translation": "Desinfetantes para as mãos matam todos os tipos de germes. \n\na) verdadeiro\nb) falso",
       "language": "pt"
+    },
+    {
+      "label": "yes",
+      "translation": "Vrai",
+      "language": "fr"
     },
     {
       "label": "covid_prev_practice_5",
@@ -3583,6 +3658,531 @@
     {
       "label": "stop_covid_thanks",
       "translation": "Obrigado por dedicar seu tempo a este treinamento. Ao concluir essas atividades diariamente, você ajudará a impedir a propagação desse vírus.\n\nJuntos, podemos parar o COVID-19.",
+      "language": "pt"
+    },
+    {
+      "label": "avoid_being_exposed_to_the_virus",
+      "translation": "Avoid being exposed to the virus",
+      "language": "en"
+    },
+    {
+      "label": "true",
+      "translation": "True",
+      "language": "en"
+    },
+    {
+      "label": "true",
+      "translation": "Verdadero",
+      "language": "es"
+    },
+    {
+      "label": "true",
+      "translation": "Vrai",
+      "language": "fr"
+    },
+    {
+      "label": "true",
+      "translation": "Verdadeiro",
+      "language": "pt"
+    },
+    {
+      "label": "true",
+      "translation": "正确",
+      "language": "zh"
+    },
+    {
+      "label": "false",
+      "translation": "False",
+      "language": "en"
+    },
+    {
+      "label": "false",
+      "translation": "Falso",
+      "language": "es"
+    },
+    {
+      "label": "false",
+      "translation": "Falso",
+      "language": "pt"
+    },
+    {
+      "label": "false",
+      "translation": "Faux",
+      "language": "fr"
+    },
+    {
+      "label": "false",
+      "translation": "错误",
+      "language": "zh"
+    },
+    {
+      "label": "more_contagious_than",
+      "translation": "more contagious than",
+      "language": "en"
+    },
+    {
+      "label": "more_contagious_than",
+      "translation": "比流感强",
+      "language": "zh"
+    },
+    {
+      "label": "more_contagious_than",
+      "translation": "mais contagioso que",
+      "language": "pt"
+    },
+    {
+      "label": "more_contagious_than",
+      "translation": "plus contagieux",
+      "language": "fr"
+    },
+    {
+      "label": "more_contagious_than",
+      "translation": "más contagioso que",
+      "language": "es"
+    },
+    {
+      "label": "all_of_the_above",
+      "translation": "All of the above",
+      "language": "en"
+    },
+    {
+      "label": "all_of_the_above",
+      "translation": "以上全部方式",
+      "language": "zh"
+    },
+    {
+      "label": "all_of_the_above",
+      "translation": "Todas acima",
+      "language": "pt"
+    },
+    {
+      "label": "all_of_the_above",
+      "translation": "Toutes les options ci-dessus",
+      "language": "fr"
+    },
+    {
+      "label": "all_of_the_above",
+      "translation": "Todas las anteriores",
+      "language": "es"
+    },
+    {
+      "label": "fever_cough_shortness_of_breath",
+      "translation": "干咳、发烧、胸闷气短",
+      "language": "zh"
+    },
+    {
+      "label": "fever_cough_shortness_of_breath",
+      "translation": "Fever, cough, shortness of breath",
+      "language": "en"
+    },
+    {
+      "label": "fever_cough_shortness_of_breath",
+      "translation": "Fiebre, tos, dificultad al respirar",
+      "language": "es"
+    },
+    {
+      "label": "fever_cough_shortness_of_breath",
+      "translation": "Fièvre, toux, souffle court",
+      "language": "fr"
+    },
+    {
+      "label": "fever_cough_shortness_of_breath",
+      "translation": "Febre, tosse, dificuldade em respirar",
+      "language": "pt"
+    },
+    {
+      "label": "avoid_being_exposed_to_the_virus",
+      "translation": "尽量避免和病毒的接触",
+      "language": "zh"
+    },
+    {
+      "label": "avoid_being_exposed_to_the_virus",
+      "translation": "Evite se expor ao vírus",
+      "language": "pt"
+    },
+    {
+      "label": "avoid_being_exposed_to_the_virus",
+      "translation": "Éviter d’être exposé(e) au virus",
+      "language": "fr"
+    },
+    {
+      "label": "avoid_being_exposed_to_the_virus",
+      "translation": "Evite exponerse al virus",
+      "language": "es"
+    },
+    {
+      "label": "days_after_exposure",
+      "translation": "2-14 days after exposure",
+      "language": "en"
+    },
+    {
+      "label": "days_after_exposure",
+      "translation": "2-14 dias após a exposição\n",
+      "language": "pt"
+    },
+    {
+      "label": "days_after_exposure",
+      "translation": "2 - 14 天",
+      "language": "zh"
+    },
+    {
+      "label": "days_after_exposure",
+      "translation": "2-14 días después de exposición",
+      "language": "es"
+    },
+    {
+      "label": "days_after_exposure",
+      "translation": "2 à 14 jours après y avoir été exposé",
+      "language": "fr"
+    },
+    {
+      "label": "soap_pumps_to_wash_hands",
+      "translation": "按两三次",
+      "language": "zh"
+    },
+    {
+      "label": "soap_pumps_to_wash_hands",
+      "translation": "2-3 bombas",
+      "language": "pt"
+    },
+    {
+      "label": "soap_pumps_to_wash_hands",
+      "translation": "2-3 gouttes",
+      "language": "fr"
+    },
+    {
+      "label": "soap_pumps_to_wash_hands",
+      "translation": "2-3 bombeos",
+      "language": "es"
+    },
+    {
+      "label": "soap_pumps_to_wash_hands",
+      "translation": "2-3 pumps",
+      "language": "en"
+    },
+    {
+      "label": "your_fingers_and_under_your_fingernails",
+      "translation": "your fingers and under your fingernails ",
+      "language": "en"
+    },
+    {
+      "label": "your_fingers_and_under_your_fingernails",
+      "translation": "los dedos y debajo de las uñas",
+      "language": "es"
+    },
+    {
+      "label": "your_fingers_and_under_your_fingernails",
+      "translation": "Vos doigts et en-dessous des ongles",
+      "language": "fr"
+    },
+    {
+      "label": "your_fingers_and_under_your_fingernails",
+      "translation": "dedos e sob as unhas",
+      "language": "pt"
+    },
+    {
+      "label": "your_fingers_and_under_your_fingernails",
+      "translation": "手指和指甲下",
+      "language": "zh"
+    },
+    {
+      "label": "for_twenty_seconds",
+      "translation": "for 20 seconds",
+      "language": "en"
+    },
+    {
+      "label": "for_twenty_seconds",
+      "translation": "durante 20 segundos",
+      "language": "es"
+    },
+    {
+      "label": "for_twenty_seconds",
+      "translation": "Pendant 20 secondes",
+      "language": "fr"
+    },
+    {
+      "label": "for_twenty_seconds",
+      "translation": "por 20 segundos",
+      "language": "pt"
+    },
+    {
+      "label": "for_twenty_seconds",
+      "translation": "大约二十秒",
+      "language": "zh"
+    },
+    {
+      "label": "paper_towel_or_air_dryer",
+      "translation": "paper towel or air dryer",
+      "language": "en"
+    },
+    {
+      "label": "paper_towel_or_air_dryer",
+      "translation": "toalla de papel o secadores de mano",
+      "language": "es"
+    },
+    {
+      "label": "paper_towel_or_air_dryer",
+      "translation": "Avec de l’essuie-tout ou un séchoir",
+      "language": "fr"
+    },
+    {
+      "label": "paper_towel_or_air_dryer",
+      "translation": "toalha de papel ou secador de mãos",
+      "language": "pt"
+    },
+    {
+      "label": "paper_towel_or_air_dryer",
+      "translation": "用纸巾、厨房纸擦干或者用干手机烘干",
+      "language": "zh"
+    },
+    {
+      "label": "alcohol_based_hand_sanitizer",
+      "translation": "以酒精为主要成分免洗洗手液",
+      "language": "zh"
+    },
+    {
+      "label": "alcohol_based_hand_sanitizer",
+      "translation": "alcohol-based",
+      "language": "en"
+    },
+    {
+      "label": "alcohol_based_hand_sanitizer",
+      "translation": "a base de alcohol",
+      "language": "es"
+    },
+    {
+      "label": "alcohol_based_hand_sanitizer",
+      "translation": "D’alcool",
+      "language": "fr"
+    },
+    {
+      "label": "alcohol_based_hand_sanitizer",
+      "translation": "à base de álcool",
+      "language": "pt"
+    },
+    {
+      "label": "at_least_sixty_percent",
+      "translation": "60% 以上",
+      "language": "zh"
+    },
+    {
+      "label": "at_least_sixty_percent",
+      "translation": "pelo menos 60%",
+      "language": "pt"
+    },
+    {
+      "label": "at_least_sixty_percent",
+      "translation": "Au moins 60%",
+      "language": "fr"
+    },
+    {
+      "label": "at_least_sixty_percent",
+      "translation": "al menos 60%",
+      "language": "es"
+    },
+    {
+      "label": "yes",
+      "translation": "正确",
+      "language": "zh"
+    },
+    {
+      "label": "off_and_unplugged",
+      "translation": "手机关机并且不在充电时",
+      "language": "zh"
+    },
+    {
+      "label": "off_and_unplugged",
+      "translation": "desligado e desconectado",
+      "language": "pt"
+    },
+    {
+      "label": "off_and_unplugged",
+      "translation": "Éteint et débranché",
+      "language": "fr"
+    },
+    {
+      "label": "off_and_unplugged",
+      "translation": "apagado y desconectado",
+      "language": "es"
+    },
+    {
+      "label": "never",
+      "translation": "即便在戴手套的情况下，也需要洗手\n",
+      "language": "zh"
+    },
+    {
+      "label": "he_coughed_into_them",
+      "translation": "he coughed into them",
+      "language": "en"
+    },
+    {
+      "label": "he_coughed_into_them",
+      "translation": "他用手遮盖了他的咳嗽",
+      "language": "zh"
+    },
+    {
+      "label": "he_coughed_into_them",
+      "translation": "ele tossiu para eles",
+      "language": "pt"
+    },
+    {
+      "label": "he_coughed_into_them",
+      "translation": "il a toussé dans ses mains",
+      "language": "fr"
+    },
+    {
+      "label": "he_coughed_into_them",
+      "translation": "tosió en ellas",
+      "language": "es"
+    },
+    {
+      "label": "wash_her_hands_before_and_after",
+      "translation": "wash her hands before and after",
+      "language": "en"
+    },
+    {
+      "label": "wash_her_hands_before_and_after",
+      "translation": "饭前饭后都要洗手",
+      "language": "zh"
+    },
+    {
+      "label": "wash_her_hands_before_and_after",
+      "translation": "lavarse las manos antes y después",
+      "language": "es"
+    },
+    {
+      "label": "wash_her_hands_before_and_after",
+      "translation": "Se laver les mains avant et après",
+      "language": "fr"
+    },
+    {
+      "label": "wash_her_hands_before_and_after",
+      "translation": "lave as mãos antes e depois",
+      "language": "pt"
+    },
+    {
+      "label": "high_contact_surfaces",
+      "translation": "high-contact surfaces",
+      "language": "en"
+    },
+    {
+      "label": "high_contact_surfaces",
+      "translation": "不经常接触的物体表面",
+      "language": "zh"
+    },
+    {
+      "label": "high_contact_surfaces",
+      "translation": "superfícies de alto contato",
+      "language": "pt"
+    },
+    {
+      "label": "high_contact_surfaces",
+      "translation": "Des surfaces de contact élevé",
+      "language": "fr"
+    },
+    {
+      "label": "high_contact_surfaces",
+      "translation": "superficies de alto contacto",
+      "language": "es"
+    },
+    {
+      "label": "up_to_twenty_four_hours",
+      "translation": "少于 24 小时",
+      "language": "zh"
+    },
+    {
+      "label": "up_to_twenty_four_hours",
+      "translation": "até 24 horas",
+      "language": "pt"
+    },
+    {
+      "label": "up_to_twenty_four_hours",
+      "translation": "Jusqu’à 24h",
+      "language": "fr"
+    },
+    {
+      "label": "up_to_twenty_four_hours",
+      "translation": "up to 24 hours",
+      "language": "en"
+    },
+    {
+      "label": "up_to_twenty_four_hours",
+      "translation": "hasta 24 horas",
+      "language": "es"
+    },
+    {
+      "label": "two_to_three_days",
+      "translation": "2-3 days",
+      "language": "en"
+    },
+    {
+      "label": "two_to_three_days",
+      "translation": "2-3 dias",
+      "language": "pt"
+    },
+    {
+      "label": "two_to_three_days",
+      "translation": "Pendant 2 à 3 jours",
+      "language": "fr"
+    },
+    {
+      "label": "two_to_three_days",
+      "translation": "两三天",
+      "language": "zh"
+    },
+    {
+      "label": "two_to_three_days",
+      "translation": "2-3 días",
+      "language": "es"
+    },
+    {
+      "label": "clean_and_disinfect",
+      "translation": "清洁并消毒",
+      "language": "zh"
+    },
+    {
+      "label": "clean_and_disinfect",
+      "translation": "clean \u0026 disinfect",
+      "language": "en"
+    },
+    {
+      "label": "clean_and_disinfect",
+      "translation": "limpar e desinfectar",
+      "language": "pt"
+    },
+    {
+      "label": "clean_and_disinfect",
+      "translation": "Nettoyer \u0026 désinfecter",
+      "language": "fr"
+    },
+    {
+      "label": "clean_and_disinfect",
+      "translation": "limpiar y desinfectar",
+      "language": "es"
+    },
+    {
+      "label": "are_sixty_to_ninety_percent_alcohol_based",
+      "translation": "酒精含量在 60% - 90%之间",
+      "language": "zh"
+    },
+    {
+      "label": "are_sixty_to_ninety_percent_alcohol_based",
+      "translation": "are 60-90% percent alcohol based",
+      "language": "en"
+    },
+    {
+      "label": "are_sixty_to_ninety_percent_alcohol_based",
+      "translation": "sean 60-90% a base de alcohol ",
+      "language": "es"
+    },
+    {
+      "label": "are_sixty_to_ninety_percent_alcohol_based",
+      "translation": "Ils contiennent entre 60 et 90%",
+      "language": "fr"
+    },
+    {
+      "label": "are_sixty_to_ninety_percent_alcohol_based",
+      "translation": "60-90% de álcool com base em",
       "language": "pt"
     },
     {

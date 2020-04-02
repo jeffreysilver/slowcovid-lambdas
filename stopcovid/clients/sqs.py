@@ -1,9 +1,16 @@
 import boto3
 import os
 import json
-from typing import List
+import re
 
+from typing import List
+from collections import defaultdict
 from stopcovid.event_distributor.outbound_sms import OutboundSMS
+
+
+def _get_message_deduplication_id(messages):
+    unique_message_ids = sorted(list(set([str(message.event_id) for message in messages])))
+    return "-".join(unique_message_ids)
 
 
 def publish_outbound_sms_messages(outbound_sms_messages: List[OutboundSMS]):
@@ -15,20 +22,20 @@ def publish_outbound_sms_messages(outbound_sms_messages: List[OutboundSMS]):
     queue_name = f"outbound-sms-{os.getenv('STAGE')}.fifo"
     queue = sqs.get_queue_by_name(QueueName=queue_name)
 
+    phone_number_to_messages = defaultdict(list)
+    for message in outbound_sms_messages:
+        phone_number_to_messages[message.phone_number].append(message)
+
     entries = [
         {
-            "Id": f"{str(outbound_sms.event_id)}-{i}",
-            "MessageBody": json.dumps({"To": outbound_sms.phone_number, "Body": outbound_sms.body}),
-            "MessageAttributes": {
-                "delay_seconds": {
-                    "StringValue": str(outbound_sms.delay_seconds),
-                    "DataType": "Number",
-                }
-            },
-            "MessageDeduplicationId": f"{str(outbound_sms.event_id)}-{i}",
-            "MessageGroupId": outbound_sms.phone_number,
+            "Id": re.sub("[^0-9]", "", phone),
+            "MessageBody": json.dumps(
+                {"to": phone, "messages": [{"body": message.body} for message in messages]}
+            ),
+            "MessageDeduplicationId": _get_message_deduplication_id(messages),
+            "MessageGroupId": phone,
         }
-        for i, outbound_sms in enumerate(outbound_sms_messages)
+        for phone, messages in phone_number_to_messages.items()
     ]
 
     return queue.send_messages(Entries=entries)
