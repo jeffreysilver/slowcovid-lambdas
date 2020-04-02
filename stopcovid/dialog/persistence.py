@@ -74,7 +74,6 @@ class DynamoDBDialogRepository(DialogRepository):
                 }
             },
         ]
-        print(write_items)
         self.dynamodb.transact_write_items(TransactItems=write_items)
 
     def ensure_tables_exist(self):
