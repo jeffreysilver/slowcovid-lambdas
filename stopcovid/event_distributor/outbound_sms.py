@@ -40,9 +40,11 @@ def get_localized_messages(
     language = dialog_event.user_profile.language
 
     additional_args = {
-        "name": dialog_event.user_profile.name.split(" ")[0] or "",
         "company": dialog_event.user_profile.account_info.get("company", "your company"),
+        "name": "",
     }
+    if dialog_event.user_profile.name is not None:
+        additional_args["name"] = dialog_event.user_profile.name.split(" ")[0]
     additional_args.update(kwargs)
 
     initial_pause_seconds = DELAY_BETWEEN_MESSAGES_IN_SECONDS if with_initial_pause else 0

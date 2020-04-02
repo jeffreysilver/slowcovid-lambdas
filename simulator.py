@@ -37,9 +37,11 @@ def fake_sms(
     **kwargs,
 ):
     additional_args = {
-        "name": user_profile.name.split(" ")[0] or "",
         "company": user_profile.account_info.get("company", "your company"),
+        "name": "",
     }
+    if user_profile.name is not None:
+        additional_args["name"] = user_profile.name.split(" ")[0]
     additional_args.update(kwargs)
 
     first = True
