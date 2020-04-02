@@ -51,6 +51,7 @@ functions:
 
   sendMessage:
     handler: stopcovid/send_sms.send_sms
+    timeout: 60
     events:
       - sqs:
           arn:
@@ -70,7 +71,7 @@ functions:
 
   logMessage:
     handler: stopcovid/message_log.log_message
-    timeout: 20  # Give aurora cluster time to cold start
+    timeout: 60  # Give aurora cluster time to cold start
 
   distributeDialogEvents:
     handler: stopcovid/event_distributor/event_distributor.distribute_dialog_events
