@@ -3,7 +3,7 @@ import uuid
 
 from stopcovid.dialog.dialog import CompletedPrompt, AdvancedToNextPrompt
 from stopcovid.dialog.persistence import DynamoDBDialogRepository
-from stopcovid.dialog.types import DialogState, UserProfile
+from stopcovid.dialog.types import DialogState, UserProfile, DialogEventBatch
 from stopcovid.drills.drills import Prompt
 
 
@@ -45,14 +45,18 @@ class TestPersistence(unittest.TestCase):
             user_profile=UserProfile(validated=True, language="de"),
             drill_instance_id=event1.drill_instance_id,
         )
-        self.repo.persist_dialog_state([event1, event2], dialog_state)
+        batch = DialogEventBatch(phone_number=self.phone_number, events=[event1, event2])
+
+        self.repo.persist_dialog_state(batch, dialog_state)
         dialog_state2 = self.repo.fetch_dialog_state(self.phone_number)
         self.assertEqual(dialog_state.phone_number, dialog_state2.phone_number)
         self.assertEqual(dialog_state.user_profile.validated, dialog_state2.user_profile.validated)
         self.assertEqual(dialog_state.user_profile.language, dialog_state2.user_profile.language)
 
-        event1_retrieved = self.repo.fetch_dialog_event(self.phone_number, event1.event_id)
+        batch_retrieved = self.repo.fetch_dialog_event_batch(self.phone_number, batch.batch_id)
+
+        event1_retrieved = batch_retrieved.events[0]
         self.assertEqual(event1.response, event1_retrieved.response)  # type: ignore
 
-        event2_retrieved = self.repo.fetch_dialog_event(self.phone_number, event2.event_id)
+        event2_retrieved = batch_retrieved.events[1]
         self.assertEqual(event2.prompt.slug, event2_retrieved.prompt.slug)  # type: ignore

@@ -5,7 +5,7 @@ import datetime
 from dataclasses import dataclass, field
 from typing import Optional, List, Dict, Any
 
-from marshmallow import Schema, fields, post_load
+from marshmallow import Schema, fields, post_load, utils
 from stopcovid.drills import drills
 
 
@@ -164,6 +164,24 @@ class DialogEvent(ABC):
 
     def to_dict(self) -> Dict:
         return self.schema.dump(self)
+
+
+@dataclass
+class DialogEventBatch:
+    events: List[DialogEvent]
+    phone_number: str
+    batch_id: uuid.UUID = field(default_factory=uuid.uuid4)
+    created_time: datetime.datetime = field(
+        default_factory=lambda: datetime.datetime.now(datetime.timezone.utc)
+    )
+
+    def to_dict(self):
+        return {
+            "batch_id": str(self.batch_id),
+            "phone_number": self.phone_number,
+            "created_time": utils.isoformat(self.created_time),
+            "events": [event.to_dict() for event in self.events],
+        }
 
 
 class Command(ABC):

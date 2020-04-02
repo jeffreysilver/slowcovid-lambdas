@@ -3,15 +3,21 @@ import sys
 from time import sleep
 from typing import List
 
-from stopcovid.dialog.dialog import DialogRepository, process_command, StartDrill, ProcessSMSMessage
-from stopcovid.dialog.registration import RegistrationValidator, CodeValidationPayload
-from stopcovid.dialog.types import (
-    DialogStateSchema,
-    DialogEventType,
-    DialogEvent,
-    DialogState,
-    UserProfile,
+from stopcovid.dialog.dialog import (
+    DialogRepository,
+    process_command,
+    StartDrill,
+    ProcessSMSMessage,
+    AdvancedToNextPrompt,
+    FailedPrompt,
+    CompletedPrompt,
+    UserValidated,
+    UserValidationFailed,
+    DrillStarted,
+    DrillCompleted,
 )
+from stopcovid.dialog.registration import RegistrationValidator, CodeValidationPayload
+from stopcovid.dialog.types import DialogStateSchema, DialogState, UserProfile, DialogEventBatch
 from stopcovid.drills.drills import get_drill
 from stopcovid.drills.localize import localize
 
@@ -48,7 +54,6 @@ def fake_sms(
     for message in messages:
         if with_initial_pause or not first:
             sleep(1)
-        first = False
         print(f"  -> {phone_number}: {localize(message, user_profile.language, **additional_args)}")
         first = False
 
@@ -70,20 +75,20 @@ class InMemoryRepository(DialogRepository):
             )
 
     def persist_dialog_state(  # noqa: C901
-        self, events: List[DialogEvent], dialog_state: DialogState
+        self, event_batch: DialogEventBatch, dialog_state: DialogState
     ):
         self.repo[dialog_state.phone_number] = DialogStateSchema().dumps(dialog_state)
 
         should_start_drill = False
-        for event in events:
-            if event.event_type == DialogEventType.ADVANCED_TO_NEXT_PROMPT:
+        for event in event_batch.events:
+            if isinstance(event, AdvancedToNextPrompt):
                 fake_sms(
                     event.phone_number,
                     dialog_state.user_profile,
                     event.prompt.messages,
                     with_initial_pause=True,
                 )
-            elif event.event_type == DialogEventType.FAILED_PROMPT:
+            elif isinstance(event, FailedPrompt):
                 if not event.abandoned:
                     fake_sms(event.phone_number, dialog_state.user_profile, [TRY_AGAIN])
                 else:
@@ -95,16 +100,16 @@ class InMemoryRepository(DialogRepository):
                             event.prompt.correct_response, dialog_state.user_profile.language
                         ),
                     )
-            elif event.event_type == DialogEventType.COMPLETED_PROMPT:
+            elif isinstance(event, CompletedPrompt):
                 if event.prompt.correct_response is not None:
                     fake_sms(event.phone_number, dialog_state.user_profile, ["{{right}}"])
-            elif event.event_type == DialogEventType.USER_VALIDATED:
+            elif isinstance(event, UserValidated):
                 should_start_drill = True
-            elif event.event_type == DialogEventType.USER_VALIDATION_FAILED:
+            elif isinstance(event, UserValidationFailed):
                 print("(try DRILL1, DRILL2, DRILL3, DRILL4, DRILL5, DRILL6, DRILL7)")
-            elif event.event_type == DialogEventType.DRILL_STARTED:
+            elif isinstance(event, DrillStarted):
                 fake_sms(event.phone_number, dialog_state.user_profile, event.first_prompt.messages)
-            elif event.event_type == DialogEventType.DRILL_COMPLETED:
+            elif isinstance(event, DrillCompleted):
                 print("(The drill is complete. Type crtl-D to exit.)")
         if should_start_drill:
             global SEQ
