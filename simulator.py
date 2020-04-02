@@ -36,12 +36,18 @@ def fake_sms(
     with_initial_pause=False,
     **kwargs,
 ):
+    additional_args = {
+        "name": user_profile.name.split(" ")[0] or "",
+        "company": user_profile.account_info.get("company", "your company"),
+    }
+    additional_args.update(kwargs)
+
     first = True
     for message in messages:
         if with_initial_pause or not first:
             sleep(1)
         first = False
-        print(f"  -> {phone_number}: {localize(message, user_profile.language, **kwargs)}")
+        print(f"  -> {phone_number}: {localize(message, user_profile.language, **additional_args)}")
         first = False
 
 
