@@ -8,6 +8,7 @@ from stopcovid.dialog.dialog import (
     DrillCompleted,
     CompletedPrompt,
     FailedPrompt,
+    AdvancedToNextPrompt,
 )
 from stopcovid.dialog.registration import CodeValidationPayload
 from stopcovid.dialog.types import UserProfile
@@ -38,6 +39,7 @@ class TestDrillInstances(unittest.TestCase):
         self.drill_instance = make_drill_instance()
         self.phone_number = "123456789"
         self.prompt1 = Prompt(slug="first", messages=[])
+        self.prompt2 = Prompt(slug="second", messages=[])
         self.drill = Drill(slug="slug", name="name", prompts=[self.prompt1])
 
     def test_get_and_save(self):
@@ -78,8 +80,7 @@ class TestDrillInstances(unittest.TestCase):
             drill=self.drill,
             first_prompt=self.prompt1,
         )
-        user_id = uuid.uuid4()
-        self.repo.update_drill_instances(user_id, event)
+        self.repo.update_drill_instances(self.drill_instance.user_id, event)
         drill_instance = self.repo.get_drill_instance(event.drill_instance_id)
         self.assertIsNotNone(drill_instance)
         self.assertEqual(event.created_time, drill_instance.current_prompt_start_time)
@@ -94,8 +95,7 @@ class TestDrillInstances(unittest.TestCase):
             user_profile=UserProfile(True),
             drill_instance_id=self.drill_instance.drill_instance_id,
         )
-        user_id = uuid.uuid4()
-        self.repo.update_drill_instances(user_id, event)
+        self.repo.update_drill_instances(self.drill_instance.user_id, event)
         retrieved = self.repo.get_drill_instance(self.drill_instance.drill_instance_id)
         self.assertEqual(event.created_time, retrieved.completion_time)
         self.assertIsNone(retrieved.current_prompt_last_response_time)
@@ -111,7 +111,7 @@ class TestDrillInstances(unittest.TestCase):
             drill_instance_id=self.drill_instance.drill_instance_id,
             response="go",
         )
-        self.repo.update_drill_instances(uuid.uuid4(), event)
+        self.repo.update_drill_instances(self.drill_instance.user_id, event)
         retrieved = self.repo.get_drill_instance(self.drill_instance.drill_instance_id)
         self.assertEqual(event.created_time, retrieved.current_prompt_last_response_time)
 
@@ -125,6 +125,28 @@ class TestDrillInstances(unittest.TestCase):
             response="go",
             abandoned=False,
         )
-        self.repo.update_drill_instances(uuid.uuid4(), event)
+        self.repo.update_drill_instances(self.drill_instance.user_id, event)
         retrieved = self.repo.get_drill_instance(self.drill_instance.drill_instance_id)
         self.assertEqual(event.created_time, retrieved.current_prompt_last_response_time)
+
+    def test_advanced_to_next_prompt(self):
+        self.repo.save_drill_instance(self.drill_instance)
+        event = CompletedPrompt(
+            phone_number=self.phone_number,
+            user_profile=UserProfile(True),
+            prompt=self.prompt1,
+            drill_instance_id=self.drill_instance.drill_instance_id,
+            response="go",
+        )
+        self.repo.update_drill_instances(self.drill_instance.user_id, event)
+        event = AdvancedToNextPrompt(
+            phone_number=self.phone_number,
+            user_profile=UserProfile(True),
+            prompt=self.prompt2,
+            drill_instance_id=self.drill_instance.drill_instance_id,
+        )
+        self.repo.update_drill_instances(self.drill_instance.user_id, event)
+        retrieved = self.repo.get_drill_instance(self.drill_instance.drill_instance_id)
+        self.assertEqual(self.prompt2.slug, retrieved.current_prompt_slug)
+        self.assertIsNone(retrieved.current_prompt_last_response_time)
+        self.assertEqual(event.created_time, retrieved.current_prompt_start_time)

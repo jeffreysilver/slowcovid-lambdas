@@ -108,7 +108,15 @@ class DrillInstanceRepository:
         )
 
     def _update_current_prompt(self, user_id: uuid.UUID, event: AdvancedToNextPrompt):
-        pass
+        self.engine.execute(
+            drill_instances.update()
+            .where(drill_instances.c.drill_instance_id == func.uuid(str(event.drill_instance_id)))
+            .values(
+                current_prompt_last_response_time=None,
+                current_prompt_start_time=event.created_time,
+                current_prompt_slug=event.prompt.slug,
+            )
+        )
 
     def get_drill_instance(self, drill_instance_id: uuid.UUID) -> Optional[DrillInstance]:
         result = self.engine.execute(
