@@ -18,4 +18,5 @@ jobs:
         npm install pyright
         python -m pip install --upgrade pip
         pip install -r requirements.txt
+        pip install -r requirements-dev.txt
         node_modules/.bin/pyright
