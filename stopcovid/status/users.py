@@ -37,7 +37,7 @@ users = Table(
     metadata,
     Column("user_id", UUID, primary_key=True),
     Column("account_info", JSONB, nullable=False),
-    Column("last_interacted_time", DateTime),
+    Column("last_interacted_time", DateTime(timezone=True)),
 )
 
 phone_numbers = Table(

@@ -1,4 +1,5 @@
 import datetime
+import logging
 import uuid
 from dataclasses import dataclass
 from typing import Union, Optional
@@ -14,6 +15,8 @@ from stopcovid.dialog.dialog import (
     DrillCompleted,
     DrillStarted,
     UserValidated,
+    UserValidationFailed,
+    ReminderTriggered,
 )
 from stopcovid.dialog.types import DialogEvent
 from . import db
@@ -26,9 +29,9 @@ drill_instances = Table(
     Column("user_id", UUID, nullable=False),
     Column("drill_slug", String, nullable=False),
     Column("current_prompt_slug", String, nullable=True),
-    Column("current_prompt_start_time", DateTime, nullable=True),
-    Column("current_prompt_last_response_time", DateTime, nullable=True),
-    Column("is_complete", Boolean, nullable=False, default=False),
+    Column("current_prompt_start_time", DateTime(timezone=True), nullable=True),
+    Column("current_prompt_last_response_time", DateTime(timezone=True), nullable=True),
+    Column("completion_time", DateTime(timezone=True), nullable=True),
     Column("is_valid", Boolean, nullable=False, default=True),
 )
 
@@ -41,7 +44,7 @@ class DrillInstance:
     current_prompt_slug: Optional[str] = None
     current_prompt_start_time: Optional[datetime.datetime] = None
     current_prompt_last_response_time: Optional[datetime.datetime] = None
-    is_complete: bool = False
+    completion_time: Optional[datetime.datetime] = None
     is_valid: bool = True
 
 
@@ -52,33 +55,57 @@ class DrillInstanceRepository:
 
     def update_drill_instances(self, user_id: uuid.UUID, event: DialogEvent):
         if isinstance(event, UserValidated):
-            self.invalidate_prior_drills(user_id)
-        if isinstance(event, DrillStarted):
-            self.record_new_drill_instance(user_id, event)
-        if isinstance(event, DrillCompleted):
-            self.mark_drill_instance_complete(user_id, event)
-        if isinstance(event, CompletedPrompt):
-            self.update_current_prompt_response_time(user_id, event)
-        if isinstance(event, FailedPrompt):
-            self.update_current_prompt_response_time(user_id, event)
-        if isinstance(event, AdvancedToNextPrompt):
-            self.update_current_prompt(user_id, event)
+            self._invalidate_prior_drills(user_id)
+        elif isinstance(event, DrillStarted):
+            self._record_new_drill_instance(user_id, event)
+        elif isinstance(event, DrillCompleted):
+            self._mark_drill_instance_complete(event)
+        elif isinstance(event, CompletedPrompt):
+            self._update_current_prompt_response_time(user_id, event)
+        elif isinstance(event, FailedPrompt):
+            self._update_current_prompt_response_time(user_id, event)
+        elif isinstance(event, AdvancedToNextPrompt):
+            self._update_current_prompt(user_id, event)
+        elif isinstance(event, ReminderTriggered) or isinstance(event, UserValidationFailed):
+            logging.info(f"Ignoring event of type {event.event_type}")
+        else:
+            raise ValueError(f"Unknown event type {event.event_type}")
 
-    def invalidate_prior_drills(self, user_id: uuid.UUID):
-        pass
+    def _invalidate_prior_drills(self, user_id: uuid.UUID):
+        self.engine.execute(
+            drill_instances.update()
+            .where(drill_instances.c.user_id == func.uuid(str(user_id)))
+            .values(is_valid=False)
+        )
 
-    def record_new_drill_instance(self, user_id: uuid.UUID, event: DrillStarted):
-        pass
+    def _record_new_drill_instance(self, user_id: uuid.UUID, event: DrillStarted):
+        drill_instance = DrillInstance(
+            drill_instance_id=event.drill_instance_id,
+            user_id=user_id,
+            drill_slug=event.drill.slug,
+            current_prompt_slug=event.first_prompt.slug,
+            current_prompt_start_time=event.created_time,
+        )
+        self.save_drill_instance(drill_instance)
 
-    def mark_drill_instance_complete(self, user_id: uuid.UUID, event: DrillCompleted):
-        pass
+    def _mark_drill_instance_complete(self, event: DrillCompleted):
+        self.engine.execute(
+            drill_instances.update()
+            .where(drill_instances.c.drill_instance_id == func.uuid(str(event.drill_instance_id)))
+            .values(
+                completion_time=event.created_time,
+                current_prompt_slug=None,
+                current_prompt_start_time=None,
+                current_prompt_last_response_time=None,
+            )
+        )
 
-    def update_current_prompt_response_time(
+    def _update_current_prompt_response_time(
         self, user_id: uuid.UUID, event: Union[FailedPrompt, CompletedPrompt]
     ):
         pass
 
-    def update_current_prompt(self, user_id: uuid.UUID, event: AdvancedToNextPrompt):
+    def _update_current_prompt(self, user_id: uuid.UUID, event: AdvancedToNextPrompt):
         pass
 
     def get_drill_instance(self, drill_instance_id: uuid.UUID) -> Optional[DrillInstance]:
@@ -97,7 +124,7 @@ class DrillInstanceRepository:
             current_prompt_slug=row["current_prompt_slug"],
             current_prompt_start_time=row["current_prompt_start_time"],
             current_prompt_last_response_time=row["current_prompt_last_response_time"],
-            is_complete=row["is_complete"],
+            completion_time=row["completion_time"],
             is_valid=row["is_valid"],
         )
 
@@ -106,7 +133,7 @@ class DrillInstanceRepository:
             current_prompt_slug=str(drill_instance.current_prompt_slug),
             current_prompt_start_time=drill_instance.current_prompt_start_time,
             current_prompt_last_response_time=drill_instance.current_prompt_last_response_time,
-            is_complete=drill_instance.is_complete,
+            completion_time=drill_instance.completion_time,
             is_valid=drill_instance.is_valid,
         )
         stmt = insert(drill_instances).values(
