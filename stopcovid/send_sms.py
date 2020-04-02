@@ -17,7 +17,8 @@ def _send_batch(record):
         res = twilio.send_message(phone, message["body"])
         twilio_responses.append(res)
 
-        if 0 < i < len(messages):
+        # sleep after every  message besides the last one
+        if i < len(messages) - 1:
             sleep(DELAY_SECONDS_BETWEEN_MESSAGES)
 
     return twilio_responses
