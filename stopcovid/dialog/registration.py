@@ -2,7 +2,7 @@ import functools
 import os
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
-from typing import Optional, Any, Dict
+from typing import Any, Dict
 
 import requests
 from marshmallow import Schema, fields, post_load
