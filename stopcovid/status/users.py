@@ -18,7 +18,7 @@ from sqlalchemy import (
 from sqlalchemy.dialects.postgresql import UUID, JSONB
 from sqlalchemy.exc import DatabaseError
 
-from stopcovid.clients import rds
+from . import db
 from stopcovid.dialog.types import UserProfile
 
 ALL_DRILL_SLUGS = [
@@ -77,8 +77,8 @@ class PhoneNumber:
 
 
 def create_or_update_user(
-    phone_number: str, profile: UserProfile, engine_factory=rds.get_sqlalchemy_engine
-) -> uuid.UUID:
+    phone_number: str, profile: UserProfile, engine_factory=db.get_sqlalchemy_engine
+) -> UUID:
     engine = engine_factory()
 
     with engine.connect() as connection:
@@ -121,10 +121,24 @@ def create_or_update_user(
                 .where(users.c.user_id == func.uuid(str(phone_number_record.user_id)))
                 .values(account_info=profile.account_info)
             )
+            return phone_number_record.user_id
+
+
+def get_user(user_id: UUID, engine_factory=db.get_sqlalchemy_engine):
+    engine = engine_factory()
+    result = engine.execute(select([users]).where(users.c.user_id == func.uuid(str(user_id))))
+    row = result.fetchone()
+    if row is None:
+        return None
+    return User(
+        user_id=uuid.UUID(row["user_id"]),
+        account_info=row["account_info"],
+        last_interacted_time=row["last_interacted_time"],
+    )
 
 
 def drop_and_recreate_tables_testing_only(engine_factory):
-    if engine_factory == rds.get_sqlalchemy_engine:
+    if engine_factory == db.get_sqlalchemy_engine:
         raise ValueError("This function should not be called against databases in RDS")
     engine = engine_factory()
     try:
