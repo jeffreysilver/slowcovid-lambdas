@@ -556,7 +556,11 @@ class TestDrillCompleted(unittest.TestCase):
 class TestSerialization(unittest.TestCase):
     def setUp(self) -> None:
         self.prompt = Prompt(
-            slug="my-prompt", messages=[PromptMessage(text="one"), PromptMessage(text="two")]
+            slug="my-prompt",
+            messages=[
+                PromptMessage(text="one", media_url="giphy.com/puppies/1"),
+                PromptMessage(text="two"),
+            ],
         )
         self.drill = Drill(name="01 START", slug="01-start", prompts=[self.prompt])
 
@@ -607,6 +611,11 @@ class TestSerialization(unittest.TestCase):
         deserialized: FailedPrompt = event_from_dict(serialized)  # type: ignore
         self._make_base_assertions(original, deserialized)
         self.assertEqual(original.prompt.slug, deserialized.prompt.slug)
+        for original_message, deserialized_message in zip(
+            original.prompt.messages, deserialized.prompt.messages
+        ):
+            self.assertEqual(original_message.text, deserialized_message.text)
+            self.assertEqual(original_message.media_url, deserialized_message.media_url)
         self.assertEqual(original.response, deserialized.response)
         self.assertEqual(original.abandoned, deserialized.abandoned)
         self.assertEqual(original.drill_instance_id, deserialized.drill_instance_id)
