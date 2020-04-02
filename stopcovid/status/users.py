@@ -1,5 +1,22 @@
-import json
+import datetime
 import uuid
+from dataclasses import dataclass, field
+from typing import Dict, Any, Optional
+
+from sqlalchemy import (
+    Table,
+    MetaData,
+    Column,
+    String,
+    ForeignKey,
+    Boolean,
+    DateTime,
+    select,
+    Integer,
+    func,
+)
+from sqlalchemy.dialects.postgresql import UUID, JSONB
+from sqlalchemy.exc import DatabaseError
 
 from stopcovid.clients import rds
 from stopcovid.dialog.types import UserProfile
@@ -14,66 +31,112 @@ ALL_DRILL_SLUGS = [
     "07-sanitizing-surfaces",
 ]
 
+metadata = MetaData()
+users = Table(
+    "users",
+    metadata,
+    Column("user_id", UUID, primary_key=True),
+    Column("account_info", JSONB, nullable=False),
+    Column("last_interacted_time", DateTime),
+)
 
-def create_or_update_user(phone_number: str, profile: UserProfile, engine=None) -> uuid.UUID:
-    if engine is None:
-        engine = rds.get_sqlalchemy_engine()
+phone_numbers = Table(
+    "phone_numbers",
+    metadata,
+    Column("id", UUID, primary_key=True),
+    Column("phone_number", String, nullable=False, unique=True),
+    Column("user_id", UUID, ForeignKey("users.user_id"), nullable=False),
+    Column("is_primary", Boolean, nullable=False),
+)
 
-    account_info = json.dumps(profile.account_info or {})
+drill_statuses = Table(
+    "drill_statuses",
+    metadata,
+    Column("id", UUID, primary_key=True),
+    Column("user_id", UUID, ForeignKey("users.user_id"), nullable=False),
+    Column("drill_slug", String, nullable=False),
+    Column("place_in_sequence", Integer, nullable=False),
+    Column("started_time", DateTime),
+    Column("completed_time", DateTime),
+)
+
+
+@dataclass
+class User:
+    user_id: UUID = field(default_factory=uuid.uuid4)
+    account_info: Dict[str, Any] = field(default_factory=dict)
+    last_interacted_time: Optional[datetime.datetime] = None
+
+
+@dataclass
+class PhoneNumber:
+    phone_number: str
+    user_id: UUID
+    is_primary: bool = True
+    id: UUID = field(default_factory=uuid.uuid4)
+
+
+def create_or_update_user(
+    phone_number: str, profile: UserProfile, engine_factory=rds.get_sqlalchemy_engine
+) -> uuid.UUID:
+    engine = engine_factory()
 
     with engine.connect() as connection:
-        result = connection.execute(
-            "select id, user_id from phone_numbers where phone_number=:phone_number",
-            phone_number=phone_number,
-        )
-        for row in result:
-            user_id = row["user_id"]
-            connection.execute(
-                "update users set account_info=cast(:account_info as jsonb) "
-                "where user_id=uuid(:user_id)",
-                user_id=user_id,
-                account_info=account_info,
-            )
-            return uuid.UUID(user_id)
-
         with connection.begin():
-            user_id = uuid.uuid4()
-            connection.execute(
-                "insert into users (user_id, account_info) "
-                "values(uuid(:user_id), cast(:account_info as jsonb));",
-                user_id=str(user_id),
-                account_info=account_info,
+            result = connection.execute(
+                select([phone_numbers]).where(phone_numbers.c.phone_number == phone_number)
             )
+            row = result.fetchone()
+            if row is None:
+                user_record = User(account_info=profile.account_info)
+                phone_number_record = PhoneNumber(
+                    phone_number=phone_number, user_id=user_record.user_id
+                )
+                connection.execute(
+                    users.insert().values(
+                        user_id=str(user_record.user_id), account_info=user_record.account_info
+                    )
+                )
+                connection.execute(
+                    phone_numbers.insert().values(
+                        id=str(phone_number_record.id),
+                        user_id=str(phone_number_record.user_id),
+                        is_primary=phone_number_record.is_primary,
+                        phone_number=phone_number_record.phone_number,
+                    )
+                )
+                for i, slug in enumerate(ALL_DRILL_SLUGS):
+                    connection.execute(
+                        drill_statuses.insert().values(
+                            id=str(uuid.uuid4()),
+                            user_id=str(user_record.user_id),
+                            drill_slug=slug,
+                            place_in_sequence=i,
+                        )
+                    )
+                return user_record.user_id
+            phone_number_record = PhoneNumber(**row)
             connection.execute(
-                "insert into phone_numbers (id, phone_number, user_id, is_primary) "
-                "values (uuid(:id), :phone_number, uuid(:user_id), true);",
-                id=str(uuid.uuid4()),
-                phone_number=phone_number,
-                user_id=str(user_id),
+                users.update()
+                .where(users.c.user_id == func.uuid(str(phone_number_record.user_id)))
+                .values(account_info=profile.account_info)
             )
-            return user_id
 
 
-def ensure_tables_exist(engine=None):
-    if engine is None:
-        engine = rds.get_sqlalchemy_engine()
-    engine.execute(
-        """
-        create table if not exists users (
-            user_id uuid,
-            account_info jsonb not null,
-            primary key (user_id)
-        );
-        """
-    )
-    engine.execute(
-        """
-        create table if not exists phone_numbers (
-            id uuid,
-            phone_number text unique not null,
-            user_id uuid not null references users(user_id),
-            is_primary bool not null,
-            primary key (id)
-        );
-        """
-    )
+def drop_and_recreate_tables_testing_only(engine_factory):
+    if engine_factory == rds.get_sqlalchemy_engine:
+        raise ValueError("This function should not be called against databases in RDS")
+    engine = engine_factory()
+    try:
+        drill_statuses.drop(bind=engine)
+    except DatabaseError:
+        pass
+    try:
+        phone_numbers.drop(bind=engine)
+    except DatabaseError:
+        pass
+    try:
+        users.drop(bind=engine)
+    except DatabaseError:
+        pass
+    metadata.create_all(bind=engine)

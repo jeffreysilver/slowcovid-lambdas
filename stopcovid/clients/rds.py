@@ -66,6 +66,5 @@ def get_sqlalchemy_engine():
     secret_arn = os.environ.get("DB_SECRET_ARN")
     return create_engine(
         "postgresql+auroradataapi://:@/postgres",
-        echo=True,
         connect_args=dict(aurora_cluster_arn=cluster_arn, secret_arn=secret_arn),
     )
