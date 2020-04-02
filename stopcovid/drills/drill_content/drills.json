@@ -1,6 +1,7 @@
 {
   "01-basics": {
     "name": "01. COVID19: Basics",
+    "slug": "01-basics",
     "prompts": [
       {
         "slug": "00 - Intake",
@@ -116,7 +117,7 @@
             "text": "{{covid_1_fact_5}}"
           },
           {
-            "text": "{{drill_complete_congrats}}\n\n{{drill_complete_next}}",
+            "text": "{{more}}",
             "media_url": "https://eslworks-api-production.herokuapp.com/rails/active_storage/blobs/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBbVpBIiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--bc9d0d119eb13b22c3a9b33282b71382475383d1/fireworks5.jpg"
           }
         ]
@@ -125,6 +126,7 @@
   },
   "02-prevention": {
     "name": "02. COVID19: Prevention",
+    "slug": "02-prevention",
     "prompts": [
       {
         "slug": "00 - Go",
@@ -213,7 +215,7 @@
         "slug": "07 - Celebration",
         "messages": [
           {
-            "text": "{{drill_complete_congrats}}",
+            "text": "{{more}}",
             "media_url": "https://eslworks-api-production.herokuapp.com/rails/active_storage/blobs/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBbWRBIiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--ceadd539c4576c7036b9f64278ed507e4848449a/fireworks2.jpg"
           }
         ]
@@ -222,6 +224,7 @@
   },
   "03-hand-washing-how": {
     "name": "03. How to wash your hands",
+    "slug": "03-hand-washing-how",
     "prompts": [
       {
         "slug": "1 - Intro - GO",
@@ -313,7 +316,7 @@
         "slug": "9 - 6 (congrats! + NPS)",
         "messages": [
           {
-            "text": "{{drill_complete_congrats}}"
+            "text": "{{more}}"
           }
         ]
       }
@@ -321,6 +324,7 @@
   },
   "04-hand-sanitizer": {
     "name": "04. Hand sanitizer best practices",
+    "slug": "04-hand-sanitizer",
     "prompts": [
       {
         "slug": "00 - GO",
@@ -409,7 +413,7 @@
         "slug": "07 - Celebration",
         "messages": [
           {
-            "text": "{{drill_complete_congrats}}"
+            "text": "{{more}}"
           }
         ]
       }
@@ -417,6 +421,7 @@
   },
   "05-disinfect-phone": {
     "name": "05. How to disinfect your phone",
+    "slug": "05-disinfect-phone",
     "prompts": [
       {
         "slug": "00 - GO",
@@ -508,7 +513,7 @@
             "text": "{{disinfect_phone_fact_5}}"
           },
           {
-            "text": "{{drill_complete_congrats}}"
+            "text": "{{more}}"
           }
         ]
       }
@@ -516,6 +521,7 @@
   },
   "06-hand-washing-when": {
     "name": "06. When to wash your hands",
+    "slug": "06-hand-washing-when",
     "prompts": [
       {
         "slug": "1 - requirements - READY",
@@ -608,7 +614,7 @@
         "slug": "8 - (congrats! + NPS)",
         "messages": [
           {
-            "text": "{{drill_complete_congrats}}"
+            "text": "{{more}}"
           },
           {
             "text": "",
@@ -624,6 +630,7 @@
   },
   "07-sanitizing-surfaces": {
     "name": "07. Sanitizing high-contact surfaces",
+    "slug": "07-sanitizing-surfaces",
     "prompts": [
       {
         "slug": "00 - GO",

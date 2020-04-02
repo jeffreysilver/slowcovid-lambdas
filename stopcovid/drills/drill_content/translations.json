@@ -4251,24 +4251,29 @@
       "language": "pt"
     },
     {
-      "label": "drill_complete_next",
-      "translation": "You will get your next drill tomorrow afternoon! ",
+      "label": "more",
+      "translation": "Congrats {{name}}! Your This training drill is complete. We’ll let {{company}} know you finished. \n\nTo get your next drill, type the word “MORE”",
       "language": "en"
     },
     {
-      "label": "drill_complete_next",
-      "translation": "¡Tendrás tu próximo ejercicio mañana por la tarde!\n\n",
+      "label": "more",
+      "translation": "¡Felicidades {{name}}! Este entrenamiento ha terminado. Le haremos saber a {{company}} que lo completó. \n\nPara obtener el proximo entrenamiento, escriba la palabra “MÁS”.",
       "language": "es"
     },
     {
-      "label": "drill_complete_next",
-      "translation": "Vous aurez votre prochain exercice demain après-midi!\n",
+      "label": "more",
+      "translation": "Félicitations {{name}}! L’exercice est terminé. Nous dirons à {{company}} que vous avez terminé cet exercice. \n\nPour recevoir un autre exercice dès maintenant, tapez le mot “MORE”",
       "language": "fr"
     },
     {
-      "label": "drill_complete_next",
-      "translation": "Você fará seu próximo exercício amanhã à tarde!\n",
+      "label": "more",
+      "translation": "Parabéns {{name}}! Este treinamento está completo. Informaremos {{company}} que você terminou. \n\nPara obter o próximo treinamento, escreva a palavra “MAIS”.",
       "language": "pt"
+    },
+    {
+      "label": "more",
+      "translation": "恭喜{{name}}！ 该培训演习已完成。 我们将通知{{company}}您已完成。 \n\n要进行下一次练习，请输入单词“ MORE”",
+      "language": "zh"
     }
   ]
 }
