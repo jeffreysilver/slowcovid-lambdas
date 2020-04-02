@@ -1,7 +1,7 @@
 import functools
 import os
 from abc import ABC, abstractmethod
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import Optional, Any, Dict
 
 import requests
@@ -22,7 +22,7 @@ class CodeValidationPayloadSchema(Schema):
 class CodeValidationPayload:
     valid: bool
     is_demo: bool = False
-    account_info: Optional[Dict[str, Any]] = None
+    account_info: Dict[str, Any] = field(default_factory=lambda: {})
 
 
 class RegistrationValidator(ABC):
