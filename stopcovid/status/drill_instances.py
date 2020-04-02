@@ -61,9 +61,9 @@ class DrillInstanceRepository:
         elif isinstance(event, DrillCompleted):
             self._mark_drill_instance_complete(event)
         elif isinstance(event, CompletedPrompt):
-            self._update_current_prompt_response_time(user_id, event)
+            self._update_current_prompt_response_time(event)
         elif isinstance(event, FailedPrompt):
-            self._update_current_prompt_response_time(user_id, event)
+            self._update_current_prompt_response_time(event)
         elif isinstance(event, AdvancedToNextPrompt):
             self._update_current_prompt(user_id, event)
         elif isinstance(event, ReminderTriggered) or isinstance(event, UserValidationFailed):
@@ -100,10 +100,12 @@ class DrillInstanceRepository:
             )
         )
 
-    def _update_current_prompt_response_time(
-        self, user_id: uuid.UUID, event: Union[FailedPrompt, CompletedPrompt]
-    ):
-        pass
+    def _update_current_prompt_response_time(self, event: Union[FailedPrompt, CompletedPrompt]):
+        self.engine.execute(
+            drill_instances.update()
+            .where(drill_instances.c.drill_instance_id == func.uuid(str(event.drill_instance_id)))
+            .values(current_prompt_last_response_time=event.created_time)
+        )
 
     def _update_current_prompt(self, user_id: uuid.UUID, event: AdvancedToNextPrompt):
         pass

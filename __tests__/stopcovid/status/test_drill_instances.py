@@ -2,7 +2,13 @@ import unittest
 import uuid
 import datetime
 
-from stopcovid.dialog.dialog import UserValidated, DrillStarted, DrillCompleted
+from stopcovid.dialog.dialog import (
+    UserValidated,
+    DrillStarted,
+    DrillCompleted,
+    CompletedPrompt,
+    FailedPrompt,
+)
 from stopcovid.dialog.registration import CodeValidationPayload
 from stopcovid.dialog.types import UserProfile
 from stopcovid.drills.drills import Drill, Prompt
@@ -31,6 +37,8 @@ class TestDrillInstances(unittest.TestCase):
         self.repo.drop_and_recreate_tables_testing_only()
         self.drill_instance = make_drill_instance()
         self.phone_number = "123456789"
+        self.prompt1 = Prompt(slug="first", messages=[])
+        self.drill = Drill(slug="slug", name="name", prompts=[self.prompt1])
 
     def test_get_and_save(self):
         self.assertIsNone(self.repo.get_drill_instance(self.drill_instance.drill_instance_id))
@@ -64,19 +72,18 @@ class TestDrillInstances(unittest.TestCase):
         self.assertFalse(drill_instance2.is_valid)
 
     def test_drill_started(self):
-        prompt = Prompt(slug="first", messages=[])
         event = DrillStarted(
             phone_number=self.phone_number,
             user_profile=UserProfile(True),
-            drill=Drill(slug="slug", name="name", prompts=[prompt]),
-            first_prompt=prompt,
+            drill=self.drill,
+            first_prompt=self.prompt1,
         )
         user_id = uuid.uuid4()
         self.repo.update_drill_instances(user_id, event)
         drill_instance = self.repo.get_drill_instance(event.drill_instance_id)
         self.assertIsNotNone(drill_instance)
         self.assertEqual(event.created_time, drill_instance.current_prompt_start_time)
-        self.assertEqual(prompt.slug, drill_instance.current_prompt_slug)
+        self.assertEqual(self.prompt1.slug, drill_instance.current_prompt_slug)
         self.assertIsNone(drill_instance.completion_time)
         self.assertTrue(drill_instance.is_valid)
 
@@ -94,3 +101,30 @@ class TestDrillInstances(unittest.TestCase):
         self.assertIsNone(retrieved.current_prompt_last_response_time)
         self.assertIsNone(retrieved.current_prompt_start_time)
         self.assertIsNone(retrieved.current_prompt_slug)
+
+    def test_prompt_completed(self):
+        self.repo.save_drill_instance(self.drill_instance)
+        event = CompletedPrompt(
+            phone_number=self.phone_number,
+            user_profile=UserProfile(True),
+            prompt=self.prompt1,
+            drill_instance_id=self.drill_instance.drill_instance_id,
+            response="go",
+        )
+        self.repo.update_drill_instances(uuid.uuid4(), event)
+        retrieved = self.repo.get_drill_instance(self.drill_instance.drill_instance_id)
+        self.assertEqual(event.created_time, retrieved.current_prompt_last_response_time)
+
+    def test_prompt_failed(self):
+        self.repo.save_drill_instance(self.drill_instance)
+        event = FailedPrompt(
+            phone_number=self.phone_number,
+            user_profile=UserProfile(True),
+            prompt=self.prompt1,
+            drill_instance_id=self.drill_instance.drill_instance_id,
+            response="go",
+            abandoned=False,
+        )
+        self.repo.update_drill_instances(uuid.uuid4(), event)
+        retrieved = self.repo.get_drill_instance(self.drill_instance.drill_instance_id)
+        self.assertEqual(event.created_time, retrieved.current_prompt_last_response_time)
