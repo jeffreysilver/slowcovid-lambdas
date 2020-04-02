@@ -28,18 +28,4 @@ class TestHandleCommand(unittest.TestCase):
         _, *kwargs = call
 
         entries = kwargs[1]["Entries"]
-        self.assertEqual(len(entries), 3)
-        self.assertEqual(entries[0]["Id"], "5e539115-07ac-4a53-809b-2280b2ce734b-0")
-        message_body = json.loads(entries[0]["MessageBody"])
-        self.assertEqual(message_body["To"], "+14802865415")
-        self.assertIsInstance(message_body["Body"], str)
-
-        self.assertEqual(
-            entries[0]["MessageDeduplicationId"], "5e539115-07ac-4a53-809b-2280b2ce734b-0"
-        )
-
-        self.assertEqual(entries[0]["MessageGroupId"], "+14802865415")
-        self.assertEqual(
-            entries[0]["MessageAttributes"]["delay_seconds"],
-            {"StringValue": "0", "DataType": "Number"},
-        )
+        self.assertEqual(len(entries), 1)

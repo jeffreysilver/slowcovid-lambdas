@@ -1,214 +1,240 @@
 {
-    "Records": [
-      {
-        "eventID": "b11d4be99c53a758db6b2316b3b4477b",
-        "eventName": "INSERT",
-        "eventVersion": "1.1",
-        "eventSource": "aws:dynamodb",
-        "awsRegion": "us-east-1",
-        "dynamodb": {
-          "ApproximateCreationDateTime": 1585669008,
-          "Keys": {
-            "event_id": {
-              "S": "5e539115-07ac-4a53-809b-2280b2ce734b"
-            },
-            "phone_number": {
-              "S": "+14802865415"
-            }
+  "Records": [
+    {
+      "eventID": "dc9ad291a9125b5c025cc48ec9f06874",
+      "eventName": "INSERT",
+      "eventVersion": "1.1",
+      "eventSource": "aws:dynamodb",
+      "awsRegion": "us-east-1",
+      "dynamodb": {
+        "ApproximateCreationDateTime": 1585839991,
+        "Keys": {
+          "event_id": {
+            "S": "0a8847d5-bb97-404c-b750-2051538c6744"
           },
-          "NewImage": {
-            "created_time": {
-              "S": "2020-03-31T15:36:47.686885+00:00"
-            },
-            "event_id": {
-              "S": "5e539115-07ac-4a53-809b-2280b2ce734b"
-            },
-            "event_type": {
-              "S": "USER_VALIDATION_FAILED"
-            },
-            "phone_number": {
-              "S": "+14802865415"
-            },
-            "user_profile": {
-              "M": {
-                "self_rating_4": {
-                  "NULL": true
-                },
-                "self_rating_3": {
-                  "NULL": true
-                },
-                "self_rating_6": {
-                  "NULL": true
-                },
-                "self_rating_5": {
-                  "NULL": true
-                },
-                "validated": {
-                  "BOOL": false
-                },
-                "self_rating_2": {
-                  "NULL": true
-                },
-                "self_rating_1": {
-                  "NULL": true
-                },
-                "name": {
-                  "NULL": true
-                },
-                "language": {
-                  "NULL": true
-                },
-                "self_rating_7": {
-                  "NULL": true
+          "phone_number": {
+            "S": "+14802865415"
+          }
+        },
+        "NewImage": {
+          "created_time": {
+            "S": "2020-04-02T15:06:31.576300+00:00"
+          },
+          "event_id": {
+            "S": "0a8847d5-bb97-404c-b750-2051538c6744"
+          },
+          "event_type": {
+            "S": "ADVANCED_TO_NEXT_PROMPT"
+          },
+          "drill_instance_id": {
+            "S": "4deaee8b-2f74-4dd5-9eaf-9a7b53fd6d64"
+          },
+          "phone_number": {
+            "S": "+14802865415"
+          },
+          "user_profile": {
+            "M": {
+              "self_rating_4": {
+                "NULL": true
+              },
+              "self_rating_3": {
+                "NULL": true
+              },
+              "self_rating_6": {
+                "NULL": true
+              },
+              "self_rating_5": {
+                "NULL": true
+              },
+              "validated": {
+                "BOOL": true
+              },
+              "self_rating_2": {
+                "NULL": true
+              },
+              "self_rating_1": {
+                "S": "3"
+              },
+              "name": {
+                "S": "Jeffrey silver"
+              },
+              "account_info": {
+                "M": {
+                  "unit_name": {
+                    "S": "UNKNOWN"
+                  },
+                  "employer_name": {
+                    "S": "The SlowCovid Company"
+                  },
+                  "unit_id": {
+                    "N": "277"
+                  },
+                  "employer_id": {
+                    "N": "67"
+                  }
                 }
+              },
+              "language": {
+                "S": "en"
+              },
+              "self_rating_7": {
+                "NULL": true
+              },
+              "is_demo": {
+                "BOOL": false
               }
             }
           },
-          "SequenceNumber": "3971500000000042116048864",
-          "SizeBytes": 359,
-          "StreamViewType": "NEW_IMAGE"
+          "prompt": {
+            "M": {
+              "correct_response": {
+                "S": "b) {{fever_cough_shortness_of_breath}}"
+              },
+              "response_user_profile_key": {
+                "NULL": true
+              },
+              "messages": {
+                "L": [
+                  {
+                    "S": "{{covid_1_fact_3}}"
+                  },
+                  {
+                    "S": "{{drill_practice_caps}} 4: {{covid_1_practice_4}}"
+                  }
+                ]
+              },
+              "slug": {
+                "S": "07 - Q4"
+              }
+            }
+          }
         },
-        "eventSourceARN": "arn:aws:dynamodb:us-east-1:696991354966:table/dialog-events-dev/stream/2020-03-30T17:20:14.106"
+        "SequenceNumber": "13850900000000022694276756",
+        "SizeBytes": 713,
+        "StreamViewType": "NEW_IMAGE"
       },
-      {
-        "eventID": "2bb23be4660882ddbff06db78af28a09",
-        "eventName": "INSERT",
-        "eventVersion": "1.1",
-        "eventSource": "aws:dynamodb",
-        "awsRegion": "us-east-1",
-        "dynamodb": {
-          "ApproximateCreationDateTime": 1585669145,
-          "Keys": {
-            "event_id": {
-              "S": "38259814-d907-4f49-b498-d0e0d83236fb"
-            },
-            "phone_number": {
-              "S": "+14802865415"
-            }
+      "eventSourceARN": "arn:aws:dynamodb:us-east-1:696991354966:table/dialog-events-dev/stream/2020-03-30T17:20:14.106"
+    },
+    {
+      "eventID": "c194bd754bd28a844a59cdc33aa3ada8",
+      "eventName": "INSERT",
+      "eventVersion": "1.1",
+      "eventSource": "aws:dynamodb",
+      "awsRegion": "us-east-1",
+      "dynamodb": {
+        "ApproximateCreationDateTime": 1585839991,
+        "Keys": {
+          "event_id": {
+            "S": "406b7d70-a814-4d43-8152-0250d18367db"
           },
-          "NewImage": {
-            "created_time": {
-              "S": "2020-03-31T15:39:05.744109+00:00"
-            },
-            "event_id": {
-              "S": "38259814-d907-4f49-b498-d0e0d83236fb"
-            },
-            "event_type": {
-              "S": "USER_VALIDATION_FAILED"
-            },
-            "phone_number": {
-              "S": "+14802865415"
-            },
-            "user_profile": {
-              "M": {
-                "self_rating_4": {
-                  "NULL": true
-                },
-                "self_rating_3": {
-                  "NULL": true
-                },
-                "self_rating_6": {
-                  "NULL": true
-                },
-                "self_rating_5": {
-                  "NULL": true
-                },
-                "validated": {
-                  "BOOL": false
-                },
-                "self_rating_2": {
-                  "NULL": true
-                },
-                "self_rating_1": {
-                  "NULL": true
-                },
-                "name": {
-                  "NULL": true
-                },
-                "language": {
-                  "NULL": true
-                },
-                "self_rating_7": {
-                  "NULL": true
+          "phone_number": {
+            "S": "+14802865415"
+          }
+        },
+        "NewImage": {
+          "created_time": {
+            "S": "2020-04-02T15:06:31.576087+00:00"
+          },
+          "event_id": {
+            "S": "406b7d70-a814-4d43-8152-0250d18367db"
+          },
+          "event_type": {
+            "S": "FAILED_PROMPT"
+          },
+          "response": {
+            "S": "b"
+          },
+          "drill_instance_id": {
+            "S": "4deaee8b-2f74-4dd5-9eaf-9a7b53fd6d64"
+          },
+          "phone_number": {
+            "S": "+14802865415"
+          },
+          "user_profile": {
+            "M": {
+              "self_rating_4": {
+                "NULL": true
+              },
+              "self_rating_3": {
+                "NULL": true
+              },
+              "self_rating_6": {
+                "NULL": true
+              },
+              "self_rating_5": {
+                "NULL": true
+              },
+              "validated": {
+                "BOOL": true
+              },
+              "self_rating_2": {
+                "NULL": true
+              },
+              "self_rating_1": {
+                "S": "3"
+              },
+              "name": {
+                "S": "Jeffrey silver"
+              },
+              "account_info": {
+                "M": {
+                  "unit_name": {
+                    "S": "UNKNOWN"
+                  },
+                  "employer_name": {
+                    "S": "The SlowCovid Company"
+                  },
+                  "unit_id": {
+                    "N": "277"
+                  },
+                  "employer_id": {
+                    "N": "67"
+                  }
                 }
+              },
+              "language": {
+                "S": "en"
+              },
+              "self_rating_7": {
+                "NULL": true
+              },
+              "is_demo": {
+                "BOOL": false
               }
             }
           },
-          "SequenceNumber": "3971600000000042116220481",
-          "SizeBytes": 359,
-          "StreamViewType": "NEW_IMAGE"
+          "abandoned": {
+            "BOOL": true
+          },
+          "prompt": {
+            "M": {
+              "correct_response": {
+                "S": "d) {{all_of_the_above}}"
+              },
+              "response_user_profile_key": {
+                "NULL": true
+              },
+              "messages": {
+                "L": [
+                  {
+                    "S": "{{covid_1_fact_2}}"
+                  },
+                  {
+                    "S": "{{drill_practice_caps}} 3: {{covid_1_practice_3}}"
+                  }
+                ]
+              },
+              "slug": {
+                "S": "06 - Q3"
+              }
+            }
+          }
         },
-        "eventSourceARN": "arn:aws:dynamodb:us-east-1:696991354966:table/dialog-events-dev/stream/2020-03-30T17:20:14.106"
+        "SequenceNumber": "13851000000000022694276757",
+        "SizeBytes": 707,
+        "StreamViewType": "NEW_IMAGE"
       },
-      {
-        "eventID": "ac56c6b4ff365f554a839118033ea203",
-        "eventName": "INSERT",
-        "eventVersion": "1.1",
-        "eventSource": "aws:dynamodb",
-        "awsRegion": "us-east-1",
-        "dynamodb": {
-          "ApproximateCreationDateTime": 1585669637,
-          "Keys": {
-            "event_id": {
-              "S": "92eb42bf-3fcd-4791-ae43-3f6b14a19c0a"
-            },
-            "phone_number": {
-              "S": "+14802865415"
-            }
-          },
-          "NewImage": {
-            "created_time": {
-              "S": "2020-03-31T15:47:17.793099+00:00"
-            },
-            "event_id": {
-              "S": "92eb42bf-3fcd-4791-ae43-3f6b14a19c0a"
-            },
-            "event_type": {
-              "S": "USER_VALIDATION_FAILED"
-            },
-            "phone_number": {
-              "S": "+14802865415"
-            },
-            "user_profile": {
-              "M": {
-                "self_rating_4": {
-                  "NULL": true
-                },
-                "self_rating_3": {
-                  "NULL": true
-                },
-                "self_rating_6": {
-                  "NULL": true
-                },
-                "self_rating_5": {
-                  "NULL": true
-                },
-                "validated": {
-                  "BOOL": false
-                },
-                "self_rating_2": {
-                  "NULL": true
-                },
-                "self_rating_1": {
-                  "NULL": true
-                },
-                "name": {
-                  "NULL": true
-                },
-                "language": {
-                  "NULL": true
-                },
-                "self_rating_7": {
-                  "NULL": true
-                }
-              }
-            }
-          },
-          "SequenceNumber": "3971700000000042116833444",
-          "SizeBytes": 359,
-          "StreamViewType": "NEW_IMAGE"
-        },
-        "eventSourceARN": "arn:aws:dynamodb:us-east-1:696991354966:table/dialog-events-dev/stream/2020-03-30T17:20:14.106"
-      }
-    ]
-  }
+      "eventSourceARN": "arn:aws:dynamodb:us-east-1:696991354966:table/dialog-events-dev/stream/2020-03-30T17:20:14.106"
+    }
+  ]
+}

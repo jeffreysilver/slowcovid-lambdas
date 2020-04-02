@@ -217,33 +217,7 @@ class TestHandleCommand(unittest.TestCase):
         self.assertEqual(outbound_messages[0].phone_number, self.phone)
         self.assertEqual(outbound_messages[0].event_id, dialog_events[0].event_id)
         self.assertEqual(outbound_messages[0].body, expected_messages[0])
-        # the initial message gets delayed by 3 seconds
-        self.assertEqual(outbound_messages[0].delay_seconds, 3)
 
         self.assertEqual(outbound_messages[1].phone_number, self.phone)
         self.assertEqual(outbound_messages[1].event_id, dialog_events[0].event_id)
         self.assertEqual(outbound_messages[1].body, expected_messages[1])
-        # the next message gets delayed by 3 more seconds
-        self.assertEqual(outbound_messages[1].delay_seconds, 6)
-
-    def test_delay_seconds(self):
-        drill = Drill(
-            name="Test Drill",
-            slug="test-drill",
-            prompts=[
-                Prompt(slug="ignore-response-1", messages=["hello", "hola", "bonjour", "aloha"])
-            ],
-        )
-
-        dialog_events: List[DialogEvent] = [
-            DrillStarted(
-                self.phone, self.validated_user_profile, drill=drill, first_prompt=drill.prompts[0]
-            )
-        ]
-        outbound_messages = get_outbound_sms_commands(dialog_events)
-        self.assertEqual(len(outbound_messages), 4)
-
-        self.assertEqual(outbound_messages[0].delay_seconds, 0)
-        self.assertEqual(outbound_messages[1].delay_seconds, 3)
-        self.assertEqual(outbound_messages[2].delay_seconds, 6)
-        self.assertEqual(outbound_messages[3].delay_seconds, 9)

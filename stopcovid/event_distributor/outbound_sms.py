@@ -1,7 +1,7 @@
 import logging
 from typing import List
 from dataclasses import dataclass
-
+import uuid
 from stopcovid.dialog.types import DialogEvent
 from stopcovid.dialog.dialog import (
     DrillCompleted,
@@ -23,15 +23,12 @@ USER_VALIDATION_FAILED_COPY = (
 # We should template these for localization
 CORRECT_ANSWER_COPY = "Correct!"
 
-DELAY_BETWEEN_MESSAGES_IN_SECONDS = 3
-
 
 @dataclass
 class OutboundSMS:
-    event_id: str
+    event_id: uuid.UUID
     phone_number: str
     body: str
-    delay_seconds: int
 
 
 def get_localized_messages(
@@ -47,14 +44,11 @@ def get_localized_messages(
         additional_args["name"] = dialog_event.user_profile.name.split(" ")[0]
     additional_args.update(kwargs)
 
-    initial_pause_seconds = DELAY_BETWEEN_MESSAGES_IN_SECONDS if with_initial_pause else 0
-
     return [
         OutboundSMS(
             event_id=dialog_event.event_id,
             phone_number=dialog_event.phone_number,
             body=localize(message, language, **additional_args),
-            delay_seconds=initial_pause_seconds + (i * DELAY_BETWEEN_MESSAGES_IN_SECONDS),
         )
         for i, message in enumerate(messages)
     ]
