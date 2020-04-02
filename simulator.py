@@ -102,7 +102,9 @@ class InMemoryRepository(DialogRepository):
                     )
             elif isinstance(event, CompletedPrompt):
                 if event.prompt.correct_response is not None:
-                    fake_sms(event.phone_number, dialog_state.user_profile, ["{{right}}"])
+                    fake_sms(
+                        event.phone_number, dialog_state.user_profile, ["{{match_correct_answer}}"]
+                    )
             elif isinstance(event, UserValidated):
                 should_start_drill = True
             elif isinstance(event, UserValidationFailed):

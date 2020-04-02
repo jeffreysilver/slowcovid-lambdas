@@ -20,8 +20,7 @@ USER_VALIDATION_FAILED_COPY = (
     "Invalid Code. Check with your administrator and make sure you have the right code."
 )
 
-# We should template these for localization
-CORRECT_ANSWER_COPY = "Correct!"
+CORRECT_ANSWER_COPY = "{{match_correct_answer}}"
 
 
 @dataclass
