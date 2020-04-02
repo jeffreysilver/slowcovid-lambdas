@@ -1,6 +1,5 @@
 import os
 import boto3
-from sqlalchemy import create_engine
 
 RDS = boto3.client("rds-data")
 
