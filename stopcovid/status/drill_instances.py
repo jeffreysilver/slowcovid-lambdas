@@ -158,7 +158,7 @@ class DrillInstanceRepository:
             self.engine.execute(
                 drill_instances.update()
                 .where(
-                    drill_instances.c.drill_instance_id
+                    drill_instances.c.drill_instance_id  # noqa: W503
                     == func.uuid(str(drill_instance.drill_instance_id))
                 )
                 .values(**settings)
