@@ -110,7 +110,11 @@ class InMemoryRepository(DialogRepository):
             elif isinstance(event, UserValidationFailed):
                 print("(try DRILL1, DRILL2, DRILL3, DRILL4, DRILL5, DRILL6, DRILL7)")
             elif isinstance(event, DrillStarted):
-                fake_sms(event.phone_number, dialog_state.user_profile, [message.text for message in event.first_prompt.messages])
+                fake_sms(
+                    event.phone_number,
+                    dialog_state.user_profile,
+                    [message.text for message in event.first_prompt.messages],
+                )
             elif isinstance(event, DrillCompleted):
                 print("(The drill is complete. Type crtl-D to exit.)")
         if should_start_drill:
