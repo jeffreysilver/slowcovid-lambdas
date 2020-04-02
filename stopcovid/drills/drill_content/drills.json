@@ -117,7 +117,7 @@
             "text": "{{covid_1_fact_5}}"
           },
           {
-            "text": "{{more}}",
+            "text": "{{drill_complete_next}}",
             "media_url": "https://eslworks-api-production.herokuapp.com/rails/active_storage/blobs/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBbVpBIiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--bc9d0d119eb13b22c3a9b33282b71382475383d1/fireworks5.jpg"
           }
         ]
@@ -215,7 +215,7 @@
         "slug": "07 - Celebration",
         "messages": [
           {
-            "text": "{{more}}",
+            "text": "{{drill_complete_next}}",
             "media_url": "https://eslworks-api-production.herokuapp.com/rails/active_storage/blobs/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBbWRBIiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--ceadd539c4576c7036b9f64278ed507e4848449a/fireworks2.jpg"
           }
         ]
@@ -316,7 +316,7 @@
         "slug": "9 - 6 (congrats! + NPS)",
         "messages": [
           {
-            "text": "{{more}}"
+            "text": "{{drill_complete_next}}"
           }
         ]
       }
@@ -413,7 +413,7 @@
         "slug": "07 - Celebration",
         "messages": [
           {
-            "text": "{{more}}"
+            "text": "{{drill_complete_next}}"
           }
         ]
       }
@@ -513,7 +513,7 @@
             "text": "{{disinfect_phone_fact_5}}"
           },
           {
-            "text": "{{more}}"
+            "text": "{{drill_complete_next}}"
           }
         ]
       }
@@ -614,7 +614,7 @@
         "slug": "8 - (congrats! + NPS)",
         "messages": [
           {
-            "text": "{{more}}"
+            "text": "{{drill_complete_next}}"
           },
           {
             "text": "",
