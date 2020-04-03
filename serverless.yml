@@ -84,6 +84,17 @@ functions:
               - StreamArn
           startingPosition: LATEST
 
+  updateDrillStatus:
+    handler: stopcovid/status/lambda.process_dialog_events
+    events:
+      - stream:
+          type: dynamodb
+          arn:
+            Fn::GetAtt:
+              - DialogEventBatches
+              - StreamArn
+          startingPosition: LATEST
+
   healthcheck:
     handler: stopcovid/healthcheck.healthcheck
     events:
