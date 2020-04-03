@@ -32,9 +32,7 @@ reminder_triggers = Table(
 
 
 Index(
-    "drill_instance_id_prompt_slug_index",
-    reminder_triggers.c.drill_instance_id.desc(),
-    reminder_triggers.c.prompt_slug.desc(),
+    "drill_instance_id_prompt_slug_index", "drill_instance_id", "prompt_slug",
 )
 
 
