@@ -17,30 +17,30 @@ from stopcovid.status import db
 from stopcovid.status.drill_instances import DrillInstanceRepository, DrillInstance
 
 
-def make_drill_instance(user_id=None) -> DrillInstance:
-    if user_id is None:
-        user_id = uuid.uuid4()
-    return DrillInstance(
-        drill_instance_id=uuid.uuid4(),
-        user_id=user_id,
-        drill_slug="test",
-        current_prompt_slug="test-prompt",
-        current_prompt_start_time=datetime.datetime.now(datetime.timezone.utc),
-        current_prompt_last_response_time=datetime.datetime.now(datetime.timezone.utc),
-        completion_time=None,
-        is_valid=True,
-    )
-
-
 class TestDrillInstances(unittest.TestCase):
     def setUp(self):
         self.repo = DrillInstanceRepository(db.get_test_sqlalchemy_engine)
         self.repo.drop_and_recreate_tables_testing_only()
-        self.drill_instance = make_drill_instance()
         self.phone_number = "123456789"
+        self.drill_instance = self._make_drill_instance()
         self.prompt1 = Prompt(slug="first", messages=[])
         self.prompt2 = Prompt(slug="second", messages=[])
         self.drill = Drill(slug="slug", name="name", prompts=[self.prompt1])
+
+    def _make_drill_instance(self, user_id=None) -> DrillInstance:
+        if user_id is None:
+            user_id = uuid.uuid4()
+        return DrillInstance(
+            drill_instance_id=uuid.uuid4(),
+            user_id=user_id,
+            phone_number=self.phone_number,
+            drill_slug="test",
+            current_prompt_slug="test-prompt",
+            current_prompt_start_time=datetime.datetime.now(datetime.timezone.utc),
+            current_prompt_last_response_time=datetime.datetime.now(datetime.timezone.utc),
+            completion_time=None,
+            is_valid=True,
+        )
 
     def test_get_and_save(self):
         self.assertIsNone(self.repo.get_drill_instance(self.drill_instance.drill_instance_id))
@@ -53,8 +53,8 @@ class TestDrillInstances(unittest.TestCase):
         self.assertEqual(self.drill_instance, retrieved)
 
     def test_user_revalidated(self):
-        drill_instance1 = make_drill_instance()
-        drill_instance2 = make_drill_instance(drill_instance1.user_id)
+        drill_instance1 = self._make_drill_instance()
+        drill_instance2 = self._make_drill_instance(drill_instance1.user_id)
         self.repo.save_drill_instance(drill_instance1)
         self.repo.save_drill_instance(drill_instance2)
         self.assertTrue(drill_instance1.is_valid)
