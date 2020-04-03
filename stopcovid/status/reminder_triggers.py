@@ -65,7 +65,6 @@ class ReminderTriggerRepository:
         )
 
     def save_reminder_triggers(self, values: List[ReminderTrigger]):
-        self.engine.execute(reminder_triggers.insert(), [value.serialize() for value in values])
 
         with self.engine.connect() as connection:
             with connection.begin():
@@ -73,12 +72,12 @@ class ReminderTriggerRepository:
                     stmt = insert(reminder_triggers).values(
                         id=str(value.id),
                         drill_instance_id=str(value.drill_instance_id),
-                        prompt_slug=str(value.prompt_slug),
+                        prompt_slug=value.prompt_slug,
                     )
-                try:
-                    self.engine.execute(stmt)
-                except IntegrityError:
-                    pass
+                    try:
+                        self.engine.execute(stmt)
+                    except IntegrityError:
+                        pass
 
     def get_reminder_triggers(self):
         results = self.engine.execute(select([reminder_triggers]))
