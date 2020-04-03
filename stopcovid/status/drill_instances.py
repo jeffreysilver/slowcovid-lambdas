@@ -173,7 +173,9 @@ class DrillInstanceRepository:
             )
 
     def get_incomplete_drills(self, inactive_for_minutes=None) -> List[DrillInstance]:
-        stmt = select([drill_instances]).where(drill_instances.c.completion_time == None)
+        stmt = select([drill_instances]).where(
+            drill_instances.c.completion_time == None
+        )  # noqa:  E711
         if inactive_for_minutes is not None:
             stmt = stmt.where(
                 drill_instances.c.current_prompt_start_time
