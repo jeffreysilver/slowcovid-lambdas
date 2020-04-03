@@ -15,7 +15,7 @@ def _make_inbound_command(record):
     )
 
 
-def handle_command(event, context):
+def handler(event, context):
     inbound_commands = [_make_inbound_command(record) for record in event["Records"]]
     handle_inbound_commands(inbound_commands)
     return {"statusCode": 200}

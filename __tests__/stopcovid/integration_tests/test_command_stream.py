@@ -2,7 +2,7 @@ import unittest
 from unittest.mock import patch
 import json
 
-from aws_lambdas.handle_command import handle_command
+from aws_lambdas.handle_command import handler as handle_command
 from stopcovid.dialog.dialog import ProcessSMSMessage, TriggerReminder, StartDrill
 
 

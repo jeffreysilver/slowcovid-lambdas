@@ -62,7 +62,7 @@ functions:
           batchSize: 1
 
   handleCommand:
-    handler: stopcovid/command_stream.handle_command
+    handler: aws_lambdas/handle_command.handler
     environment:
       DIALOG_TABLE_NAME_SUFFIX: ${self:provider.stage}
       REGISTRATION_VALIDATION_URL: https://eslworks-api-production.herokuapp.com/slowcovid/lookup
