@@ -110,7 +110,7 @@ class PhoneNumber:
 class DrillStatus:
     id: uuid.UUID
     user_id: uuid.UUID
-    drill_instance_id: uuid.UUID
+    drill_instance_id: Optional[uuid.UUID]
     drill_slug: str
     place_in_sequence: int
     started_time: datetime.datetime
@@ -332,7 +332,7 @@ class UserRepository:
         connection.execute(
             drill_statuses.update()
             .where(drill_statuses.c.user_id == func.uuid(str(user_id)))
-            .values(started_time=None, completed_time=None)
+            .values(started_time=None, completed_time=None, drill_instance_id=None)
         )
 
     @staticmethod
