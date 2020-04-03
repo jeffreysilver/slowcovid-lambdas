@@ -70,7 +70,6 @@ drill_statuses = Table(
     Column("drill_slug", String, nullable=False),
     Column("place_in_sequence", Integer, nullable=False),
     Column("started_time", DateTime(timezone=True)),
-    Column("reminder_sent_time", DateTime(timezone=True)),
     Column("completed_time", DateTime(timezone=True)),
     UniqueConstraint("user_id", "place_in_sequence"),
 )
@@ -99,7 +98,6 @@ class DrillStatus:
     drill_slug: str
     place_in_sequence: int
     started_time: datetime.datetime
-    reminder_sent_time: datetime.datetime
     completed_time: datetime.datetime
 
 
@@ -138,7 +136,6 @@ class UserRepository:
             drill_slug=row["drill_slug"],
             place_in_sequence=row["place_in_sequence"],
             started_time=row["started_time"],
-            reminder_sent_time=row["reminder_sent_time"],
             completed_time=row["completed_time"],
         )
 
@@ -211,7 +208,7 @@ class UserRepository:
         self.engine.execute(
             drill_statuses.update()
             .where(drill_statuses.c.user_id == func.uuid(str(user_id)))
-            .values(started_time=None, reminder_sent_time=None, completed_time=None)
+            .values(started_time=None, completed_time=None)
         )
 
     def _mark_drill_started(self, user_id: uuid.UUID, event: DrillStarted):

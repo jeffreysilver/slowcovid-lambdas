@@ -27,6 +27,7 @@ drill_instances = Table(
     metadata,
     Column("drill_instance_id", UUID, primary_key=True),
     Column("user_id", UUID, nullable=False),
+    Column("phone_number", String, nullable=False),
     Column("drill_slug", String, nullable=False),
     Column("current_prompt_slug", String, nullable=True),
     Column("current_prompt_start_time", DateTime(timezone=True), nullable=True),
@@ -40,6 +41,7 @@ drill_instances = Table(
 class DrillInstance:
     drill_instance_id: uuid.UUID
     user_id: uuid.UUID
+    phone_number: str
     drill_slug: str
     current_prompt_slug: Optional[str] = None
     current_prompt_start_time: Optional[datetime.datetime] = None
@@ -65,7 +67,7 @@ class DrillInstanceRepository:
         elif isinstance(event, FailedPrompt):
             self._update_current_prompt_response_time(event)
         elif isinstance(event, AdvancedToNextPrompt):
-            self._update_current_prompt(user_id, event)
+            self._update_current_prompt(event)
         elif isinstance(event, ReminderTriggered) or isinstance(event, UserValidationFailed):
             logging.info(f"Ignoring event of type {event.event_type}")
         else:
@@ -82,6 +84,7 @@ class DrillInstanceRepository:
         drill_instance = DrillInstance(
             drill_instance_id=event.drill_instance_id,
             user_id=user_id,
+            phone_number=event.phone_number,
             drill_slug=event.drill.slug,
             current_prompt_slug=event.first_prompt.slug,
             current_prompt_start_time=event.created_time,
@@ -107,7 +110,7 @@ class DrillInstanceRepository:
             .values(current_prompt_last_response_time=event.created_time)
         )
 
-    def _update_current_prompt(self, user_id: uuid.UUID, event: AdvancedToNextPrompt):
+    def _update_current_prompt(self, event: AdvancedToNextPrompt):
         self.engine.execute(
             drill_instances.update()
             .where(drill_instances.c.drill_instance_id == func.uuid(str(event.drill_instance_id)))
@@ -130,6 +133,7 @@ class DrillInstanceRepository:
         return DrillInstance(
             drill_instance_id=uuid.UUID(row["drill_instance_id"]),
             user_id=uuid.UUID(row["user_id"]),
+            phone_number=row["phone_number"],
             drill_slug=row["drill_slug"],
             current_prompt_slug=row["current_prompt_slug"],
             current_prompt_start_time=row["current_prompt_start_time"],
@@ -149,6 +153,7 @@ class DrillInstanceRepository:
         stmt = insert(drill_instances).values(
             drill_instance_id=str(drill_instance.drill_instance_id),
             user_id=str(drill_instance.user_id),
+            phone_number=drill_instance.phone_number,
             drill_slug=str(drill_instance.drill_slug),
             **settings,
         )
