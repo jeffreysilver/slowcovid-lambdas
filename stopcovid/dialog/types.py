@@ -170,6 +170,7 @@ class DialogEvent(ABC):
 class DialogEventBatch:
     events: List[DialogEvent]
     phone_number: str
+    seq: str
     batch_id: uuid.UUID = field(default_factory=uuid.uuid4)
     created_time: datetime.datetime = field(
         default_factory=lambda: datetime.datetime.now(datetime.timezone.utc)
@@ -178,6 +179,7 @@ class DialogEventBatch:
     def to_dict(self):
         return {
             "batch_id": str(self.batch_id),
+            "seq": self.seq,
             "phone_number": self.phone_number,
             "created_time": utils.isoformat(self.created_time),
             "events": [event.to_dict() for event in self.events],

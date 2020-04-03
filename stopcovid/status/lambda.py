@@ -11,7 +11,6 @@ def process_dialog_events(event, context):
     ]
 
     for batch in event_batches:
-        for event in batch.events:
-            status.handle_dialog_event(event)
+        status.handle_dialog_event_batch(batch)
 
     return {"statusCode": 200}
