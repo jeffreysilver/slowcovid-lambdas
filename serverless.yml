@@ -50,7 +50,7 @@ functions:
           cors: true
 
   sendMessage:
-    handler: stopcovid/outbound_sms/send_sms.send_sms_handler
+    handler: aws_lambdas/send_sms_batch.handler
     timeout: 60
     events:
       - sqs:
@@ -62,7 +62,7 @@ functions:
           batchSize: 1
 
   handleCommand:
-    handler: stopcovid/command_stream.handle_command
+    handler: aws_lambdas/handle_command.handler
     environment:
       DIALOG_TABLE_NAME_SUFFIX: ${self:provider.stage}
       REGISTRATION_VALIDATION_URL: https://eslworks-api-production.herokuapp.com/slowcovid/lookup

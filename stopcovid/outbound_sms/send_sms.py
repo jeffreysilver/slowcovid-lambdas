@@ -6,7 +6,7 @@ import json
 from typing import List
 
 from stopcovid.clients import twilio, kinesis
-from stopcovid.outbound_sms.types import SMSBatchSchema, SMSBatch
+from stopcovid.outbound_sms.types import SMSBatch
 
 DELAY_SECONDS_BETWEEN_MESSAGES = 3
 
@@ -46,9 +46,3 @@ def send_sms_batches(batches: List[SMSBatch]):
         logging.info(
             f"send_sms_failed_to_write_to_kinesis_log: {json.dumps(formatted_twilio_responses)}"
         )
-
-
-def send_sms_handler(event, context):
-    batches = [SMSBatchSchema().loads(record["body"]) for record in event["Records"]]
-    send_sms_batches(batches)
-    return {"statusCode": 200}
