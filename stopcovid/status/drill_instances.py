@@ -2,7 +2,7 @@ import datetime
 import logging
 import uuid
 from dataclasses import dataclass
-from typing import Union, Optional
+from typing import Union, Optional, List
 
 from sqlalchemy import MetaData, Table, Column, String, DateTime, Boolean, select, func, insert
 from sqlalchemy.dialects.postgresql import UUID
@@ -121,15 +121,7 @@ class DrillInstanceRepository:
             )
         )
 
-    def get_drill_instance(self, drill_instance_id: uuid.UUID) -> Optional[DrillInstance]:
-        result = self.engine.execute(
-            select([drill_instances]).where(
-                drill_instances.c.drill_instance_id == func.uuid(str(drill_instance_id))
-            )
-        )
-        row = result.fetchone()
-        if row is None:
-            return None
+    def _deserialize_row(self, row):
         return DrillInstance(
             drill_instance_id=uuid.UUID(row["drill_instance_id"]),
             user_id=uuid.UUID(row["user_id"]),
@@ -141,6 +133,17 @@ class DrillInstanceRepository:
             completion_time=row["completion_time"],
             is_valid=row["is_valid"],
         )
+
+    def get_drill_instance(self, drill_instance_id: uuid.UUID) -> Optional[DrillInstance]:
+        result = self.engine.execute(
+            select([drill_instances]).where(
+                drill_instances.c.drill_instance_id == func.uuid(str(drill_instance_id))
+            )
+        )
+        row = result.fetchone()
+        if row is None:
+            return None
+        return self._deserialize_row(row)
 
     def save_drill_instance(self, drill_instance: DrillInstance):
         settings = dict(
@@ -168,6 +171,18 @@ class DrillInstanceRepository:
                 )
                 .values(**settings)
             )
+
+    def get_incomplete_drills(self, inactive_for_minutes=None) -> List[DrillInstance]:
+        stmt = select([drill_instances]).where(drill_instances.c.completion_time == None)
+        if inactive_for_minutes is not None:
+            stmt = stmt.where(
+                drill_instances.c.current_prompt_start_time
+                >= datetime.datetime.now(datetime.timezone.utc)
+                - datetime.timedelta(minutes=-1 * inactive_for_minutes)
+            )
+        results = self.engine.execute(stmt)
+        rows = results.fetchall()
+        return [self._deserialize_row(row) for row in rows]
 
     def drop_and_recreate_tables_testing_only(self):
         if self.engine_factory == db.get_sqlalchemy_engine:

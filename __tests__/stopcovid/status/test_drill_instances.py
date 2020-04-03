@@ -27,19 +27,24 @@ class TestDrillInstances(unittest.TestCase):
         self.prompt2 = Prompt(slug="second", messages=[])
         self.drill = Drill(slug="slug", name="name", prompts=[self.prompt1])
 
-    def _make_drill_instance(self, user_id=None) -> DrillInstance:
-        if user_id is None:
-            user_id = uuid.uuid4()
+    def _make_drill_instance(self, **overrides) -> DrillInstance:
+        def _get_value(key, default):
+            return overrides[key] if key in overrides else default
+
         return DrillInstance(
-            drill_instance_id=uuid.uuid4(),
-            user_id=user_id,
-            phone_number=self.phone_number,
-            drill_slug="test",
-            current_prompt_slug="test-prompt",
-            current_prompt_start_time=datetime.datetime.now(datetime.timezone.utc),
-            current_prompt_last_response_time=datetime.datetime.now(datetime.timezone.utc),
-            completion_time=None,
-            is_valid=True,
+            drill_instance_id=_get_value("drill_instance_id", uuid.uuid4()),
+            user_id=_get_value("user_id", uuid.uuid4()),
+            phone_number=_get_value("phone_number", self.phone_number),
+            drill_slug=_get_value("drill_slug", "test"),
+            current_prompt_slug=_get_value("current_prompt_slug", "test-prompt"),
+            current_prompt_start_time=_get_value(
+                "current_prompt_start_time", datetime.datetime.now(datetime.timezone.utc)
+            ),
+            current_prompt_last_response_time=_get_value(
+                "current_prompt_last_response_time", datetime.datetime.now(datetime.timezone.utc)
+            ),
+            completion_time=_get_value("completion_time", None),
+            is_valid=_get_value("is_valid", True),
         )
 
     def test_get_and_save(self):
@@ -54,7 +59,7 @@ class TestDrillInstances(unittest.TestCase):
 
     def test_user_revalidated(self):
         drill_instance1 = self._make_drill_instance()
-        drill_instance2 = self._make_drill_instance(drill_instance1.user_id)
+        drill_instance2 = self._make_drill_instance(user_id=drill_instance1.user_id)
         self.repo.save_drill_instance(drill_instance1)
         self.repo.save_drill_instance(drill_instance2)
         self.assertTrue(drill_instance1.is_valid)
@@ -150,3 +155,42 @@ class TestDrillInstances(unittest.TestCase):
         self.assertEqual(self.prompt2.slug, retrieved.current_prompt_slug)
         self.assertIsNone(retrieved.current_prompt_last_response_time)
         self.assertEqual(event.created_time, retrieved.current_prompt_start_time)
+
+    def test_get_incomplete_drills(self):
+        incomplete_drill_instance = self._make_drill_instance(completion_time=None)
+        complete_drill_instance = self._make_drill_instance(
+            completion_time=datetime.datetime.now(datetime.timezone.utc)
+        )
+        self.repo.save_drill_instance(incomplete_drill_instance)
+        self.repo.save_drill_instance(complete_drill_instance)
+        results = self.repo.get_incomplete_drills()
+        self.assertEqual(len(results), 1)
+        self.assertEqual(results[0].drill_instance_id, incomplete_drill_instance.drill_instance_id)
+
+    def test_get_incomplete_drills_with_inactive_for_minutes(self):
+        just_started_drill_instance = self._make_drill_instance(
+            current_prompt_start_time=datetime.datetime.now(datetime.timezone.utc)
+            - datetime.timedelta(minutes=-2),
+            completion_time=None,
+        )
+        stale_drill_instance_1 = self._make_drill_instance(
+            current_prompt_start_time=datetime.datetime.now(datetime.timezone.utc)
+            - datetime.timedelta(minutes=-61),
+            completion_time=None,
+        )
+        stale_drill_instance_2 = self._make_drill_instance(
+            current_prompt_start_time=datetime.datetime.now(datetime.timezone.utc)
+            - datetime.timedelta(minutes=-120),
+            completion_time=None,
+        )
+        complete_drill_instance = self._make_drill_instance(
+            completion_time=datetime.datetime.now(datetime.timezone.utc)
+        )
+        self.repo.save_drill_instance(just_started_drill_instance)
+        self.repo.save_drill_instance(stale_drill_instance_1)
+        self.repo.save_drill_instance(stale_drill_instance_2)
+        self.repo.save_drill_instance(complete_drill_instance)
+        results = self.repo.get_incomplete_drills(inactive_for_minutes=60)
+        self.assertEqual(len(results), 2)
+        self.assertEqual(results[0].drill_instance_id, stale_drill_instance_1.drill_instance_id)
+        self.assertEqual(results[1].drill_instance_id, stale_drill_instance_2.drill_instance_id)
