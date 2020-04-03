@@ -3,7 +3,7 @@
     {
       "messageId": "4c8f87a2-89cc-45f7-b9da-27e90e55a53c",
       "receiptHandle": "AQEB9WHUgNm3dZYCr1YtRfKxlS4pNldpVk+MoZgJOuXvnVxxjrZ1yfifDreB3yoiZTWCskmPQwAg4qXQ9yREAGfiSX0w4OasQUG1sR3tCWEoSeYou7s8tFYrvvrq+vmw2MtM/fI8bN7BkVovL2oTzV1v73F3yK8vNMVmOJvYrYSwmctrSpknvPR69WvnzH/Ga78lTzTEoykUAa1BS6kq+gPSOOSoKDl6a9e2nLjPDPZX0eWFhIbPnW96HxfzgOEOdQDOKQYE3dt0Q8acQ9u/XjsPMiNXDp72ZaXSJ4OIvDbUR5A=",
-      "body": "{\"to\": \"+14802865415\", \"messages\": [{\"body\": \"hello\"}, {\"body\": \"how are you\"}]}",
+      "body": "{\"phone_number\": \"+14802865415\", \"messages\": [{\"body\": \"hello\"}, {\"body\": \"how are you\"}]}",
       "attributes": {
         "ApproximateReceiveCount": "1",
         "SentTimestamp": "1585850534061",
