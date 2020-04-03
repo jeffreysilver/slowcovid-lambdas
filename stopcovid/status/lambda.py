@@ -1,6 +1,6 @@
 from stopcovid.dialog.dialog import batch_from_dict
 from stopcovid.utils import dynamodb as dynamodb_utils
-from . import status
+from stopcovid.status import status
 
 
 def process_dialog_events(event, context):
