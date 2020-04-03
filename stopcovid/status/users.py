@@ -110,6 +110,8 @@ class PhoneNumber:
 class DrillStatus:
     id: uuid.UUID
     user_id: uuid.UUID
+    # Why are drill instance IDs nullable? We add a drill status row for each known drill before
+    # any of them have started. At that time, the drill instance IDs haven't yet been created.
     drill_instance_id: Optional[uuid.UUID]
     drill_slug: str
     place_in_sequence: int
