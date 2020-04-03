@@ -15,6 +15,7 @@ from sqlalchemy import (
     select,
     Integer,
     func,
+    UniqueConstraint,
 )
 from sqlalchemy.dialects.postgresql import UUID, JSONB
 from sqlalchemy.exc import DatabaseError
@@ -71,6 +72,7 @@ drill_statuses = Table(
     Column("started_time", DateTime(timezone=True)),
     Column("reminder_sent_time", DateTime(timezone=True)),
     Column("completed_time", DateTime(timezone=True)),
+    UniqueConstraint("user_id", "place_in_sequence"),
 )
 
 
