@@ -1,6 +1,9 @@
 import os
 
 from sqlalchemy import create_engine
+import sqlalchemy_aurora_data_api
+
+sqlalchemy_aurora_data_api.register_dialects()
 
 
 def get_sqlalchemy_engine():
