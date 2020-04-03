@@ -13,7 +13,7 @@ from stopcovid.dialog.registration import CodeValidationPayload
 from stopcovid.dialog.types import UserProfile, DialogEventBatch
 from stopcovid.drills.drills import Prompt, Drill
 from stopcovid.status.db import get_test_sqlalchemy_engine
-from stopcovid.status.users import UserRepository, ALL_DRILL_SLUGS
+from stopcovid.status.users import UserRepository, ALL_DRILL_SLUGS, DrillProgress
 
 
 class TestUsers(unittest.TestCase):
@@ -64,12 +64,12 @@ class TestUsers(unittest.TestCase):
         self.assertEqual({"foo": "bar", "one": "two"}, user.account_info)
         self.assertEqual(batch2.seq, user.seq)
 
-    def _make_user_and_get_id(self) -> uuid.UUID:
+    def _make_user_and_get_id(self, **overrides) -> uuid.UUID:
         return self.repo._create_or_update_user(
             self._make_batch(
                 [
                     UserValidated(
-                        phone_number=self.phone_number,
+                        phone_number=overrides.get("phone_number", self.phone_number),
                         user_profile=UserProfile(True),
                         code_validation_payload=CodeValidationPayload(valid=True),
                     )
@@ -91,7 +91,7 @@ class TestUsers(unittest.TestCase):
             event = DrillStarted(
                 phone_number=self.phone_number,
                 user_profile=UserProfile(True),
-                drill=self.drill,
+                drill=Drill(slug=slug, name="name", prompts=[]),
                 first_prompt=self.prompt,
             )
             event2 = DrillCompleted(
@@ -117,6 +117,7 @@ class TestUsers(unittest.TestCase):
         )
         for slug in ALL_DRILL_SLUGS:
             drill_status = self.repo.get_drill_status(user_id, slug)
+            self.assertIsNone(drill_status.drill_instance_id)
             self.assertIsNone(drill_status.started_time)
             self.assertIsNone(drill_status.completed_time)
 
@@ -125,11 +126,11 @@ class TestUsers(unittest.TestCase):
         event = DrillStarted(
             phone_number=self.phone_number,
             user_profile=UserProfile(True),
-            drill=self.drill,
+            drill=Drill(slug=ALL_DRILL_SLUGS[0], name="drill", prompts=[]),
             first_prompt=self.prompt,
         )
         self.repo.update_user(self._make_batch([event]))
-        drill_status = self.repo.get_drill_status(user_id, self.prompt.slug)
+        drill_status = self.repo.get_drill_status(user_id, ALL_DRILL_SLUGS[0])
         self.assertEqual(event.created_time, drill_status.started_time)
         self.assertIsNone(drill_status.completed_time)
 
@@ -139,7 +140,7 @@ class TestUsers(unittest.TestCase):
             drill_instance_id=event.drill_instance_id,
         )
         self.repo.update_user(self._make_batch([event2]))
-        drill_status = self.repo.get_drill_status(user_id, self.prompt.slug)
+        drill_status = self.repo.get_drill_status(user_id, ALL_DRILL_SLUGS[0])
         self.assertEqual(event.created_time, drill_status.started_time)
         self.assertEqual(event2.created_time, drill_status.completed_time)
 
@@ -213,3 +214,116 @@ class TestUsers(unittest.TestCase):
         self.repo.update_user(batch2)
         user = self.repo.get_user(user_id)
         self.assertIsNone(user.last_interacted_time)
+
+    def test_get_progress_empty(self):
+        drill_progresses = list(self.repo.get_progress_for_users_who_need_drills(30))
+        self.assertEqual(0, len(drill_progresses))
+
+        # no started drills, so we won't receive anything
+        self._make_user_and_get_id()
+        drill_progresses = list(self.repo.get_progress_for_users_who_need_drills(30))
+        self.assertEqual(0, len(drill_progresses))
+
+        for slug in ALL_DRILL_SLUGS:
+            event = DrillStarted(
+                phone_number=self.phone_number,
+                user_profile=UserProfile(True),
+                drill=Drill(slug=slug, name="name", prompts=[]),
+                first_prompt=self.prompt,
+            )
+            event2 = DrillCompleted(
+                phone_number=self.phone_number,
+                user_profile=UserProfile(True),
+                drill_instance_id=event.drill_instance_id,
+            )
+            self.repo.update_user(self._make_batch([event, event2]))
+        # all drills complete, so we won't receive anything
+        drill_progresses = list(self.repo.get_progress_for_users_who_need_drills(30))
+        self.assertEqual(0, len(drill_progresses))
+
+    def test_get_progress_one_user(self):
+        user_id = self._make_user_and_get_id()
+        event = DrillStarted(
+            phone_number=self.phone_number,
+            user_profile=UserProfile(True),
+            drill=Drill(slug=ALL_DRILL_SLUGS[0], name="name", prompts=[]),
+            first_prompt=self.prompt,
+        )
+        self.repo.get_progress_for_users_who_need_drills(30)
+        self.repo.update_user(self._make_batch([event]))
+
+        drill_progresses = list(self.repo.get_progress_for_users_who_need_drills(30))
+        self.assertEqual(1, len(drill_progresses))
+        self.assertEqual(
+            DrillProgress(
+                user_id=user_id,
+                phone_number=self.phone_number,
+                first_incomplete_drill_slug=ALL_DRILL_SLUGS[0],
+                first_unstarted_drill_slug=ALL_DRILL_SLUGS[1],
+            ),
+            drill_progresses[0],
+        )
+
+        event2 = DrillCompleted(
+            phone_number=self.phone_number,
+            user_profile=UserProfile(True),
+            drill_instance_id=event.drill_instance_id,
+        )
+        self.repo.update_user(self._make_batch([event2]))
+        drill_progresses = list(self.repo.get_progress_for_users_who_need_drills(30))
+        self.assertEqual(1, len(drill_progresses))
+        self.assertEqual(
+            DrillProgress(
+                user_id=user_id,
+                phone_number=self.phone_number,
+                first_incomplete_drill_slug=ALL_DRILL_SLUGS[1],
+                first_unstarted_drill_slug=ALL_DRILL_SLUGS[1],
+            ),
+            drill_progresses[0],
+        )
+
+    def test_get_progress_multiple_users(self):
+        user_id1 = self._make_user_and_get_id()
+        user_id2 = self._make_user_and_get_id(phone_number="987654321")
+        event = DrillStarted(
+            phone_number=self.phone_number,
+            user_profile=UserProfile(True),
+            drill=Drill(slug=ALL_DRILL_SLUGS[0], name="name", prompts=[]),
+            first_prompt=self.prompt,
+        )
+        self.repo.update_user(self._make_batch([event]))
+
+        event2 = DrillStarted(
+            phone_number="987654321",
+            user_profile=UserProfile(True),
+            drill=Drill(slug=ALL_DRILL_SLUGS[1], name="name", prompts=[]),
+            first_prompt=self.prompt,
+        )
+        self.repo.update_user(self._make_batch([event2]))
+
+        drill_progresses = list(self.repo.get_progress_for_users_who_need_drills(30))
+        self.assertEqual(2, len(drill_progresses))
+        if drill_progresses[0].user_id == user_id1:
+            drill_progress1 = drill_progresses[0]
+            drill_progress2 = drill_progresses[1]
+        else:
+            drill_progress1 = drill_progresses[1]
+            drill_progress2 = drill_progresses[0]
+        self.assertEqual(
+            DrillProgress(
+                phone_number=self.phone_number,
+                user_id=user_id1,
+                first_unstarted_drill_slug=ALL_DRILL_SLUGS[1],
+                first_incomplete_drill_slug=ALL_DRILL_SLUGS[0],
+            ),
+            drill_progress1,
+        )
+        self.assertEqual(
+            DrillProgress(
+                phone_number="987654321",
+                user_id=user_id2,
+                first_unstarted_drill_slug=ALL_DRILL_SLUGS[0],
+                first_incomplete_drill_slug=ALL_DRILL_SLUGS[0],
+            ),
+            drill_progress2,
+        )

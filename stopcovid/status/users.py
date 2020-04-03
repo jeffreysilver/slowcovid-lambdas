@@ -2,7 +2,7 @@ import datetime
 import logging
 import uuid
 from dataclasses import dataclass, field
-from typing import Dict, Any, Optional, Union
+from typing import Dict, Any, Optional, Union, Iterator
 
 from sqlalchemy import (
     Table,
@@ -16,6 +16,10 @@ from sqlalchemy import (
     Integer,
     func,
     UniqueConstraint,
+    Index,
+    and_,
+    exists,
+    or_,
 )
 from sqlalchemy.dialects.postgresql import UUID, JSONB
 from sqlalchemy.exc import DatabaseError
@@ -74,7 +78,16 @@ drill_statuses = Table(
     Column("completed_time", DateTime(timezone=True)),
     UniqueConstraint("user_id", "place_in_sequence"),
     UniqueConstraint("user_id", "drill_slug"),
+    Index("user_id_started", "user_id", "started_time"),
 )
+
+
+@dataclass
+class DrillProgress:
+    phone_number: str
+    user_id: uuid.UUID
+    first_unstarted_drill_slug: Optional[str] = None
+    first_incomplete_drill_slug: Optional[str] = None
 
 
 @dataclass
@@ -97,7 +110,9 @@ class PhoneNumber:
 class DrillStatus:
     id: uuid.UUID
     user_id: uuid.UUID
-    drill_instance_id: uuid.UUID
+    # Why are drill instance IDs nullable? We add a drill status row for each known drill before
+    # any of them have started. At that time, the drill instance IDs haven't yet been created.
+    drill_instance_id: Optional[uuid.UUID]
     drill_slug: str
     place_in_sequence: int
     started_time: datetime.datetime
@@ -126,17 +141,22 @@ class UserRepository:
     def get_drill_status(self, user_id: uuid.UUID, drill_slug: str) -> Optional[DrillStatus]:
         result = self.engine.execute(
             select([drill_statuses]).where(
-                drill_statuses.c.user_id == func.uuid(str(user_id))
-                and drill_statuses.c.drill_slug == drill_slug
+                and_(
+                    drill_statuses.c.user_id == func.uuid(str(user_id)),
+                    drill_statuses.c.drill_slug == drill_slug,
+                )
             )
         )
         row = result.fetchone()
         if row is None:
             return None
+        drill_instance_id = (
+            uuid.UUID(row["drill_instance_id"]) if row["drill_instance_id"] else None
+        )
         return DrillStatus(
             id=uuid.UUID(row["id"]),
             user_id=uuid.UUID(row["user_id"]),
-            drill_instance_id=uuid.UUID(row["drill_instance_id"]),
+            drill_instance_id=drill_instance_id,
             drill_slug=row["drill_slug"],
             place_in_sequence=row["place_in_sequence"],
             started_time=row["started_time"],
@@ -180,6 +200,61 @@ class UserRepository:
                         raise ValueError(f"Unknown event type {event.event_type}")
 
                 return user_id
+
+    def get_progress_for_users_who_need_drills(self, inactivity_minutes) -> Iterator[DrillProgress]:
+        ds1 = drill_statuses.alias()
+        ds2 = drill_statuses.alias()
+        time_threshold = datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(
+            minutes=inactivity_minutes
+        )
+        stmt = (
+            select([drill_statuses, phone_numbers.c.phone_number])
+            .select_from(
+                drill_statuses.join(users, users.c.user_id == drill_statuses.c.user_id).join(
+                    phone_numbers, phone_numbers.c.user_id == drill_statuses.c.user_id
+                )
+            )
+            .where(
+                and_(
+                    # haven't interacted recently
+                    or_(
+                        users.c.last_interacted_time.is_(None),
+                        users.c.last_interacted_time <= time_threshold,
+                    ),
+                    # there's at least one started drill
+                    exists().where(
+                        and_(ds2.c.user_id == users.c.user_id, ds2.c.started_time.isnot(None))
+                    ),
+                    # and at least one incomplete drill
+                    exists().where(
+                        and_(ds1.c.user_id == users.c.user_id, ds1.c.completed_time.is_(None))
+                    ),
+                )
+            )
+            .order_by(drill_statuses.c.user_id, drill_statuses.c.place_in_sequence)
+        )
+        cur_drill_progress = None
+        for row in self.engine.execute(stmt):
+            user_id = uuid.UUID(row["user_id"])
+            if cur_drill_progress is None or cur_drill_progress.user_id != user_id:
+                if cur_drill_progress is not None:
+                    yield cur_drill_progress
+                cur_drill_progress = DrillProgress(
+                    phone_number=row["phone_number"], user_id=user_id
+                )
+            if (
+                cur_drill_progress.first_incomplete_drill_slug is None
+                and row["completed_time"] is None
+            ):
+                cur_drill_progress.first_incomplete_drill_slug = row["drill_slug"]
+            if (
+                cur_drill_progress.first_unstarted_drill_slug is None
+                and row["started_time"] is None
+            ):
+                cur_drill_progress.first_unstarted_drill_slug = row["drill_slug"]
+
+        if cur_drill_progress is not None:
+            yield cur_drill_progress
 
     @staticmethod
     def _get_user_for_phone_number(phone_number: str, connection) -> Optional[User]:
@@ -259,7 +334,7 @@ class UserRepository:
         connection.execute(
             drill_statuses.update()
             .where(drill_statuses.c.user_id == func.uuid(str(user_id)))
-            .values(started_time=None, completed_time=None)
+            .values(started_time=None, completed_time=None, drill_instance_id=None)
         )
 
     @staticmethod
@@ -267,8 +342,10 @@ class UserRepository:
         connection.execute(
             drill_statuses.update()
             .where(
-                drill_statuses.c.user_id == func.uuid(str(user_id))
-                and drill_statuses.c.drill_slug == event.drill.slug
+                and_(
+                    drill_statuses.c.user_id == func.uuid(str(user_id)),
+                    drill_statuses.c.drill_slug == event.drill.slug,
+                )
             )
             .values(started_time=event.created_time, drill_instance_id=str(event.drill_instance_id))
         )
@@ -277,10 +354,7 @@ class UserRepository:
     def _mark_drill_completed(user_id: uuid.UUID, event: DrillCompleted, connection):
         connection.execute(
             drill_statuses.update()
-            .where(
-                drill_statuses.c.user_id == func.uuid(str(user_id))
-                and drill_statuses.c.drill_instance_id == func.uuid(str(event.drill_instance_id))
-            )
+            .where((drill_statuses.c.drill_instance_id == func.uuid(str(event.drill_instance_id))))
             .values(completed_time=event.created_time)
         )
 
