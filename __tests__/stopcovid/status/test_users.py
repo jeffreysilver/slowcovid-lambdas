@@ -1,4 +1,5 @@
 import unittest
+import uuid
 from copy import copy
 
 from stopcovid.dialog.dialog import (
@@ -9,7 +10,7 @@ from stopcovid.dialog.dialog import (
     FailedPrompt,
 )
 from stopcovid.dialog.registration import CodeValidationPayload
-from stopcovid.dialog.types import UserProfile
+from stopcovid.dialog.types import UserProfile, DialogEventBatch
 from stopcovid.drills.drills import Prompt, Drill
 from stopcovid.status.db import get_test_sqlalchemy_engine
 from stopcovid.status.users import UserRepository, ALL_DRILL_SLUGS
@@ -24,17 +25,40 @@ class TestUsers(unittest.TestCase):
         self.drill = Drill(slug="slug", name="name", prompts=[self.prompt])
 
     def test_create_or_update_user(self):
-        profile = UserProfile(True, account_info={"foo": "bar"})
-        user_id = self.repo.create_or_update_user(self.phone_number, profile)
+        batch = DialogEventBatch(
+            phone_number=self.phone_number,
+            seq="1",
+            events=[
+                DrillCompleted(
+                    phone_number=self.phone_number,
+                    user_profile=UserProfile(True, account_info={"foo": "bar"}),
+                    drill_instance_id=uuid.uuid4(),
+                )
+            ],
+        )
+        user_id = self.repo._create_or_update_user(batch, self.repo.engine)
         user = self.repo.get_user(user_id)
         self.assertEqual(user_id, user.user_id)
         self.assertEqual({"foo": "bar"}, user.account_info)
         self.assertIsNone(user.last_interacted_time)
+        self.assertEqual("1", user.seq)
 
-        profile.account_info["one"] = "two"
-        self.repo.create_or_update_user(self.phone_number, profile)
+        batch2 = DialogEventBatch(
+            phone_number=self.phone_number,
+            seq="2",
+            events=[
+                DrillCompleted(
+                    phone_number=self.phone_number,
+                    user_profile=UserProfile(True, account_info={"foo": "bar", "one": "two"}),
+                    drill_instance_id=uuid.uuid4(),
+                )
+            ],
+        )
+
+        self.repo._create_or_update_user(batch2, self.repo.engine)
         user = self.repo.get_user(user_id)
         self.assertEqual({"foo": "bar", "one": "two"}, user.account_info)
+        self.assertEqual("2", user.seq)
 
     def test_user_revalidated(self):
         user_id = self.repo.create_or_update_user(self.phone_number, UserProfile(True))
