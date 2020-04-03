@@ -1,5 +1,4 @@
 import unittest
-import datetime
 from copy import copy
 
 from stopcovid.dialog.dialog import (
@@ -39,7 +38,6 @@ class TestUsers(unittest.TestCase):
 
     def test_user_revalidated(self):
         user_id = self.repo.create_or_update_user(self.phone_number, UserProfile(True))
-        time = datetime.datetime.now(datetime.timezone.utc)
         for slug in ALL_DRILL_SLUGS:
             drill = copy(self.drill)
             drill.slug = slug

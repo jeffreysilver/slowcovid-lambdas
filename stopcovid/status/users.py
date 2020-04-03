@@ -21,7 +21,6 @@ from sqlalchemy.exc import DatabaseError
 
 from . import db
 from stopcovid.dialog.types import UserProfile, DialogEvent
-from .drill_instances import DrillInstanceRepository
 from ..dialog.dialog import (
     UserValidated,
     DrillStarted,
