@@ -86,6 +86,7 @@ functions:
 
   updateDrillStatus:
     handler: stopcovid/status/lambda.process_dialog_events
+    timeout: 60
     events:
       - stream:
           type: dynamodb
