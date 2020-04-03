@@ -63,7 +63,6 @@ class ReminderTriggerRepository:
         )
 
     def save_reminder_triggers(self, values: List[ReminderTrigger]):
-
         with self.engine.connect() as connection:
             with connection.begin():
                 for value in values:
