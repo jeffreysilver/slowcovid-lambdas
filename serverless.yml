@@ -50,7 +50,7 @@ functions:
           cors: true
 
   sendMessage:
-    handler: stopcovid/send_sms.send_sms
+    handler: stopcovid/outbound_sms/send_sms.send_sms_handler
     timeout: 60
     events:
       - sqs:

@@ -49,7 +49,7 @@ class TestPublishOutboundSMS(unittest.TestCase):
             entry["MessageBody"],
             json.dumps(
                 {
-                    "to": phone_number,
+                    "phone_number": phone_number,
                     "messages": [
                         {"body": "message 1"},
                         {"body": "message 2"},
@@ -83,7 +83,7 @@ class TestPublishOutboundSMS(unittest.TestCase):
             entry["MessageBody"],
             json.dumps(
                 {
-                    "to": phone_number,
+                    "phone_number": phone_number,
                     "messages": [
                         {"body": "message 1"},
                         {"body": "message 2"},
@@ -118,7 +118,10 @@ class TestPublishOutboundSMS(unittest.TestCase):
         self.assertEqual(
             entry["MessageBody"],
             json.dumps(
-                {"to": phone_number_1, "messages": [{"body": "message 1"}, {"body": "message 2"}]}
+                {
+                    "phone_number": phone_number_1,
+                    "messages": [{"body": "message 1"}, {"body": "message 2"}],
+                }
             ),
         )
         self.assertEqual(entry["MessageGroupId"], phone_number_1)
@@ -128,7 +131,7 @@ class TestPublishOutboundSMS(unittest.TestCase):
         self.assertIn(str(event_2_id), entry["MessageDeduplicationId"])
         self.assertEqual(
             entry["MessageBody"],
-            json.dumps({"to": phone_number_2, "messages": [{"body": "message 3"}]}),
+            json.dumps({"phone_number": phone_number_2, "messages": [{"body": "message 3"}]}),
         )
         self.assertEqual(entry["MessageGroupId"], phone_number_2)
 
@@ -179,7 +182,10 @@ class TestPublishOutboundSMS(unittest.TestCase):
         self.assertEqual(
             entry["MessageBody"],
             json.dumps(
-                {"to": phone_number_1, "messages": [{"body": "message 1"}, {"body": "message 2"}]}
+                {
+                    "phone_number": phone_number_1,
+                    "messages": [{"body": "message 1"}, {"body": "message 2"}],
+                }
             ),
         )
         self.assertEqual(entry["MessageGroupId"], phone_number_1)
@@ -192,7 +198,10 @@ class TestPublishOutboundSMS(unittest.TestCase):
         self.assertEqual(
             entry["MessageBody"],
             json.dumps(
-                {"to": phone_number_2, "messages": [{"body": "message 3"}, {"body": "message 4"}]}
+                {
+                    "phone_number": phone_number_2,
+                    "messages": [{"body": "message 3"}, {"body": "message 4"}],
+                }
             ),
         )
         self.assertEqual(entry["MessageGroupId"], phone_number_2)
@@ -206,7 +215,7 @@ class TestPublishOutboundSMS(unittest.TestCase):
             entry["MessageBody"],
             json.dumps(
                 {
-                    "to": phone_number_3,
+                    "phone_number": phone_number_3,
                     "messages": [
                         {"body": "message 5"},
                         {"body": "message 6"},

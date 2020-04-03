@@ -30,7 +30,10 @@ def publish_outbound_sms_messages(outbound_sms_messages: List[OutboundSMS]):
         {
             "Id": str(uuid.uuid4()),
             "MessageBody": json.dumps(
-                {"to": phone, "messages": [{"body": message.body} for message in messages]}
+                {
+                    "phone_number": phone,
+                    "messages": [{"body": message.body} for message in messages],
+                }
             ),
             "MessageDeduplicationId": _get_message_deduplication_id(messages),
             "MessageGroupId": phone,
