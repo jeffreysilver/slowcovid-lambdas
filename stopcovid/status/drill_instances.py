@@ -139,6 +139,7 @@ class DrillInstanceRepository:
                     current_prompt_slug=None,
                     current_prompt_start_time=None,
                     current_prompt_last_response_time=None,
+                    seq=seq,
                 )
             )
 
@@ -151,7 +152,7 @@ class DrillInstanceRepository:
                 .where(
                     drill_instances.c.drill_instance_id == func.uuid(str(event.drill_instance_id))
                 )
-                .values(current_prompt_last_response_time=event.created_time)
+                .values(current_prompt_last_response_time=event.created_time, seq=seq)
             )
 
     def _update_current_prompt(self, event: AdvancedToNextPrompt, seq: str, connection):
@@ -165,6 +166,7 @@ class DrillInstanceRepository:
                     current_prompt_last_response_time=None,
                     current_prompt_start_time=event.created_time,
                     current_prompt_slug=event.prompt.slug,
+                    seq=seq,
                 )
             )
 
