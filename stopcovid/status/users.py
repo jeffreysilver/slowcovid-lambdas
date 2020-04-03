@@ -73,6 +73,7 @@ drill_statuses = Table(
     Column("started_time", DateTime(timezone=True)),
     Column("completed_time", DateTime(timezone=True)),
     UniqueConstraint("user_id", "place_in_sequence"),
+    UniqueConstraint("user_id", "drill_slug"),
 )
 
 
