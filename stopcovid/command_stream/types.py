@@ -1,13 +1,11 @@
 from dataclasses import dataclass
-
-import enum
 from marshmallow import Schema, fields, post_load
 
 
-class InboundCommandType(enum.Enum):
-    DRILL_STARTED = "INBOUND_SMS"
-    REMINDER_TRIGGERED = "START_DRILL"
-    USER_VALIDATED = "TRIGGER_REMINDER"
+class InboundCommandType:
+    INBOUND_SMS = "INBOUND_SMS"
+    START_DRILL = "START_DRILL"
+    TRIGGER_REMINDER = "TRIGGER_REMINDER"
 
 
 @dataclass

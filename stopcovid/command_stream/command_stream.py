@@ -2,20 +2,20 @@ from typing import List
 
 from stopcovid.dialog.dialog import process_command, ProcessSMSMessage, StartDrill, TriggerReminder
 from stopcovid.drills.drills import drill_from_dict
-from stopcovid.command_stream.types import InboundCommand
+from stopcovid.command_stream.types import InboundCommand, InboundCommandType
 
 
 def handle_inbound_commands(commands: List[InboundCommand]):
 
     for command in commands:
-        if command.command_type == "INBOUND_SMS":
+        if command.command_type == InboundCommandType.INBOUND_SMS:
             process_command(
                 ProcessSMSMessage(
                     phone_number=command.payload["From"], content=command.payload["Body"]
                 ),
                 command.sequence_number,
             )
-        elif command.command_type == "START_DRILL":
+        elif command.command_type == InboundCommandType.START_DRILL:
             process_command(
                 StartDrill(
                     phone_number=command.payload["phone_number"],
@@ -23,7 +23,7 @@ def handle_inbound_commands(commands: List[InboundCommand]):
                 ),
                 command.sequence_number,
             )
-        elif command.command_type == "TRIGGER_REMINDER":
+        elif command.command_type == InboundCommandType.TRIGGER_REMINDER:
             process_command(
                 TriggerReminder(
                     phone_number=command.payload["phone_number"],
