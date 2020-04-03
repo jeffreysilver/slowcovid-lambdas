@@ -170,17 +170,17 @@ class TestDrillInstances(unittest.TestCase):
     def test_get_incomplete_drills_with_inactive_for_minutes(self):
         just_started_drill_instance = self._make_drill_instance(
             current_prompt_start_time=datetime.datetime.now(datetime.timezone.utc)
-            - datetime.timedelta(minutes=-2),
+            - datetime.timedelta(minutes=2),
             completion_time=None,
         )
         stale_drill_instance_1 = self._make_drill_instance(
             current_prompt_start_time=datetime.datetime.now(datetime.timezone.utc)
-            - datetime.timedelta(minutes=-61),
+            - datetime.timedelta(minutes=61),
             completion_time=None,
         )
         stale_drill_instance_2 = self._make_drill_instance(
             current_prompt_start_time=datetime.datetime.now(datetime.timezone.utc)
-            - datetime.timedelta(minutes=-120),
+            - datetime.timedelta(minutes=120),
             completion_time=None,
         )
         complete_drill_instance = self._make_drill_instance(

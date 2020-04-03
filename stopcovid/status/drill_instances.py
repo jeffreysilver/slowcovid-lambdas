@@ -4,7 +4,18 @@ import uuid
 from dataclasses import dataclass
 from typing import Union, Optional, List
 
-from sqlalchemy import MetaData, Table, Column, String, DateTime, Boolean, select, func, insert
+from sqlalchemy import (
+    MetaData,
+    Table,
+    Column,
+    String,
+    DateTime,
+    Boolean,
+    select,
+    func,
+    insert,
+    and_,
+)
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.exc import DatabaseError, IntegrityError
 
@@ -174,17 +185,15 @@ class DrillInstanceRepository:
 
     def get_incomplete_drills(self, inactive_for_minutes=None) -> List[DrillInstance]:
         stmt = select([drill_instances]).where(
-            drill_instances.c.completion_time == None
+            and_(drill_instances.c.completion_time == None, drill_instances.c.is_valid.is_(True))
         )  # noqa:  E711
         if inactive_for_minutes is not None:
             stmt = stmt.where(
                 drill_instances.c.current_prompt_start_time
-                >= datetime.datetime.now(datetime.timezone.utc)
-                - datetime.timedelta(minutes=-1 * inactive_for_minutes)
+                <= datetime.datetime.now(datetime.timezone.utc)
+                - datetime.timedelta(minutes=inactive_for_minutes)
             )
-        results = self.engine.execute(stmt)
-        rows = results.fetchall()
-        return [self._deserialize_row(row) for row in rows]
+        return [self._deserialize_row(row) for row in self.engine.execute(stmt)]
 
     def drop_and_recreate_tables_testing_only(self):
         if self.engine_factory == db.get_sqlalchemy_engine:
