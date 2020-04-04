@@ -50,16 +50,14 @@ class StartDrill(types.Command):
         self.drill = drill
 
     def execute(self, dialog_state: types.DialogState) -> List[types.DialogEvent]:
-        if dialog_state.current_drill is None:
-            return [
-                DrillStarted(
-                    phone_number=self.phone_number,
-                    user_profile=dialog_state.user_profile,
-                    drill=self.drill,
-                    first_prompt=self.drill.first_prompt(),
-                )
-            ]
-        return []
+        return [
+            DrillStarted(
+                phone_number=self.phone_number,
+                user_profile=dialog_state.user_profile,
+                drill=self.drill,
+                first_prompt=self.drill.first_prompt(),
+            )
+        ]
 
 
 class TriggerReminder(types.Command):

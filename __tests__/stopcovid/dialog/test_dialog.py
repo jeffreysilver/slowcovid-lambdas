@@ -194,16 +194,6 @@ class TestProcessCommand(unittest.TestCase):
         self.assertEqual(self.drill.first_prompt(), event.first_prompt)
         self.assertIsNotNone(event.drill_instance_id)
 
-    def test_start_drill_ignored_while_in_progress(self):
-        self.dialog_state.user_profile.validated = True
-        self._set_current_prompt(0, should_advance=True)
-        command = ProcessSMSMessage(self.phone_number, "go")
-        self._process_command(command)
-
-        command = StartDrill(self.phone_number, self.drill)
-        batch = self._process_command(command)
-        self.assertEqual(0, len(batch.events))
-
     def test_complete_and_advance(self):
         self.dialog_state.user_profile.validated = True
         self._set_current_prompt(0, should_advance=True)
