@@ -250,3 +250,25 @@ resources:
         StreamSpecification:
           StreamViewType: NEW_IMAGE
         BillingMode: PAY_PER_REQUEST
+
+    # DRILL INITIATION
+    DrillInitiations:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: drill-initiations-${self:provider.stage}
+        KeySchema:
+          - AttributeName: phone_number
+            KeyType: HASH
+          - AttributeName: drill_slug
+            KeyType: RANGE
+        AttributeDefinitions:
+          - AttributeName: phone_number
+            AttributeType: S
+          - AttributeName: drill_slug
+            AttributeType: S
+          - AttributeName: expiration_ts
+            AttributeType: N
+        TimeToLiveSpecification:
+          AttributeName: expiration_ts
+          Enabled: true
+        BillingMode: PAY_PER_REQUEST
