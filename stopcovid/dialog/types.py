@@ -9,6 +9,9 @@ from marshmallow import Schema, fields, post_load, utils
 from stopcovid.drills import drills
 
 
+SCHEMA_VERSION = 1
+
+
 class UserProfileSchema(Schema):
     validated = fields.Boolean(required=True)
     language = fields.Str(allow_none=True)
@@ -77,6 +80,7 @@ class DialogStateSchema(Schema):
     current_drill = fields.Nested(drills.DrillSchema, allow_none=True)
     drill_instance_id = fields.UUID(allow_none=True)
     current_prompt_state = fields.Nested(PromptStateSchema, allow_none=True)
+    schema_version = fields.Integer(missing=1)
 
     @post_load
     def make_dialog_state(self, data, **kwargs):
@@ -87,6 +91,7 @@ class DialogStateSchema(Schema):
 class DialogState:
     phone_number: str
     seq: str
+    schema_version: int = SCHEMA_VERSION
     user_profile: UserProfile = field(default_factory=lambda: UserProfile(validated=False))
     current_drill: Optional[drills.Drill] = None
     drill_instance_id: Optional[uuid.UUID] = None
@@ -136,6 +141,7 @@ class DialogEventSchema(Schema):
     event_id = fields.UUID(required=True)
     event_type = EventTypeField(required=True)
     user_profile = fields.Nested(UserProfileSchema, required=True)
+    schema_version = fields.Integer(missing=1)
 
 
 class DialogEvent(ABC):
@@ -157,6 +163,7 @@ class DialogEvent(ABC):
         self.event_id = kwargs.get("event_id", uuid.uuid4())
         self.event_type = event_type
         self.user_profile = user_profile
+        self.schema_version = SCHEMA_VERSION
 
     @abstractmethod
     def apply_to(self, dialog_state: DialogState):
@@ -170,6 +177,7 @@ class DialogEvent(ABC):
 class DialogEventBatch:
     events: List[DialogEvent]
     phone_number: str
+    seq: str
     batch_id: uuid.UUID = field(default_factory=uuid.uuid4)
     created_time: datetime.datetime = field(
         default_factory=lambda: datetime.datetime.now(datetime.timezone.utc)
@@ -178,6 +186,7 @@ class DialogEventBatch:
     def to_dict(self):
         return {
             "batch_id": str(self.batch_id),
+            "seq": self.seq,
             "phone_number": self.phone_number,
             "created_time": utils.isoformat(self.created_time),
             "events": [event.to_dict() for event in self.events],

@@ -40,7 +40,7 @@ def process_command(command: types.Command, seq: str, repo: DialogRepository = N
         deepcopy(event).apply_to(dialog_state)
     dialog_state.seq = seq
     repo.persist_dialog_state(
-        DialogEventBatch(events=events, phone_number=command.phone_number), dialog_state
+        DialogEventBatch(events=events, phone_number=command.phone_number, seq=seq), dialog_state
     )
 
 
@@ -444,6 +444,7 @@ def batch_from_dict(batch_dict: Dict[str, Any]) -> types.DialogEventBatch:
     return DialogEventBatch(
         batch_id=uuid.UUID(batch_dict["batch_id"]),
         phone_number=batch_dict["phone_number"],
+        seq=batch_dict["seq"],
         created_time=utils.from_iso_datetime(batch_dict["created_time"]),
         events=[event_from_dict(event_dict) for event_dict in batch_dict["events"]],
     )

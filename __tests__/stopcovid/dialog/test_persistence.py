@@ -49,7 +49,7 @@ class TestPersistence(unittest.TestCase):
             user_profile=UserProfile(validated=True, language="de"),
             drill_instance_id=event1.drill_instance_id,
         )
-        batch = DialogEventBatch(phone_number=self.phone_number, events=[event1, event2])
+        batch = DialogEventBatch(phone_number=self.phone_number, events=[event1, event2], seq="216")
 
         self.repo.persist_dialog_state(batch, dialog_state)
         dialog_state2 = self.repo.fetch_dialog_state(self.phone_number)

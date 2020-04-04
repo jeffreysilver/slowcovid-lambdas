@@ -2,7 +2,7 @@ import datetime
 import logging
 import uuid
 from dataclasses import dataclass, field
-from typing import Dict, Any, Optional, Union
+from typing import Dict, Any, Optional, Iterator
 
 from sqlalchemy import (
     Table,
@@ -16,12 +16,16 @@ from sqlalchemy import (
     Integer,
     func,
     UniqueConstraint,
+    Index,
+    and_,
+    exists,
+    or_,
 )
 from sqlalchemy.dialects.postgresql import UUID, JSONB
 from sqlalchemy.exc import DatabaseError
 
 from . import db
-from stopcovid.dialog.types import UserProfile, DialogEvent
+from stopcovid.dialog.types import DialogEventBatch, DialogEvent
 from ..dialog.dialog import (
     UserValidated,
     DrillStarted,
@@ -48,8 +52,9 @@ users = Table(
     "users",
     metadata,
     Column("user_id", UUID, primary_key=True),
+    Column("seq", String, nullable=False),
     Column("account_info", JSONB, nullable=False),
-    Column("last_interacted_time", DateTime(timezone=True)),
+    Column("last_interacted_time", DateTime(timezone=True), index=True),
 )
 
 phone_numbers = Table(
@@ -72,11 +77,28 @@ drill_statuses = Table(
     Column("started_time", DateTime(timezone=True)),
     Column("completed_time", DateTime(timezone=True)),
     UniqueConstraint("user_id", "place_in_sequence"),
+    UniqueConstraint("user_id", "drill_slug"),
+    Index("user_id_started", "user_id", "started_time"),
+    Index("user_id_completed", "user_id", "completed_time"),
 )
 
 
 @dataclass
+class DrillProgress:
+    phone_number: str
+    user_id: uuid.UUID
+    first_unstarted_drill_slug: Optional[str] = None
+    first_incomplete_drill_slug: Optional[str] = None
+
+    def next_drill_slug_to_trigger(self) -> str:
+        if self.first_unstarted_drill_slug:
+            return self.first_unstarted_drill_slug
+        return self.first_incomplete_drill_slug  # type: ignore
+
+
+@dataclass
 class User:
+    seq: str
     user_id: UUID = field(default_factory=uuid.uuid4)
     account_info: Dict[str, Any] = field(default_factory=dict)
     last_interacted_time: Optional[datetime.datetime] = None
@@ -94,7 +116,9 @@ class PhoneNumber:
 class DrillStatus:
     id: uuid.UUID
     user_id: uuid.UUID
-    drill_instance_id: uuid.UUID
+    # Why are drill instance IDs nullable? We add a drill status row for each known drill before
+    # any of them have started. At that time, the drill instance IDs haven't yet been created.
+    drill_instance_id: Optional[uuid.UUID]
     drill_slug: str
     place_in_sequence: int
     started_time: datetime.datetime
@@ -117,122 +141,231 @@ class UserRepository:
             user_id=uuid.UUID(row["user_id"]),
             account_info=row["account_info"],
             last_interacted_time=row["last_interacted_time"],
+            seq=row["seq"],
         )
 
     def get_drill_status(self, user_id: uuid.UUID, drill_slug: str) -> Optional[DrillStatus]:
         result = self.engine.execute(
             select([drill_statuses]).where(
-                drill_statuses.c.user_id == func.uuid(str(user_id))
-                and drill_statuses.c.drill_slug == drill_slug
+                and_(
+                    drill_statuses.c.user_id == func.uuid(str(user_id)),
+                    drill_statuses.c.drill_slug == drill_slug,
+                )
             )
         )
         row = result.fetchone()
         if row is None:
             return None
+        drill_instance_id = (
+            uuid.UUID(row["drill_instance_id"]) if row["drill_instance_id"] else None
+        )
         return DrillStatus(
             id=uuid.UUID(row["id"]),
             user_id=uuid.UUID(row["user_id"]),
-            drill_instance_id=uuid.UUID(row["drill_instance_id"]),
+            drill_instance_id=drill_instance_id,
             drill_slug=row["drill_slug"],
             place_in_sequence=row["place_in_sequence"],
             started_time=row["started_time"],
             completed_time=row["completed_time"],
         )
 
-    def update_user_progress(self, user_id: uuid.UUID, event: DialogEvent):
-        if isinstance(event, UserValidated):
-            self._reset_drill_statuses(user_id)
-        elif isinstance(event, DrillStarted):
-            self._mark_drill_started(user_id, event)
-        elif isinstance(event, DrillCompleted):
-            self._mark_drill_completed(user_id, event)
-        elif isinstance(event, CompletedPrompt):
-            self._mark_interaction_time(user_id, event)
-        elif isinstance(event, FailedPrompt):
-            self._mark_interaction_time(user_id, event)
-        elif (
-            isinstance(event, AdvancedToNextPrompt)
-            or isinstance(event, ReminderTriggered)
-            or isinstance(event, UserValidationFailed)
-            or isinstance(event, AdvancedToNextPrompt)
-        ):
-            logging.info(f"Ignoring event of type {event.event_type}")
-        else:
-            raise ValueError(f"Unknown event type {event.event_type}")
-
-    def create_or_update_user(self, phone_number: str, profile: UserProfile) -> uuid.UUID:
-
+    def update_user(self, batch: DialogEventBatch) -> uuid.UUID:
         with self.engine.connect() as connection:
             with connection.begin():
-                result = connection.execute(
-                    select([phone_numbers]).where(phone_numbers.c.phone_number == phone_number)
-                )
-                row = result.fetchone()
-                if row is None:
-                    user_record = User(account_info=profile.account_info)
-                    phone_number_record = PhoneNumber(
-                        phone_number=phone_number, user_id=user_record.user_id
+                user = self._get_user_for_phone_number(batch.phone_number, connection)
+                if user is not None and int(user.seq) >= int(batch.seq):
+                    logging.info(
+                        f"Ignoring batch at {batch.seq} because a more recent user exists "
+                        f"(seq {user.seq})"
                     )
-                    connection.execute(
-                        users.insert().values(
-                            user_id=str(user_record.user_id), account_info=user_record.account_info
-                        )
-                    )
-                    connection.execute(
-                        phone_numbers.insert().values(
-                            id=str(phone_number_record.id),
-                            user_id=str(phone_number_record.user_id),
-                            is_primary=phone_number_record.is_primary,
-                            phone_number=phone_number_record.phone_number,
-                        )
-                    )
-                    for i, slug in enumerate(ALL_DRILL_SLUGS):
-                        connection.execute(
-                            drill_statuses.insert().values(
-                                id=str(uuid.uuid4()),
-                                user_id=str(user_record.user_id),
-                                drill_slug=slug,
-                                place_in_sequence=i,
-                            )
-                        )
-                    return user_record.user_id
-                phone_number_record = PhoneNumber(**row)
-                connection.execute(
-                    users.update()
-                    .where(users.c.user_id == func.uuid(str(phone_number_record.user_id)))
-                    .values(account_info=profile.account_info)
-                )
-                return phone_number_record.user_id
+                    return user.user_id
 
-    def _reset_drill_statuses(self, user_id: uuid.UUID):
-        self.engine.execute(
-            drill_statuses.update()
-            .where(drill_statuses.c.user_id == func.uuid(str(user_id)))
-            .values(started_time=None, completed_time=None)
+                # also updates sequence number for the user, which won't be committed unless the
+                # transaction succeeds
+                user_id = self._create_or_update_user(batch, connection)
+
+                for event in batch.events:
+                    self._mark_interacted_time(user_id, event, connection)
+                    if isinstance(event, UserValidated):
+                        self._reset_drill_statuses(user_id, connection)
+                    elif isinstance(event, DrillStarted):
+                        self._mark_drill_started(user_id, event, connection)
+                    elif isinstance(event, DrillCompleted):
+                        self._mark_drill_completed(user_id, event, connection)
+                    elif (
+                        isinstance(event, AdvancedToNextPrompt)
+                        or isinstance(event, ReminderTriggered)
+                        or isinstance(event, UserValidationFailed)
+                        or isinstance(event, CompletedPrompt)
+                        or isinstance(event, FailedPrompt)
+                    ):
+                        logging.info(f"Ignoring event of type {event.event_type}")
+                    else:
+                        raise ValueError(f"Unknown event type {event.event_type}")
+
+                return user_id
+
+    def get_progress_for_users_who_need_drills(self, inactivity_minutes) -> Iterator[DrillProgress]:
+        ds1 = drill_statuses.alias()
+        ds2 = drill_statuses.alias()
+        time_threshold = datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(
+            minutes=inactivity_minutes
+        )
+        stmt = (
+            select([drill_statuses, phone_numbers.c.phone_number])
+            .select_from(
+                drill_statuses.join(users, users.c.user_id == drill_statuses.c.user_id).join(
+                    phone_numbers, phone_numbers.c.user_id == drill_statuses.c.user_id
+                )
+            )
+            .where(
+                and_(
+                    phone_numbers.c.is_primary.is_(True),
+                    # haven't interacted recently
+                    or_(
+                        users.c.last_interacted_time.is_(None),
+                        users.c.last_interacted_time <= time_threshold,
+                    ),
+                    # there's at least one started drill
+                    exists().where(
+                        and_(ds2.c.user_id == users.c.user_id, ds2.c.started_time.isnot(None))
+                    ),
+                    # and at least one incomplete drill
+                    exists().where(
+                        and_(ds1.c.user_id == users.c.user_id, ds1.c.completed_time.is_(None))
+                    ),
+                )
+            )
+            .order_by(drill_statuses.c.user_id, drill_statuses.c.place_in_sequence)
+        )
+        cur_drill_progress = None
+        for row in self.engine.execute(stmt):
+            user_id = uuid.UUID(row["user_id"])
+            if cur_drill_progress is None or cur_drill_progress.user_id != user_id:
+                if cur_drill_progress is not None:
+                    yield cur_drill_progress
+                cur_drill_progress = DrillProgress(
+                    phone_number=row["phone_number"], user_id=user_id
+                )
+            if (
+                cur_drill_progress.first_incomplete_drill_slug is None
+                and row["completed_time"] is None
+            ):
+                cur_drill_progress.first_incomplete_drill_slug = row["drill_slug"]
+            if (
+                cur_drill_progress.first_unstarted_drill_slug is None
+                and row["started_time"] is None
+            ):
+                cur_drill_progress.first_unstarted_drill_slug = row["drill_slug"]
+
+        if cur_drill_progress is not None:
+            yield cur_drill_progress
+
+    @staticmethod
+    def _get_user_for_phone_number(phone_number: str, connection) -> Optional[User]:
+        result = connection.execute(
+            select([users])
+            .select_from(users.join(phone_numbers, users.c.user_id == phone_numbers.c.user_id))
+            .where(phone_numbers.c.phone_number == phone_number)
+        )
+        row = result.fetchone()
+        if row is None:
+            return None
+        return User(
+            user_id=uuid.UUID(row["user_id"]),
+            account_info=row["account_info"],
+            last_interacted_time=row["last_interacted_time"],
+            seq=row["seq"],
         )
 
-    def _mark_drill_started(self, user_id: uuid.UUID, event: DrillStarted):
-        self.engine.execute(
+    def _create_or_update_user(self, batch: DialogEventBatch, connection) -> uuid.UUID:
+        event = batch.events[-1]
+        phone_number = event.phone_number
+        profile = event.user_profile
+
+        result = connection.execute(
+            select([phone_numbers]).where(phone_numbers.c.phone_number == phone_number)
+        )
+        row = result.fetchone()
+        if row is None:
+            user_record = User(account_info=profile.account_info, seq=batch.seq)
+            phone_number_record = PhoneNumber(
+                phone_number=phone_number, user_id=user_record.user_id
+            )
+            connection.execute(
+                users.insert().values(
+                    user_id=str(user_record.user_id),
+                    account_info=user_record.account_info,
+                    seq=batch.seq,
+                )
+            )
+            connection.execute(
+                phone_numbers.insert().values(
+                    id=str(phone_number_record.id),
+                    user_id=str(phone_number_record.user_id),
+                    is_primary=phone_number_record.is_primary,
+                    phone_number=phone_number_record.phone_number,
+                )
+            )
+            for i, slug in enumerate(ALL_DRILL_SLUGS):
+                connection.execute(
+                    drill_statuses.insert().values(
+                        id=str(uuid.uuid4()),
+                        user_id=str(user_record.user_id),
+                        drill_slug=slug,
+                        place_in_sequence=i,
+                    )
+                )
+            return user_record.user_id
+
+        phone_number_record = PhoneNumber(**row)
+        user_record = self.get_user(phone_number_record.user_id)
+        if int(user_record.seq) >= int(batch.seq):
+            logging.info(
+                f"Ignoring batch at {batch.seq} because a more recent user exists "
+                f"(seq {user_record.seq}"
+            )
+            return phone_number_record.user_id
+
+        connection.execute(
+            users.update()
+            .where(users.c.user_id == func.uuid(str(phone_number_record.user_id)))
+            .values(account_info=profile.account_info, seq=batch.seq)
+        )
+        return phone_number_record.user_id
+
+    @staticmethod
+    def _reset_drill_statuses(user_id: uuid.UUID, connection):
+        connection.execute(
+            drill_statuses.update()
+            .where(drill_statuses.c.user_id == func.uuid(str(user_id)))
+            .values(started_time=None, completed_time=None, drill_instance_id=None)
+        )
+
+    @staticmethod
+    def _mark_drill_started(user_id: uuid.UUID, event: DrillStarted, connection):
+        connection.execute(
             drill_statuses.update()
             .where(
-                drill_statuses.c.user_id == func.uuid(str(user_id))
-                and drill_statuses.c.drill_slug == event.drill.slug
+                and_(
+                    drill_statuses.c.user_id == func.uuid(str(user_id)),
+                    drill_statuses.c.drill_slug == event.drill.slug,
+                )
             )
             .values(started_time=event.created_time, drill_instance_id=str(event.drill_instance_id))
         )
 
-    def _mark_drill_completed(self, user_id: uuid.UUID, event: DrillCompleted):
-        self.engine.execute(
+    @staticmethod
+    def _mark_drill_completed(user_id: uuid.UUID, event: DrillCompleted, connection):
+        connection.execute(
             drill_statuses.update()
-            .where(
-                drill_statuses.c.user_id == func.uuid(str(user_id))
-                and drill_statuses.c.drill_instance_id == func.uuid(str(event.drill_instance_id))
-            )
+            .where((drill_statuses.c.drill_instance_id == func.uuid(str(event.drill_instance_id))))
             .values(completed_time=event.created_time)
         )
 
-    def _mark_interaction_time(self, user_id, event: Union[CompletedPrompt, FailedPrompt]):
-        self.engine.execute(
+    @staticmethod
+    def _mark_interacted_time(user_id, event: DialogEvent, connection):
+        connection.execute(
             users.update()
             .where(users.c.user_id == func.uuid(str(user_id)))
             .values(last_interacted_time=event.created_time)
