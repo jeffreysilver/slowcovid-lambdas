@@ -267,6 +267,20 @@ class UserRepository:
         if cur_drill_progress is not None:
             yield cur_drill_progress
 
+    def get_progress_for_user(self, user_id: uuid.UUID, phone_number: str) -> DrillProgress:
+        result = self.engine.execute(
+            select([drill_statuses])
+            .where(drill_statuses.c.user_id == func.uuid((str(user_id))))
+            .order_by(drill_statuses.c.place_in_sequence)
+        )
+        progress = DrillProgress(phone_number=phone_number, user_id=user_id)
+        for row in result:
+            if progress.first_incomplete_drill_slug is None and row["completed_time"] is None:
+                progress.first_incomplete_drill_slug = row["drill_slug"]
+            if progress.first_unstarted_drill_slug is None and row["started_time"] is None:
+                progress.first_unstarted_drill_slug = row["drill_slug"]
+        return progress
+
     @staticmethod
     def _get_user_for_phone_number(phone_number: str, connection) -> Optional[User]:
         result = connection.execute(

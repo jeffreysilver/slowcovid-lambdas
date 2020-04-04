@@ -248,7 +248,53 @@ class TestUsers(unittest.TestCase):
         drill_progresses = list(self.repo.get_progress_for_users_who_need_drills(30))
         self.assertEqual(0, len(drill_progresses))
 
-    def test_get_progress_one_user(self):
+    def test_get_progress(self):
+        user_id = self._make_user_and_get_id()
+        event = DrillStarted(
+            phone_number=self.phone_number,
+            user_profile=UserProfile(True),
+            drill=Drill(slug=ALL_DRILL_SLUGS[0], name="name", prompts=[]),
+            first_prompt=self.prompt,
+            created_time=datetime.datetime.now(datetime.timezone.utc)
+            - datetime.timedelta(minutes=32),
+        )
+        self.repo.update_user(self._make_batch([event]))
+
+        drill_progress = self.repo.get_progress_for_user(
+            user_id=user_id, phone_number=self.phone_number
+        )
+        self.assertEqual(
+            DrillProgress(
+                user_id=user_id,
+                phone_number=self.phone_number,
+                first_incomplete_drill_slug=ALL_DRILL_SLUGS[0],
+                first_unstarted_drill_slug=ALL_DRILL_SLUGS[1],
+            ),
+            drill_progress,
+        )
+
+        event2 = DrillCompleted(
+            phone_number=self.phone_number,
+            user_profile=UserProfile(True),
+            drill_instance_id=event.drill_instance_id,
+            created_time=datetime.datetime.now(datetime.timezone.utc)
+            - datetime.timedelta(minutes=31),
+        )
+        self.repo.update_user(self._make_batch([event2]))
+        drill_progress = self.repo.get_progress_for_user(
+            user_id=user_id, phone_number=self.phone_number
+        )
+        self.assertEqual(
+            DrillProgress(
+                user_id=user_id,
+                phone_number=self.phone_number,
+                first_incomplete_drill_slug=ALL_DRILL_SLUGS[1],
+                first_unstarted_drill_slug=ALL_DRILL_SLUGS[1],
+            ),
+            drill_progress,
+        )
+
+    def test_get_progress_for_users_one_user(self):
         user_id = self._make_user_and_get_id()
         event = DrillStarted(
             phone_number=self.phone_number,
