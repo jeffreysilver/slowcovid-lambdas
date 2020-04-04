@@ -1,6 +1,7 @@
 import datetime
 import json
 import os
+import uuid
 from typing import Iterable, Tuple
 
 import boto3
@@ -48,6 +49,16 @@ class DrillInitiator:
         if not self._was_recently_initiated(phone_number, FIRST_DRILL.slug, idempotency_key):
             self._publish_start_drill_commands([(phone_number, FIRST_DRILL)])
         self._record_initiation(phone_number, FIRST_DRILL.slug, idempotency_key)
+
+    def trigger_next_drill_for_user(
+        self, user_id: uuid.UUID, phone_number: str, idempotency_key: str
+    ):
+        repo = UserRepository()
+        drill_progress = repo.get_progress_for_user(user_id, phone_number)
+        slug = drill_progress.next_drill_slug_to_trigger()
+        if not self._was_recently_initiated(phone_number, slug, idempotency_key):
+            self._publish_start_drill_commands([(phone_number, get_drill(slug))])
+        self._record_initiation(phone_number, slug, idempotency_key)
 
     def _get_kinesis_client(self):
         return boto3.client("kinesis")

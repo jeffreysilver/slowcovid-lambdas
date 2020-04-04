@@ -120,3 +120,22 @@ class TestRecordInitiation(unittest.TestCase):
             self.assertEqual(1, self.put_records_mock.call_count)
             self.initiator.trigger_next_drills()
             self.assertEqual(1, self.put_records_mock.call_count)
+
+    def test_initiation_next_drill_for_user(self, get_kinesis_mock):
+        get_kinesis_mock.return_value = self.kinesis_mock
+
+        phone_number = str(uuid.uuid4())
+        user_id = uuid.uuid4()
+        with patch(
+            "stopcovid.status.initiation.UserRepository.get_progress_for_user",
+            return_value=DrillProgress(
+                phone_number=phone_number,
+                user_id=user_id,
+                first_incomplete_drill_slug="02-prevention",
+                first_unstarted_drill_slug="03-hand-washing-how",
+            ),
+        ):
+            self.initiator.trigger_next_drill_for_user(user_id, phone_number, "foo")
+            self.assertEqual(1, self.put_records_mock.call_count)
+            self.initiator.trigger_next_drill_for_user(user_id, phone_number, "foo")
+            self.assertEqual(1, self.put_records_mock.call_count)
