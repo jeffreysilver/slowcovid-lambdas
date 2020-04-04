@@ -28,11 +28,7 @@ def _publish_start_drill_commands(drill_progress_statuses: Iterator[DrillProgres
                     "type": "START_DRILL",
                     "payload": {
                         "phone_number": drill_progress.phone_number,
-                        "drill": get_drill(
-                            drill_progress.first_unstarted_drill_slug
-                            if drill_progress.first_unstarted_drill_slug is not None
-                            else drill_progress.first_incomplete_drill_slug
-                        ).to_dict(),
+                        "drill": get_drill(drill_progress.next_drill_slug_to_trigger()).to_dict(),
                     },
                 }
             ),

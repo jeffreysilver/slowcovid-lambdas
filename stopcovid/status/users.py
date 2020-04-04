@@ -89,6 +89,11 @@ class DrillProgress:
     first_unstarted_drill_slug: Optional[str] = None
     first_incomplete_drill_slug: Optional[str] = None
 
+    def next_drill_slug_to_trigger(self) -> str:
+        if self.first_unstarted_drill_slug:
+            return self.first_unstarted_drill_slug
+        return self.first_incomplete_drill_slug
+
 
 @dataclass
 class User:
