@@ -2,7 +2,7 @@ import datetime
 import logging
 import uuid
 from dataclasses import dataclass, field
-from typing import Dict, Any, Optional, Union, Iterator
+from typing import Dict, Any, Optional, Iterator
 
 from sqlalchemy import (
     Table,
@@ -25,7 +25,7 @@ from sqlalchemy.dialects.postgresql import UUID, JSONB
 from sqlalchemy.exc import DatabaseError
 
 from . import db
-from stopcovid.dialog.types import DialogEventBatch
+from stopcovid.dialog.types import DialogEventBatch, DialogEvent
 from ..dialog.dialog import (
     UserValidated,
     DrillStarted,
@@ -179,21 +179,20 @@ class UserRepository:
                 user_id = self._create_or_update_user(batch, connection)
 
                 for event in batch.events:
+                    self._mark_interacted_time(user_id, event, connection)
                     if isinstance(event, UserValidated):
                         self._reset_drill_statuses(user_id, connection)
                     elif isinstance(event, DrillStarted):
                         self._mark_drill_started(user_id, event, connection)
                     elif isinstance(event, DrillCompleted):
                         self._mark_drill_completed(user_id, event, connection)
-                    elif isinstance(event, CompletedPrompt):
-                        self._mark_interaction_time(user_id, event, connection)
-                    elif isinstance(event, FailedPrompt):
-                        self._mark_interaction_time(user_id, event, connection)
                     elif (
                         isinstance(event, AdvancedToNextPrompt)
                         or isinstance(event, ReminderTriggered)
                         or isinstance(event, UserValidationFailed)
                         or isinstance(event, AdvancedToNextPrompt)
+                        or isinstance(event, CompletedPrompt)
+                        or isinstance(event, FailedPrompt)
                     ):
                         logging.info(f"Ignoring event of type {event.event_type}")
                     else:
@@ -359,7 +358,7 @@ class UserRepository:
         )
 
     @staticmethod
-    def _mark_interaction_time(user_id, event: Union[CompletedPrompt, FailedPrompt], connection):
+    def _mark_interacted_time(user_id, event: DialogEvent, connection):
         connection.execute(
             users.update()
             .where(users.c.user_id == func.uuid(str(user_id)))
