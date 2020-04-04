@@ -14,7 +14,7 @@ from .registration import (
     CodeValidationPayloadSchema,
     CodeValidationPayload,
 )
-from .types import DialogEventBatch
+from .types import DialogEventBatch, DialogState
 
 DEFAULT_REGISTRATION_VALIDATOR = DefaultRegistrationValidator()
 
@@ -419,6 +419,54 @@ class DrillCompleted(types.DialogEvent):
         dialog_state.current_prompt_state = None
 
 
+class OptedOutSchema(types.DialogEventSchema):
+    drill_instance_id = fields.UUID()
+
+    @post_load
+    def make_opted_out(self, data, **kwargs):
+        return OptedOut(**{k: v for k, v in data.items() if k != "event_type"})
+
+
+class OptedOut(types.DialogEvent):
+    def __init__(
+        self,
+        phone_number: str,
+        user_profile: types.UserProfile,
+        drill_instance_id: Optional[uuid.UUID],
+        **kwargs,
+    ):
+        super().__init__(
+            OptedOutSchema(), types.DialogEventType.OPTED_OUT, phone_number, user_profile, **kwargs
+        )
+        self.drill_instance_id = drill_instance_id
+
+    def apply_to(self, dialog_state: DialogState):
+        dialog_state.drill_instance_id = None
+        dialog_state.user_profile.opted_out = True
+        dialog_state.current_drill = None
+        dialog_state.current_prompt_state = None
+
+
+class NextDrillRequestedSchema(types.DialogEventSchema):
+    @post_load
+    def make_next_drill_requested(self, data, **kwargs):
+        return NextDrillRequested(**{k: v for k, v in data.items() if k != "event_type"})
+
+
+class NextDrillRequested(types.DialogEvent):
+    def __init__(self, phone_number: str, user_profile: types.UserProfile, **kwargs):
+        super().__init__(
+            NextDrillRequestedSchema(),
+            types.DialogEventType.NEXT_DRILL_REQUESTED,
+            phone_number,
+            user_profile,
+            **kwargs,
+        )
+
+    def apply_to(self, dialog_state: DialogState):
+        dialog_state.user_profile.opted_out = False
+
+
 def event_from_dict(event_dict: Dict[str, Any]) -> types.DialogEvent:
     event_type = types.DialogEventType[event_dict["event_type"]]
     if event_type == types.DialogEventType.ADVANCED_TO_NEXT_PROMPT:
@@ -437,6 +485,10 @@ def event_from_dict(event_dict: Dict[str, Any]) -> types.DialogEvent:
         return FailedPromptSchema().load(event_dict)
     if event_type == types.DialogEventType.REMINDER_TRIGGERED:
         return ReminderTriggeredSchema().load(event_dict)
+    if event_type == types.DialogEventType.OPTED_OUT:
+        return OptedOutSchema().load(event_dict)
+    if event_type == types.DialogEventType.NEXT_DRILL_REQUESTED:
+        return NextDrillRequestedSchema().load(event_dict)
     raise ValueError(f"unknown event type {event_type}")
 
 
