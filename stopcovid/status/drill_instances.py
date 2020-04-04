@@ -109,7 +109,11 @@ class DrillInstanceRepository:
 
         connection.execute(
             drill_instances.update()
-            .where(drill_instances.c.drill_instance_id.in_(ids))
+            .where(
+                drill_instances.c.drill_instance_id.in_(
+                    [func.uuid(str(drill_instance_id)) for drill_instance_id in ids]
+                )
+            )
             .values(is_valid=False)
         )
 
