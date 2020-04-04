@@ -1,9 +1,9 @@
 from stopcovid.dialog.dialog import batch_from_dict
 from stopcovid.utils import dynamodb as dynamodb_utils
-from . import status
+from stopcovid.status import status
 
 
-def process_dialog_events(event, context):
+def handler(event, context):
     event_batches = [
         batch_from_dict(dynamodb_utils.deserialize(record["dynamodb"]["NewImage"]))
         for record in event["Records"]
@@ -11,7 +11,6 @@ def process_dialog_events(event, context):
     ]
 
     for batch in event_batches:
-        for event in batch.events:
-            status.handle_dialog_event(event)
+        status.handle_dialog_event_batch(batch)
 
     return {"statusCode": 200}
