@@ -707,7 +707,7 @@ class TestSerialization(unittest.TestCase):
             "123456789", user_profile=UserProfile(True), drill_instance_id=uuid.uuid4()
         )
         serialized = original.to_dict()
-        deserialized = event_from_dict(serialized)
+        deserialized: OptedOut = event_from_dict(serialized)  # type: ignore
         self._make_base_assertions(original, deserialized)
         self.assertEqual(original.drill_instance_id, deserialized.drill_instance_id)
 

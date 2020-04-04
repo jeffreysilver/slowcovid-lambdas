@@ -35,6 +35,8 @@ from ..dialog.dialog import (
     AdvancedToNextPrompt,
     ReminderTriggered,
     UserValidationFailed,
+    NextDrillRequested,
+    OptedOut,
 )
 
 ALL_DRILL_SLUGS = [
@@ -192,12 +194,16 @@ class UserRepository:
                         self._mark_drill_started(user_id, event, connection)
                     elif isinstance(event, DrillCompleted):
                         self._mark_drill_completed(user_id, event, connection)
+                    elif isinstance(event, OptedOut):
+                        if event.drill_instance_id is not None:
+                            self._unmark_drill_started(event, connection)
                     elif (
                         isinstance(event, AdvancedToNextPrompt)
                         or isinstance(event, ReminderTriggered)
                         or isinstance(event, UserValidationFailed)
                         or isinstance(event, CompletedPrompt)
                         or isinstance(event, FailedPrompt)
+                        or isinstance(event, NextDrillRequested)
                     ):
                         logging.info(f"Ignoring event of type {event.event_type}")
                     else:
@@ -353,6 +359,14 @@ class UserRepository:
                 )
             )
             .values(started_time=event.created_time, drill_instance_id=str(event.drill_instance_id))
+        )
+
+    @staticmethod
+    def _unmark_drill_started(event: OptedOut, connection):
+        connection.execute(
+            drill_statuses.update()
+            .where(drill_statuses.c.drill_instance_id == func.uuid(str(event.drill_instance_id)))
+            .values(started_time=None)
         )
 
     @staticmethod

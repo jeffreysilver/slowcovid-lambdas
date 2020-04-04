@@ -11,6 +11,8 @@ from stopcovid.dialog.dialog import (
     UserValidated,
     DrillStarted,
     UserValidationFailed,
+    NextDrillRequested,
+    OptedOut,
 )
 from stopcovid.drills.localize import localize
 
@@ -83,7 +85,11 @@ def get_messages_for_command(event: DialogEvent):  # noqa: C901
             event, [message.text for message in event.first_prompt.messages]
         )
 
-    elif isinstance(event, DrillCompleted):
+    elif (
+        isinstance(event, DrillCompleted)
+        or isinstance(event, OptedOut)
+        or isinstance(event, NextDrillRequested)
+    ):
         # Drills include a drill completed message
         pass
 

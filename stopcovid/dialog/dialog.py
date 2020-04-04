@@ -1,7 +1,7 @@
 import logging
 import uuid
 from copy import deepcopy
-from typing import List, Dict, Any, Optional
+from typing import List, Dict, Any, Optional, Type
 
 from marshmallow import fields, post_load, utils
 
@@ -467,29 +467,23 @@ class NextDrillRequested(types.DialogEvent):
         dialog_state.user_profile.opted_out = False
 
 
+TYPE_TO_SCHEMA: Dict[types.DialogEventType, Type[types.DialogEventSchema]] = {
+    types.DialogEventType.ADVANCED_TO_NEXT_PROMPT: AdvancedToNextPromptSchema,
+    types.DialogEventType.DRILL_COMPLETED: DrillCompletedSchema,
+    types.DialogEventType.USER_VALIDATION_FAILED: UserValidationFailedSchema,
+    types.DialogEventType.DRILL_STARTED: DrillStartedSchema,
+    types.DialogEventType.USER_VALIDATED: UserValidatedSchema,
+    types.DialogEventType.COMPLETED_PROMPT: CompletedPromptSchema,
+    types.DialogEventType.FAILED_PROMPT: FailedPromptSchema,
+    types.DialogEventType.REMINDER_TRIGGERED: ReminderTriggeredSchema,
+    types.DialogEventType.OPTED_OUT: OptedOutSchema,
+    types.DialogEventType.NEXT_DRILL_REQUESTED: NextDrillRequestedSchema,
+}
+
+
 def event_from_dict(event_dict: Dict[str, Any]) -> types.DialogEvent:
     event_type = types.DialogEventType[event_dict["event_type"]]
-    if event_type == types.DialogEventType.ADVANCED_TO_NEXT_PROMPT:
-        return AdvancedToNextPromptSchema().load(event_dict)
-    if event_type == types.DialogEventType.DRILL_COMPLETED:
-        return DrillCompletedSchema().load(event_dict)
-    if event_type == types.DialogEventType.USER_VALIDATION_FAILED:
-        return UserValidationFailedSchema().load(event_dict)
-    if event_type == types.DialogEventType.DRILL_STARTED:
-        return DrillStartedSchema().load(event_dict)
-    if event_type == types.DialogEventType.USER_VALIDATED:
-        return UserValidatedSchema().load(event_dict)
-    if event_type == types.DialogEventType.COMPLETED_PROMPT:
-        return CompletedPromptSchema().load(event_dict)
-    if event_type == types.DialogEventType.FAILED_PROMPT:
-        return FailedPromptSchema().load(event_dict)
-    if event_type == types.DialogEventType.REMINDER_TRIGGERED:
-        return ReminderTriggeredSchema().load(event_dict)
-    if event_type == types.DialogEventType.OPTED_OUT:
-        return OptedOutSchema().load(event_dict)
-    if event_type == types.DialogEventType.NEXT_DRILL_REQUESTED:
-        return NextDrillRequestedSchema().load(event_dict)
-    raise ValueError(f"unknown event type {event_type}")
+    return TYPE_TO_SCHEMA[event_type]().load(event_dict)
 
 
 def batch_from_dict(batch_dict: Dict[str, Any]) -> types.DialogEventBatch:
