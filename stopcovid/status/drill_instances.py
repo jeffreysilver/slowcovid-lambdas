@@ -2,7 +2,9 @@ import datetime
 import logging
 import uuid
 from dataclasses import dataclass
-from typing import Union, Optional
+
+from typing import Union, Optional, List
+
 
 from sqlalchemy import (
     MetaData,
@@ -170,6 +172,20 @@ class DrillInstanceRepository:
                 )
             )
 
+    def _deserialize(self, row):
+        return DrillInstance(
+            drill_instance_id=uuid.UUID(row["drill_instance_id"]),
+            seq=row["seq"],
+            user_id=uuid.UUID(row["user_id"]),
+            phone_number=row["phone_number"],
+            drill_slug=row["drill_slug"],
+            current_prompt_slug=row["current_prompt_slug"],
+            current_prompt_start_time=row["current_prompt_start_time"],
+            current_prompt_last_response_time=row["current_prompt_last_response_time"],
+            completion_time=row["completion_time"],
+            is_valid=row["is_valid"],
+        )
+
     def get_drill_instance(
         self, drill_instance_id: uuid.UUID, connection=None
     ) -> Optional[DrillInstance]:
@@ -183,18 +199,7 @@ class DrillInstanceRepository:
         row = result.fetchone()
         if row is None:
             return None
-        return DrillInstance(
-            drill_instance_id=uuid.UUID(row["drill_instance_id"]),
-            seq=row["seq"],
-            user_id=uuid.UUID(row["user_id"]),
-            phone_number=row["phone_number"],
-            drill_slug=row["drill_slug"],
-            current_prompt_slug=row["current_prompt_slug"],
-            current_prompt_start_time=row["current_prompt_start_time"],
-            current_prompt_last_response_time=row["current_prompt_last_response_time"],
-            completion_time=row["completion_time"],
-            is_valid=row["is_valid"],
-        )
+        return self._deserialize(row)
 
     def _is_not_stale(self, drill_instance_id: uuid.UUID, seq: str, connection):
         drill_instance = self.get_drill_instance(drill_instance_id, connection=connection)
@@ -222,6 +227,18 @@ class DrillInstanceRepository:
                 f"Reprocessing a drill instance that was already "
                 f"created {drill_instance.drill_instance_id}. Ignoring."
             )
+
+    def get_incomplete_drills(self, inactive_for_minutes=None) -> List[DrillInstance]:
+        stmt = select([drill_instances]).where(
+            and_(drill_instances.c.completion_time == None, drill_instances.c.is_valid.is_(True))
+        )  # noqa:  E711
+        if inactive_for_minutes is not None:
+            stmt = stmt.where(
+                drill_instances.c.current_prompt_start_time
+                <= datetime.datetime.now(datetime.timezone.utc)
+                - datetime.timedelta(minutes=inactive_for_minutes)
+            )
+        return [self._deserialize(row) for row in self.engine.execute(stmt)]
 
     def drop_and_recreate_tables_testing_only(self):
         if self.engine_factory == db.get_sqlalchemy_engine:
