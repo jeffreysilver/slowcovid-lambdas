@@ -1,6 +1,6 @@
 import json
 import os
-from typing import Iterable, Tuple
+from typing import Iterable, Tuple, List
 
 import boto3
 
@@ -8,6 +8,7 @@ from .users import UserRepository
 from ..drills.drills import get_drill, Drill
 
 INACTIVITY_THRESHOLD_MINUTES = 720
+FIRST_DRILL = get_drill("01-basics")
 
 
 def trigger_next_drills():
@@ -18,6 +19,12 @@ def trigger_next_drills():
             INACTIVITY_THRESHOLD_MINUTES
         )
     )
+
+
+def trigger_first_drill(phone_numbers: List[str]):
+    if not phone_numbers:
+        return
+    _publish_start_drill_commands((phone_number, FIRST_DRILL) for phone_number in phone_numbers)
 
 
 def _publish_start_drill_commands(drills: Iterable[Tuple[str, Drill]]):
