@@ -2,7 +2,7 @@ import datetime
 import logging
 import uuid
 from dataclasses import dataclass, field
-from typing import Dict, Any, Optional, Union, Iterator
+from typing import Dict, Any, Optional, Iterator
 
 from sqlalchemy import (
     Table,
@@ -25,7 +25,7 @@ from sqlalchemy.dialects.postgresql import UUID, JSONB
 from sqlalchemy.exc import DatabaseError
 
 from . import db
-from stopcovid.dialog.types import DialogEventBatch
+from stopcovid.dialog.types import DialogEventBatch, DialogEvent
 from ..dialog.dialog import (
     UserValidated,
     DrillStarted,
@@ -54,7 +54,7 @@ users = Table(
     Column("user_id", UUID, primary_key=True),
     Column("seq", String, nullable=False),
     Column("account_info", JSONB, nullable=False),
-    Column("last_interacted_time", DateTime(timezone=True)),
+    Column("last_interacted_time", DateTime(timezone=True), index=True),
 )
 
 phone_numbers = Table(
@@ -79,6 +79,7 @@ drill_statuses = Table(
     UniqueConstraint("user_id", "place_in_sequence"),
     UniqueConstraint("user_id", "drill_slug"),
     Index("user_id_started", "user_id", "started_time"),
+    Index("user_id_completed", "user_id", "completed_time"),
 )
 
 
@@ -88,6 +89,11 @@ class DrillProgress:
     user_id: uuid.UUID
     first_unstarted_drill_slug: Optional[str] = None
     first_incomplete_drill_slug: Optional[str] = None
+
+    def next_drill_slug_to_trigger(self) -> str:
+        if self.first_unstarted_drill_slug:
+            return self.first_unstarted_drill_slug
+        return self.first_incomplete_drill_slug  # type: ignore
 
 
 @dataclass
@@ -179,21 +185,19 @@ class UserRepository:
                 user_id = self._create_or_update_user(batch, connection)
 
                 for event in batch.events:
+                    self._mark_interacted_time(user_id, event, connection)
                     if isinstance(event, UserValidated):
                         self._reset_drill_statuses(user_id, connection)
                     elif isinstance(event, DrillStarted):
                         self._mark_drill_started(user_id, event, connection)
                     elif isinstance(event, DrillCompleted):
                         self._mark_drill_completed(user_id, event, connection)
-                    elif isinstance(event, CompletedPrompt):
-                        self._mark_interaction_time(user_id, event, connection)
-                    elif isinstance(event, FailedPrompt):
-                        self._mark_interaction_time(user_id, event, connection)
                     elif (
                         isinstance(event, AdvancedToNextPrompt)
                         or isinstance(event, ReminderTriggered)
                         or isinstance(event, UserValidationFailed)
-                        or isinstance(event, AdvancedToNextPrompt)
+                        or isinstance(event, CompletedPrompt)
+                        or isinstance(event, FailedPrompt)
                     ):
                         logging.info(f"Ignoring event of type {event.event_type}")
                     else:
@@ -216,6 +220,7 @@ class UserRepository:
             )
             .where(
                 and_(
+                    phone_numbers.c.is_primary.is_(True),
                     # haven't interacted recently
                     or_(
                         users.c.last_interacted_time.is_(None),
@@ -359,7 +364,7 @@ class UserRepository:
         )
 
     @staticmethod
-    def _mark_interaction_time(user_id, event: Union[CompletedPrompt, FailedPrompt], connection):
+    def _mark_interacted_time(user_id, event: DialogEvent, connection):
         connection.execute(
             users.update()
             .where(users.c.user_id == func.uuid(str(user_id)))

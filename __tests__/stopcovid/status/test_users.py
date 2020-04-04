@@ -1,7 +1,7 @@
 import unittest
 import uuid
 from copy import copy
-
+import datetime
 from stopcovid.dialog.dialog import (
     UserValidated,
     DrillStarted,
@@ -144,7 +144,7 @@ class TestUsers(unittest.TestCase):
         self.assertEqual(event.created_time, drill_status.started_time)
         self.assertEqual(event2.created_time, drill_status.completed_time)
 
-    def test_completed_prompt(self):
+    def test_last_interacted(self):
         user_id = self._make_user_and_get_id()
         event = DrillStarted(
             phone_number=self.phone_number,
@@ -154,36 +154,13 @@ class TestUsers(unittest.TestCase):
         )
         self.repo.update_user(self._make_batch([event]))
         user = self.repo.get_user(user_id)
-        self.assertIsNone(user.last_interacted_time)
+        self.assertEqual(event.created_time, user.last_interacted_time)
         event2 = CompletedPrompt(
             phone_number=self.phone_number,
             user_profile=UserProfile(True),
             prompt=self.prompt,
             drill_instance_id=event.drill_instance_id,
             response="go",
-        )
-        self.repo.update_user(self._make_batch([event2]))
-        user = self.repo.get_user(user_id)
-        self.assertEqual(event2.created_time, user.last_interacted_time)
-
-    def test_failed_prompt(self):
-        user_id = self._make_user_and_get_id()
-        event = DrillStarted(
-            phone_number=self.phone_number,
-            user_profile=UserProfile(True),
-            drill=self.drill,
-            first_prompt=self.prompt,
-        )
-        self.repo.update_user(self._make_batch([event]))
-        user = self.repo.get_user(user_id)
-        self.assertIsNone(user.last_interacted_time)
-        event2 = FailedPrompt(
-            phone_number=self.phone_number,
-            user_profile=UserProfile(True),
-            prompt=self.prompt,
-            drill_instance_id=event.drill_instance_id,
-            response="go",
-            abandoned=True,
         )
         self.repo.update_user(self._make_batch([event2]))
         user = self.repo.get_user(user_id)
@@ -200,7 +177,7 @@ class TestUsers(unittest.TestCase):
         batch1 = self._make_batch([event])
         self.repo.update_user(batch1)
         user = self.repo.get_user(user_id)
-        self.assertIsNone(user.last_interacted_time)
+        self.assertEqual(event.created_time, user.last_interacted_time)
         event2 = FailedPrompt(
             phone_number=self.phone_number,
             user_profile=UserProfile(True),
@@ -213,7 +190,7 @@ class TestUsers(unittest.TestCase):
         batch2.seq = batch1.seq
         self.repo.update_user(batch2)
         user = self.repo.get_user(user_id)
-        self.assertIsNone(user.last_interacted_time)
+        self.assertEqual(event.created_time, user.last_interacted_time)
 
     def test_get_progress_empty(self):
         drill_progresses = list(self.repo.get_progress_for_users_who_need_drills(30))
@@ -248,8 +225,9 @@ class TestUsers(unittest.TestCase):
             user_profile=UserProfile(True),
             drill=Drill(slug=ALL_DRILL_SLUGS[0], name="name", prompts=[]),
             first_prompt=self.prompt,
+            created_time=datetime.datetime.now(datetime.timezone.utc)
+            - datetime.timedelta(minutes=32),
         )
-        self.repo.get_progress_for_users_who_need_drills(30)
         self.repo.update_user(self._make_batch([event]))
 
         drill_progresses = list(self.repo.get_progress_for_users_who_need_drills(30))
@@ -268,6 +246,8 @@ class TestUsers(unittest.TestCase):
             phone_number=self.phone_number,
             user_profile=UserProfile(True),
             drill_instance_id=event.drill_instance_id,
+            created_time=datetime.datetime.now(datetime.timezone.utc)
+            - datetime.timedelta(minutes=31),
         )
         self.repo.update_user(self._make_batch([event2]))
         drill_progresses = list(self.repo.get_progress_for_users_who_need_drills(30))
@@ -282,6 +262,21 @@ class TestUsers(unittest.TestCase):
             drill_progresses[0],
         )
 
+    def test_get_progress_recent_interaction(self):
+        self._make_user_and_get_id()
+        event = DrillStarted(
+            phone_number=self.phone_number,
+            user_profile=UserProfile(True),
+            drill=Drill(slug=ALL_DRILL_SLUGS[0], name="name", prompts=[]),
+            first_prompt=self.prompt,
+            created_time=datetime.datetime.now(datetime.timezone.utc)
+            - datetime.timedelta(minutes=20),
+        )
+        self.repo.update_user(self._make_batch([event]))
+
+        drill_progresses = list(self.repo.get_progress_for_users_who_need_drills(30))
+        self.assertEqual(0, len(drill_progresses))
+
     def test_get_progress_multiple_users(self):
         user_id1 = self._make_user_and_get_id()
         user_id2 = self._make_user_and_get_id(phone_number="987654321")
@@ -290,6 +285,8 @@ class TestUsers(unittest.TestCase):
             user_profile=UserProfile(True),
             drill=Drill(slug=ALL_DRILL_SLUGS[0], name="name", prompts=[]),
             first_prompt=self.prompt,
+            created_time=datetime.datetime.now(datetime.timezone.utc)
+            - datetime.timedelta(minutes=32),
         )
         self.repo.update_user(self._make_batch([event]))
 
@@ -298,6 +295,8 @@ class TestUsers(unittest.TestCase):
             user_profile=UserProfile(True),
             drill=Drill(slug=ALL_DRILL_SLUGS[1], name="name", prompts=[]),
             first_prompt=self.prompt,
+            created_time=datetime.datetime.now(datetime.timezone.utc)
+            - datetime.timedelta(minutes=32),
         )
         self.repo.update_user(self._make_batch([event2]))
 
