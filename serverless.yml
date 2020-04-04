@@ -185,10 +185,9 @@ resources:
         MasterUserPassword: ${env:DB_PASSWORD}
         StorageEncrypted: true
         ScalingConfiguration:
-            AutoPause: true
+            AutoPause: false
             MaxCapacity: 4
             MinCapacity: 2
-            SecondsUntilAutoPause: 300
 
     # OUTBOUND SMS
     OutboundSMSFifoQueue:
