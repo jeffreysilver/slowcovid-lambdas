@@ -92,7 +92,7 @@ class DrillProgress:
     def next_drill_slug_to_trigger(self) -> str:
         if self.first_unstarted_drill_slug:
             return self.first_unstarted_drill_slug
-        return self.first_incomplete_drill_slug
+        return self.first_incomplete_drill_slug  # type: ignore
 
 
 @dataclass
