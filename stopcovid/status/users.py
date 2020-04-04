@@ -196,7 +196,6 @@ class UserRepository:
                         isinstance(event, AdvancedToNextPrompt)
                         or isinstance(event, ReminderTriggered)
                         or isinstance(event, UserValidationFailed)
-                        or isinstance(event, AdvancedToNextPrompt)
                         or isinstance(event, CompletedPrompt)
                         or isinstance(event, FailedPrompt)
                     ):
