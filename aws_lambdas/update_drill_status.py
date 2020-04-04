@@ -10,7 +10,6 @@ def handler(event, context):
         if record["dynamodb"].get("NewImage")
     ]
 
-    for batch in event_batches:
-        status.handle_dialog_event_batch(batch)
+    status.handle_dialog_event_batches(event_batches)
 
     return {"statusCode": 200}

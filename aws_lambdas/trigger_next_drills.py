@@ -1,7 +1,7 @@
-from stopcovid.status.initiation import trigger_next_drills
+from stopcovid.status.initiation import DrillInitiator
 
 
 def handler(event, context):
-    trigger_next_drills()
+    DrillInitiator().trigger_next_drills()
 
     return {"statusCode": 200}
