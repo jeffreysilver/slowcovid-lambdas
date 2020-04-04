@@ -54,7 +54,7 @@ users = Table(
     Column("user_id", UUID, primary_key=True),
     Column("seq", String, nullable=False),
     Column("account_info", JSONB, nullable=False),
-    Column("last_interacted_time", DateTime(timezone=True)),
+    Column("last_interacted_time", DateTime(timezone=True), index=True),
 )
 
 phone_numbers = Table(
@@ -79,6 +79,7 @@ drill_statuses = Table(
     UniqueConstraint("user_id", "place_in_sequence"),
     UniqueConstraint("user_id", "drill_slug"),
     Index("user_id_started", "user_id", "started_time"),
+    Index("user_id_completed", "user_id", "completed_time"),
 )
 
 
@@ -220,6 +221,7 @@ class UserRepository:
             )
             .where(
                 and_(
+                    phone_numbers.c.is_primary.is_(True),
                     # haven't interacted recently
                     or_(
                         users.c.last_interacted_time.is_(None),
