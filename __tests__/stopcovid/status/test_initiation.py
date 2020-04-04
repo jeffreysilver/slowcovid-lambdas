@@ -63,20 +63,14 @@ class TestInitiation(unittest.TestCase):
         self, get_kinesis_mock, record_initiation_mock, recently_initiated_mock
     ):
         get_kinesis_mock.return_value = self.kinesis_mock
-        self.initiator.trigger_first_drill(["123456789", "987654321"])
+        self.initiator.trigger_first_drill("123456789", "foo")
         self.assertEqual(1, self.put_records_mock.call_count)
         kwargs = self.put_records_mock.call_args[1]
-        self.assertEqual(2, len(kwargs["Records"]))
+        self.assertEqual(1, len(kwargs["Records"]))
         self.assertEqual("command-stream-test", kwargs["StreamName"])
 
-    def test_trigger_first_drill_none(
-        self, get_kinesis_mock, record_initiation_mock, recently_initiated_mock
-    ):
-        get_kinesis_mock.return_value = self.kinesis_mock
-        self.initiator.trigger_first_drill([])
-        self.assertEqual(0, self.put_records_mock.call_count)
 
-
+@patch("stopcovid.status.initiation.DrillInitiator._get_kinesis_client")
 class TestRecordInitiation(unittest.TestCase):
     def setUp(self):
         os.environ["STAGE"] = "test"
@@ -86,16 +80,43 @@ class TestRecordInitiation(unittest.TestCase):
             aws_access_key_id="fake-key",
             aws_secret_access_key="fake-secret",
         )
+        self.kinesis_mock = MagicMock()
+        self.put_records_mock = MagicMock()
+        self.kinesis_mock.put_records = self.put_records_mock
         self.initiator.ensure_tables_exist()
 
-    def test_initiation(self):
+    def test_initiation_first_drill(self, get_kinesis_mock):
+        get_kinesis_mock.return_value = self.kinesis_mock
+
         # we aren't erasing our DB between test runs, so let's ensure the phone number is unique
         phone_number = str(uuid.uuid4())
-        slug1 = "a-slug"
-        slug2 = "b-slug"
-        self.assertFalse(self.initiator._was_recently_initiated(phone_number, slug1))
-        self.assertFalse(self.initiator._was_recently_initiated(phone_number, slug2))
 
-        self.initiator._record_initiation(phone_number, slug1)
-        self.assertTrue(self.initiator._was_recently_initiated(phone_number, slug1))
-        self.assertFalse(self.initiator._was_recently_initiated(phone_number, slug2))
+        self.initiator.trigger_first_drill(phone_number, "foo")
+        self.assertEqual(1, self.put_records_mock.call_count)
+        self.initiator.trigger_first_drill(phone_number, "foo")
+        self.assertEqual(1, self.put_records_mock.call_count)
+
+    def test_initiation_next_drills(self, get_kinesis_mock):
+        get_kinesis_mock.return_value = self.kinesis_mock
+
+        with patch(
+            "stopcovid.status.initiation.UserRepository.get_progress_for_users_who_need_drills",
+            return_value=[
+                DrillProgress(
+                    phone_number=str(uuid.uuid4()),
+                    user_id=uuid.uuid4(),
+                    first_incomplete_drill_slug="01-basics",
+                    first_unstarted_drill_slug="01-basics",
+                ),
+                DrillProgress(
+                    phone_number=str(uuid.uuid4()),
+                    user_id=uuid.uuid4(),
+                    first_incomplete_drill_slug="02-prevention",
+                    first_unstarted_drill_slug=None,
+                ),
+            ],
+        ):
+            self.initiator.trigger_next_drills()
+            self.assertEqual(1, self.put_records_mock.call_count)
+            self.initiator.trigger_next_drills()
+            self.assertEqual(1, self.put_records_mock.call_count)

@@ -259,12 +259,12 @@ resources:
         KeySchema:
           - AttributeName: phone_number
             KeyType: HASH
-          - AttributeName: drill_slug
+          - AttributeName: idempotency_key
             KeyType: RANGE
         AttributeDefinitions:
           - AttributeName: phone_number
             AttributeType: S
-          - AttributeName: drill_slug
+          - AttributeName: idempotency_key
             AttributeType: S
         TimeToLiveSpecification:
           AttributeName: expiration_ts
