@@ -81,7 +81,7 @@ class ReminderTriggerRepository:
         return [self._deserialize(row) for row in results]
 
     def reminder_trigger_exists(self, drill_instance_id, prompt_slug):
-        result = self.engine.execute(
+        return self.engine.execute(
             exists([reminder_triggers])
             .where(
                 and_(
@@ -91,8 +91,6 @@ class ReminderTriggerRepository:
             )
             .select()
         ).scalar()
-
-        return result
 
     def drop_and_recreate_tables_testing_only(self):
         if self.engine_factory == db.get_sqlalchemy_engine:
