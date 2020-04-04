@@ -85,7 +85,7 @@ functions:
           startingPosition: LATEST
 
   updateDrillStatus:
-    handler: stopcovid/status/lambda.process_dialog_events
+    handler: aws_lambdas/update_drill_status.handler
     timeout: 60
     events:
       - stream:
@@ -95,6 +95,12 @@ functions:
               - DialogEventBatches
               - StreamArn
           startingPosition: LATEST
+
+  triggerNextDrills:
+    handler: aws_lambdas/trigger_next_drills.handler
+    timeout: 60
+    events:
+      - schedule: cron(5 17 * * ? *)
 
   healthcheck:
     handler: stopcovid/healthcheck.healthcheck
