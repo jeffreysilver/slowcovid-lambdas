@@ -266,8 +266,6 @@ resources:
             AttributeType: S
           - AttributeName: drill_slug
             AttributeType: S
-          - AttributeName: expiration_ts
-            AttributeType: N
         TimeToLiveSpecification:
           AttributeName: expiration_ts
           Enabled: true
