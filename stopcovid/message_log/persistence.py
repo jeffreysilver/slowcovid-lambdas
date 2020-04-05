@@ -44,23 +44,21 @@ class MessageRepository:
             obj["id"] = uuid.uuid4()
             return obj
 
-        with self.engine.connect() as connection:
-            with connection.begin():
-                for value in values:
-                    try:
-                        stmt = insert(messages).values(**_prep_insert(value))
-                        connection.execute(stmt)
-                    except IntegrityError as exception:
-                        # If the upsert error was anything besides a duplicate twilio_message_id reraise
-                        if not self._integrity_error_is_dupe_twilio_message_id(exception):
-                            raise exception
-                        twilio_message_id = value.pop("twilio_message_id")
-                        stmt = (
-                            messages.update()
-                            .where(messages.c.twilio_message_id == twilio_message_id)
-                            .values(**value)
-                        )
-                        connection.execute(stmt)
+        for value in values:
+            try:
+                stmt = insert(messages).values(**_prep_insert(value))
+                self.engine.execute(stmt)
+            except IntegrityError as exception:
+                # If the upsert error was anything besides a duplicate twilio_message_id reraise
+                if not self._integrity_error_is_dupe_twilio_message_id(exception):
+                    raise exception
+                twilio_message_id = value.pop("twilio_message_id")
+                stmt = (
+                    messages.update()
+                    .where(messages.c.twilio_message_id == twilio_message_id)
+                    .values(**value)
+                )
+                self.engine.execute(stmt)
 
     def _get_messages(self):
         results = self.engine.execute(select([messages]))
