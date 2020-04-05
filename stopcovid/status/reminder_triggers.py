@@ -1,6 +1,7 @@
 import uuid
 from dataclasses import dataclass
 from typing import List
+import logging
 
 from sqlalchemy import (
     Table,
@@ -9,7 +10,6 @@ from sqlalchemy import (
     String,
     select,
     exists,
-    Index,
     and_,
     insert,
 )
@@ -28,11 +28,6 @@ reminder_triggers = Table(
     Column("prompt_slug", String, nullable=False),
     # Do not remind for same prompt on drill twice
     UniqueConstraint("drill_instance_id", "prompt_slug"),
-)
-
-
-Index(
-    "drill_instance_id_prompt_slug_index", "drill_instance_id", "prompt_slug",
 )
 
 
@@ -74,7 +69,10 @@ class ReminderTriggerRepository:
                     try:
                         self.engine.execute(stmt)
                     except IntegrityError:
-                        pass
+                        logging.info(
+                            "Reprocessing a reminder_trigger instance that was already "
+                            f"created {value.id}. Ignoring."
+                        )
 
     def get_reminder_triggers(self):
         results = self.engine.execute(select([reminder_triggers]))
