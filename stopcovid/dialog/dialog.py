@@ -97,21 +97,29 @@ class ProcessSMSMessage(types.Command):
         self.registration_validator = registration_validator
 
     def execute(self, dialog_state: types.DialogState) -> List[types.DialogEvent]:
+        base_args = {"phone_number": self.phone_number, "user_profile": dialog_state.user_profile}
+
+        if self.content_lower == "help":
+            # Twilio will respond with help text
+            return []
+        if self.content_lower in ["cancel", "end", "quit", "stop", "stopall", "unsubscribe"]:
+            return [OptedOut(drill_instance_id=dialog_state.drill_instance_id, **base_args)]
+        if dialog_state.user_profile.opted_out:
+            if self.content_lower == "start":
+                return [NextDrillRequested(**base_args)]
+            return []
+
         if dialog_state.user_profile.is_demo or not dialog_state.user_profile.validated:
             validation_payload = self.registration_validator.validate_code(self.content_lower)
             if validation_payload.valid:
-                return [
-                    UserValidated(
-                        phone_number=self.phone_number,
-                        user_profile=dialog_state.user_profile,
-                        code_validation_payload=validation_payload,
-                    )
-                ]
+                return [UserValidated(code_validation_payload=validation_payload, **base_args)]
             if not dialog_state.user_profile.validated:
-                return [UserValidationFailed(self.phone_number, dialog_state.user_profile)]
+                return [UserValidationFailed(**base_args)]
 
         prompt = dialog_state.get_prompt()
         if prompt is None:
+            if self.content_lower == "more":
+                return [NextDrillRequested(**base_args)]
             return []
         events = []
         if prompt.should_advance_with_answer(
@@ -119,11 +127,10 @@ class ProcessSMSMessage(types.Command):
         ):
             events.append(
                 CompletedPrompt(
-                    phone_number=self.phone_number,
-                    user_profile=dialog_state.user_profile,
                     prompt=prompt,
                     drill_instance_id=dialog_state.drill_instance_id,  # type: ignore
                     response=self.content,
+                    **base_args,
                 )
             )
             should_advance = True
@@ -131,12 +138,11 @@ class ProcessSMSMessage(types.Command):
             should_advance = dialog_state.current_prompt_state.failures >= prompt.max_failures
             events.append(
                 FailedPrompt(
-                    phone_number=self.phone_number,
-                    user_profile=dialog_state.user_profile,
                     prompt=prompt,
                     response=self.content,
                     drill_instance_id=dialog_state.drill_instance_id,  # type: ignore
                     abandoned=should_advance,
+                    **base_args,
                 )
             )
 
@@ -145,19 +151,17 @@ class ProcessSMSMessage(types.Command):
             if next_prompt is not None:
                 events.append(
                     AdvancedToNextPrompt(
-                        phone_number=self.phone_number,
-                        user_profile=dialog_state.user_profile,
                         prompt=next_prompt,
                         drill_instance_id=dialog_state.drill_instance_id,  # type: ignore
+                        **base_args,
                     )
                 )
                 if dialog_state.is_next_prompt_last():
                     # assume the last prompt doesn't wait for an answer
                     events.append(
                         DrillCompleted(
-                            self.phone_number,
-                            dialog_state.user_profile,
-                            dialog_state.drill_instance_id,  # type: ignore
+                            drill_instance_id=dialog_state.drill_instance_id,  # type: ignore
+                            **base_args,
                         )
                     )
         return events
