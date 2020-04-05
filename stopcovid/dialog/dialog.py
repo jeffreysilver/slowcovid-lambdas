@@ -96,18 +96,49 @@ class ProcessSMSMessage(types.Command):
             registration_validator = DEFAULT_REGISTRATION_VALIDATOR
         self.registration_validator = registration_validator
 
-    def execute(self, dialog_state: types.DialogState) -> List[types.DialogEvent]:  # noqa: C901
+    def execute(self, dialog_state: types.DialogState) -> List[types.DialogEvent]:
         base_args = {"phone_number": self.phone_number, "user_profile": dialog_state.user_profile}
 
+        # a chain of responsibility. Each handler can handle the current command and return an
+        # event list. A handler can also NOT handle an event and return None, thereby leaving it
+        # for the next handler.
+        for handler in [
+            self._respond_to_help,
+            self._handle_opt_out,
+            self._handle_opt_back_in,
+            self._validate_registration,
+            self._check_response,
+            self._advance_to_next_drill,
+        ]:
+            result = handler(dialog_state, base_args)
+            if result is not None:
+                return result
+        return []
+
+    def _respond_to_help(
+        self, dialog_state: types.DialogState, base_args: Dict[str, Any]
+    ) -> Optional[List[types.DialogEvent]]:
         if self.content_lower == "help":
             # Twilio will respond with help text
             return []
+
+    def _handle_opt_out(
+        self, dialog_state: types.DialogState, base_args: Dict[str, Any]
+    ) -> Optional[List[types.DialogEvent]]:
         if self.content_lower in ["cancel", "end", "quit", "stop", "stopall", "unsubscribe"]:
             return [OptedOut(drill_instance_id=dialog_state.drill_instance_id, **base_args)]
+
+    def _handle_opt_back_in(
+        self, dialog_state: types.DialogState, base_args: Dict[str, Any]
+    ) -> Optional[List[types.DialogEvent]]:
         if dialog_state.user_profile.opted_out:
             if self.content_lower == "start":
                 return [NextDrillRequested(**base_args)]
             return []
+
+    def _validate_registration(
+        self, dialog_state: types.DialogState, base_args: Dict[str, Any]
+    ) -> Optional[List[types.DialogEvent]]:
 
         if dialog_state.user_profile.is_demo or not dialog_state.user_profile.validated:
             validation_payload = self.registration_validator.validate_code(self.content_lower)
@@ -116,11 +147,12 @@ class ProcessSMSMessage(types.Command):
             if not dialog_state.user_profile.validated:
                 return [UserValidationFailed(**base_args)]
 
+    def _check_response(
+        self, dialog_state: types.DialogState, base_args: Dict[str, Any]
+    ) -> Optional[List[types.DialogEvent]]:
         prompt = dialog_state.get_prompt()
         if prompt is None:
-            if self.content_lower == "more":
-                return [NextDrillRequested(**base_args)]
-            return []
+            return
         events = []
         if prompt.should_advance_with_answer(
             self.content_lower, dialog_state.user_profile.language
@@ -165,6 +197,15 @@ class ProcessSMSMessage(types.Command):
                         )
                     )
         return events
+
+    def _advance_to_next_drill(
+        self, dialog_state: types.DialogState, base_args: Dict[str, Any]
+    ) -> Optional[List[types.DialogEvent]]:
+        prompt = dialog_state.get_prompt()
+        if prompt is None:
+            if self.content_lower == "more":
+                return [NextDrillRequested(**base_args)]
+            return []
 
 
 class DrillStartedSchema(types.DialogEventSchema):
