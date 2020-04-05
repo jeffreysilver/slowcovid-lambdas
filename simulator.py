@@ -15,6 +15,8 @@ from stopcovid.dialog.dialog import (
     UserValidationFailed,
     DrillStarted,
     DrillCompleted,
+    NextDrillRequested,
+    OptedOut,
 )
 from stopcovid.dialog.registration import RegistrationValidator, CodeValidationPayload
 from stopcovid.dialog.types import DialogStateSchema, DialogState, UserProfile, DialogEventBatch
@@ -33,6 +35,8 @@ DRILLS = {
     "drill6": get_drill("06-hand-washing-when"),
     "drill7": get_drill("07-sanitizing-surfaces"),
 }
+
+STARTED_DRILLS = {}
 
 
 def fake_sms(
@@ -79,7 +83,7 @@ class InMemoryRepository(DialogRepository):
     ):
         self.repo[dialog_state.phone_number] = DialogStateSchema().dumps(dialog_state)
 
-        should_start_drill = False
+        drill_to_start = None
         for event in event_batch.events:
             if isinstance(event, AdvancedToNextPrompt):
                 fake_sms(
@@ -106,25 +110,36 @@ class InMemoryRepository(DialogRepository):
                         event.phone_number, dialog_state.user_profile, ["{{match_correct_answer}}"]
                     )
             elif isinstance(event, UserValidated):
-                should_start_drill = True
+                drill_to_start = dialog_state.user_profile.account_info["code"]
+            elif isinstance(event, OptedOut):
+                print("(You've been opted out.)")
+                if event.drill_instance_id:
+                    del STARTED_DRILLS[event.drill_instance_id]
+            elif isinstance(event, NextDrillRequested):
+                unstarted_drills = [
+                    code
+                    for code in DRILLS.keys()
+                    if DRILLS[code].slug not in STARTED_DRILLS.values()
+                ]
+                if unstarted_drills:
+                    drill_to_start = unstarted_drills[0]
+                else:
+                    print("(You're all out of drills.)")
             elif isinstance(event, UserValidationFailed):
                 print("(try DRILL1, DRILL2, DRILL3, DRILL4, DRILL5, DRILL6, DRILL7)")
             elif isinstance(event, DrillStarted):
+                STARTED_DRILLS[event.drill_instance_id] = dialog_state.current_drill.slug
                 fake_sms(
                     event.phone_number,
                     dialog_state.user_profile,
                     [message.text for message in event.first_prompt.messages],
                 )
             elif isinstance(event, DrillCompleted):
-                print("(The drill is complete. Type crtl-D to exit.)")
-        if should_start_drill:
+                print("(The drill is complete. Type 'more' for another drill or crtl-D to exit.)")
+        if drill_to_start:
             global SEQ
             SEQ += 1
-            process_command(
-                StartDrill(PHONE_NUMBER, DRILLS[dialog_state.user_profile.account_info["code"]]),
-                str(SEQ),
-                repo=self,
-            )
+            process_command(StartDrill(PHONE_NUMBER, DRILLS[drill_to_start]), str(SEQ), repo=self)
 
 
 class FakeRegistrationValidator(RegistrationValidator):

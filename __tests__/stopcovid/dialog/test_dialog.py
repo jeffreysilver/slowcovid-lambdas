@@ -20,6 +20,8 @@ from stopcovid.dialog.dialog import (
     ReminderTriggered,
     UserValidationFailed,
     UserValidated,
+    OptedOut,
+    NextDrillRequested,
 )
 from stopcovid.dialog.types import (
     DialogEvent,
@@ -300,6 +302,44 @@ class TestProcessCommand(unittest.TestCase):
             self.dialog_state.drill_instance_id, drill_completed_event.drill_instance_id
         )
 
+    def test_opt_out(self):
+        self.dialog_state.user_profile.validated = True
+        self._set_current_prompt(0, should_advance=True)
+        command = ProcessSMSMessage(self.phone_number, "stop")
+        batch = self._process_command(command)
+        self._assert_event_types(batch, DialogEventType.OPTED_OUT)
+
+    def test_message_during_opt_out(self):
+        self.dialog_state.user_profile.validated = True
+        self.dialog_state.user_profile.opted_out = True
+        command = ProcessSMSMessage(self.phone_number, "it's not a bacteria")
+        batch = self._process_command(command)
+        self.assertEqual(0, len(batch.events))
+
+    def test_opt_back_in(self):
+        self.dialog_state.user_profile.validated = True
+        self.dialog_state.user_profile.opted_out = True
+        command = ProcessSMSMessage(self.phone_number, "start")
+        batch = self._process_command(command)
+        self._assert_event_types(batch, DialogEventType.NEXT_DRILL_REQUESTED)
+
+    def test_ask_for_help(self):
+        command = ProcessSMSMessage(self.phone_number, "help")
+        batch = self._process_command(command)
+        self.assertEqual(0, len(batch.events))  # response handled by twilio
+
+    def test_ask_for_help_validated(self):
+        self.dialog_state.user_profile.validated = True
+        command = ProcessSMSMessage(self.phone_number, "help")
+        batch = self._process_command(command)
+        self.assertEqual(0, len(batch.events))  # response handled by twilio
+
+    def test_ask_for_more(self):
+        self.dialog_state.user_profile.validated = True
+        command = ProcessSMSMessage(self.phone_number, "more")
+        batch = self._process_command(command)
+        self._assert_event_types(batch, DialogEventType.NEXT_DRILL_REQUESTED)
+
     def test_trigger_reminder(self):
         self.dialog_state.user_profile.validated = True
         self._set_current_prompt(2, should_advance=True)
@@ -553,6 +593,52 @@ class TestDrillCompleted(unittest.TestCase):
         self.assertIsNone(dialog_state.current_drill)
 
 
+class TestOptedOut(unittest.TestCase):
+    def test_opted_out_during_drill(self):
+        profile = UserProfile(validated=True)
+        event = OptedOut("123456789", user_profile=profile, drill_instance_id=uuid.uuid4())
+        dialog_state = DialogState(
+            "123456789",
+            seq="0",
+            user_profile=profile,
+            current_drill=DRILL,
+            drill_instance_id=event.drill_instance_id,
+            current_prompt_state=PromptState(DRILL.prompts[-1].slug, start_time=NOW),
+        )
+
+        self.assertFalse(profile.opted_out)
+        event.apply_to(dialog_state)
+        self.assertTrue(profile.opted_out)
+        self.assertIsNone(dialog_state.drill_instance_id)
+        self.assertIsNone(dialog_state.current_prompt_state)
+        self.assertIsNone(dialog_state.current_drill)
+
+    def test_opted_out_no_drill(self):
+        profile = UserProfile(validated=True)
+        event = OptedOut("123456789", user_profile=profile, drill_instance_id=None)
+        dialog_state = DialogState("123456789", seq="0", user_profile=profile)
+
+        self.assertFalse(profile.opted_out)
+        event.apply_to(dialog_state)
+        self.assertTrue(profile.opted_out)
+        self.assertIsNone(dialog_state.drill_instance_id)
+        self.assertIsNone(dialog_state.current_prompt_state)
+        self.assertIsNone(dialog_state.current_drill)
+
+
+class TestNextDrillRequested(unittest.TestCase):
+    def test_next_drill_requested(self):
+        profile = UserProfile(validated=True, opted_out=True)
+        event = NextDrillRequested(
+            "123456789", user_profile=profile, drill_instance_id=uuid.uuid4()
+        )
+        dialog_state = DialogState("123456789", seq="0", user_profile=profile)
+
+        self.assertTrue(profile.opted_out)
+        event.apply_to(dialog_state)
+        self.assertFalse(profile.opted_out)
+
+
 class TestSerialization(unittest.TestCase):
     def setUp(self) -> None:
         self.prompt = Prompt(
@@ -662,6 +748,21 @@ class TestSerialization(unittest.TestCase):
 
     def test_user_validation_failed(self):
         original = UserValidationFailed("123456789", user_profile=UserProfile(True))
+        serialized = original.to_dict()
+        deserialized = event_from_dict(serialized)
+        self._make_base_assertions(original, deserialized)
+
+    def test_opted_out(self):
+        original = OptedOut(
+            "123456789", user_profile=UserProfile(True), drill_instance_id=uuid.uuid4()
+        )
+        serialized = original.to_dict()
+        deserialized: OptedOut = event_from_dict(serialized)  # type: ignore
+        self._make_base_assertions(original, deserialized)
+        self.assertEqual(original.drill_instance_id, deserialized.drill_instance_id)
+
+    def test_next_drill_requested(self):
+        original = NextDrillRequested("123456789", user_profile=UserProfile(True))
         serialized = original.to_dict()
         deserialized = event_from_dict(serialized)
         self._make_base_assertions(original, deserialized)

@@ -1,7 +1,7 @@
 import logging
 import uuid
 from copy import deepcopy
-from typing import List, Dict, Any, Optional
+from typing import List, Dict, Any, Optional, Type
 
 from marshmallow import fields, post_load, utils
 
@@ -14,7 +14,7 @@ from .registration import (
     CodeValidationPayloadSchema,
     CodeValidationPayload,
 )
-from .types import DialogEventBatch
+from .types import DialogEventBatch, DialogState
 
 DEFAULT_REGISTRATION_VALIDATOR = DefaultRegistrationValidator()
 
@@ -97,33 +97,72 @@ class ProcessSMSMessage(types.Command):
         self.registration_validator = registration_validator
 
     def execute(self, dialog_state: types.DialogState) -> List[types.DialogEvent]:
+        base_args = {"phone_number": self.phone_number, "user_profile": dialog_state.user_profile}
+
+        # a chain of responsibility. Each handler can handle the current command and return an
+        # event list. A handler can also NOT handle an event and return None, thereby leaving it
+        # for the next handler.
+        for handler in [
+            self._respond_to_help,
+            self._handle_opt_out,
+            self._handle_opt_back_in,
+            self._validate_registration,
+            self._check_response,
+            self._advance_to_next_drill,
+        ]:
+            result = handler(dialog_state, base_args)
+            if result is not None:
+                return result
+        return []
+
+    def _respond_to_help(
+        self, dialog_state: types.DialogState, base_args: Dict[str, Any]
+    ) -> Optional[List[types.DialogEvent]]:
+        if self.content_lower == "help":
+            # Twilio will respond with help text
+            return []
+
+    def _handle_opt_out(
+        self, dialog_state: types.DialogState, base_args: Dict[str, Any]
+    ) -> Optional[List[types.DialogEvent]]:
+        if self.content_lower in ["cancel", "end", "quit", "stop", "stopall", "unsubscribe"]:
+            return [OptedOut(drill_instance_id=dialog_state.drill_instance_id, **base_args)]
+
+    def _handle_opt_back_in(
+        self, dialog_state: types.DialogState, base_args: Dict[str, Any]
+    ) -> Optional[List[types.DialogEvent]]:
+        if dialog_state.user_profile.opted_out:
+            if self.content_lower == "start":
+                return [NextDrillRequested(**base_args)]
+            return []
+
+    def _validate_registration(
+        self, dialog_state: types.DialogState, base_args: Dict[str, Any]
+    ) -> Optional[List[types.DialogEvent]]:
+
         if dialog_state.user_profile.is_demo or not dialog_state.user_profile.validated:
             validation_payload = self.registration_validator.validate_code(self.content_lower)
             if validation_payload.valid:
-                return [
-                    UserValidated(
-                        phone_number=self.phone_number,
-                        user_profile=dialog_state.user_profile,
-                        code_validation_payload=validation_payload,
-                    )
-                ]
+                return [UserValidated(code_validation_payload=validation_payload, **base_args)]
             if not dialog_state.user_profile.validated:
-                return [UserValidationFailed(self.phone_number, dialog_state.user_profile)]
+                return [UserValidationFailed(**base_args)]
 
+    def _check_response(
+        self, dialog_state: types.DialogState, base_args: Dict[str, Any]
+    ) -> Optional[List[types.DialogEvent]]:
         prompt = dialog_state.get_prompt()
         if prompt is None:
-            return []
+            return
         events = []
         if prompt.should_advance_with_answer(
             self.content_lower, dialog_state.user_profile.language
         ):
             events.append(
                 CompletedPrompt(
-                    phone_number=self.phone_number,
-                    user_profile=dialog_state.user_profile,
                     prompt=prompt,
                     drill_instance_id=dialog_state.drill_instance_id,  # type: ignore
                     response=self.content,
+                    **base_args,
                 )
             )
             should_advance = True
@@ -131,12 +170,11 @@ class ProcessSMSMessage(types.Command):
             should_advance = dialog_state.current_prompt_state.failures >= prompt.max_failures
             events.append(
                 FailedPrompt(
-                    phone_number=self.phone_number,
-                    user_profile=dialog_state.user_profile,
                     prompt=prompt,
                     response=self.content,
                     drill_instance_id=dialog_state.drill_instance_id,  # type: ignore
                     abandoned=should_advance,
+                    **base_args,
                 )
             )
 
@@ -145,22 +183,29 @@ class ProcessSMSMessage(types.Command):
             if next_prompt is not None:
                 events.append(
                     AdvancedToNextPrompt(
-                        phone_number=self.phone_number,
-                        user_profile=dialog_state.user_profile,
                         prompt=next_prompt,
                         drill_instance_id=dialog_state.drill_instance_id,  # type: ignore
+                        **base_args,
                     )
                 )
                 if dialog_state.is_next_prompt_last():
                     # assume the last prompt doesn't wait for an answer
                     events.append(
                         DrillCompleted(
-                            self.phone_number,
-                            dialog_state.user_profile,
-                            dialog_state.drill_instance_id,  # type: ignore
+                            drill_instance_id=dialog_state.drill_instance_id,  # type: ignore
+                            **base_args,
                         )
                     )
         return events
+
+    def _advance_to_next_drill(
+        self, dialog_state: types.DialogState, base_args: Dict[str, Any]
+    ) -> Optional[List[types.DialogEvent]]:
+        prompt = dialog_state.get_prompt()
+        if prompt is None:
+            if self.content_lower == "more":
+                return [NextDrillRequested(**base_args)]
+            return []
 
 
 class DrillStartedSchema(types.DialogEventSchema):
@@ -419,25 +464,71 @@ class DrillCompleted(types.DialogEvent):
         dialog_state.current_prompt_state = None
 
 
+class OptedOutSchema(types.DialogEventSchema):
+    drill_instance_id = fields.UUID()
+
+    @post_load
+    def make_opted_out(self, data, **kwargs):
+        return OptedOut(**{k: v for k, v in data.items() if k != "event_type"})
+
+
+class OptedOut(types.DialogEvent):
+    def __init__(
+        self,
+        phone_number: str,
+        user_profile: types.UserProfile,
+        drill_instance_id: Optional[uuid.UUID],
+        **kwargs,
+    ):
+        super().__init__(
+            OptedOutSchema(), types.DialogEventType.OPTED_OUT, phone_number, user_profile, **kwargs
+        )
+        self.drill_instance_id = drill_instance_id
+
+    def apply_to(self, dialog_state: DialogState):
+        dialog_state.drill_instance_id = None
+        dialog_state.user_profile.opted_out = True
+        dialog_state.current_drill = None
+        dialog_state.current_prompt_state = None
+
+
+class NextDrillRequestedSchema(types.DialogEventSchema):
+    @post_load
+    def make_next_drill_requested(self, data, **kwargs):
+        return NextDrillRequested(**{k: v for k, v in data.items() if k != "event_type"})
+
+
+class NextDrillRequested(types.DialogEvent):
+    def __init__(self, phone_number: str, user_profile: types.UserProfile, **kwargs):
+        super().__init__(
+            NextDrillRequestedSchema(),
+            types.DialogEventType.NEXT_DRILL_REQUESTED,
+            phone_number,
+            user_profile,
+            **kwargs,
+        )
+
+    def apply_to(self, dialog_state: DialogState):
+        dialog_state.user_profile.opted_out = False
+
+
+TYPE_TO_SCHEMA: Dict[types.DialogEventType, Type[types.DialogEventSchema]] = {
+    types.DialogEventType.ADVANCED_TO_NEXT_PROMPT: AdvancedToNextPromptSchema,
+    types.DialogEventType.DRILL_COMPLETED: DrillCompletedSchema,
+    types.DialogEventType.USER_VALIDATION_FAILED: UserValidationFailedSchema,
+    types.DialogEventType.DRILL_STARTED: DrillStartedSchema,
+    types.DialogEventType.USER_VALIDATED: UserValidatedSchema,
+    types.DialogEventType.COMPLETED_PROMPT: CompletedPromptSchema,
+    types.DialogEventType.FAILED_PROMPT: FailedPromptSchema,
+    types.DialogEventType.REMINDER_TRIGGERED: ReminderTriggeredSchema,
+    types.DialogEventType.OPTED_OUT: OptedOutSchema,
+    types.DialogEventType.NEXT_DRILL_REQUESTED: NextDrillRequestedSchema,
+}
+
+
 def event_from_dict(event_dict: Dict[str, Any]) -> types.DialogEvent:
     event_type = types.DialogEventType[event_dict["event_type"]]
-    if event_type == types.DialogEventType.ADVANCED_TO_NEXT_PROMPT:
-        return AdvancedToNextPromptSchema().load(event_dict)
-    if event_type == types.DialogEventType.DRILL_COMPLETED:
-        return DrillCompletedSchema().load(event_dict)
-    if event_type == types.DialogEventType.USER_VALIDATION_FAILED:
-        return UserValidationFailedSchema().load(event_dict)
-    if event_type == types.DialogEventType.DRILL_STARTED:
-        return DrillStartedSchema().load(event_dict)
-    if event_type == types.DialogEventType.USER_VALIDATED:
-        return UserValidatedSchema().load(event_dict)
-    if event_type == types.DialogEventType.COMPLETED_PROMPT:
-        return CompletedPromptSchema().load(event_dict)
-    if event_type == types.DialogEventType.FAILED_PROMPT:
-        return FailedPromptSchema().load(event_dict)
-    if event_type == types.DialogEventType.REMINDER_TRIGGERED:
-        return ReminderTriggeredSchema().load(event_dict)
-    raise ValueError(f"unknown event type {event_type}")
+    return TYPE_TO_SCHEMA[event_type]().load(event_dict)
 
 
 def batch_from_dict(batch_dict: Dict[str, Any]) -> types.DialogEventBatch:
