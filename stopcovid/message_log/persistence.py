@@ -49,7 +49,7 @@ class MessageRepository:
                 for value in values:
                     try:
                         stmt = insert(messages).values(**_prep_insert(value))
-                        self.engine.execute(stmt)
+                        connection.execute(stmt)
                     except IntegrityError as exception:
                         # If the upsert error was anything besides a duplicate twilio_message_id reraise
                         if not self._integrity_error_is_dupe_twilio_message_id(exception):
@@ -60,7 +60,7 @@ class MessageRepository:
                             .where(messages.c.twilio_message_id == twilio_message_id)
                             .values(**value)
                         )
-                        self.engine.execute(stmt)
+                        connection.execute(stmt)
 
     def _get_messages(self):
         results = self.engine.execute(select([messages]))
