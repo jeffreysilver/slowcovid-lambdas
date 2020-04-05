@@ -21,19 +21,19 @@ from sqlalchemy import (
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.exc import DatabaseError, IntegrityError
 
-from stopcovid.dialog.dialog import (
-    AdvancedToNextPrompt,
-    CompletedPrompt,
-    FailedPrompt,
-    DrillCompleted,
+from ..dialog.models.events import (
     DrillStarted,
+    ReminderTriggered,
     UserValidated,
     UserValidationFailed,
-    ReminderTriggered,
-    NextDrillRequested,
+    CompletedPrompt,
+    FailedPrompt,
+    AdvancedToNextPrompt,
+    DrillCompleted,
     OptedOut,
+    NextDrillRequested,
+    DialogEventBatch,
 )
-from stopcovid.dialog.types import DialogEventBatch
 from stopcovid import db
 
 metadata = MetaData()

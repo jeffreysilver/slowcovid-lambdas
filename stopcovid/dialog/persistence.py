@@ -5,7 +5,8 @@ from abc import ABC, abstractmethod
 import boto3
 
 from stopcovid.utils import dynamodb as dynamodb_utils
-from .types import DialogState, DialogStateSchema, DialogEventBatch
+from .models.state import DialogState, DialogStateSchema
+from .models.events import DialogEventBatch
 
 
 class DialogRepository(ABC):
@@ -55,7 +56,7 @@ class DynamoDBDialogRepository(DialogRepository):
             ConsistentRead=True,
         )
         dialog_dict = dynamodb_utils.deserialize(response["Item"])
-        from .dialog import batch_from_dict
+        from .models.events import batch_from_dict
 
         return batch_from_dict(dialog_dict)
 

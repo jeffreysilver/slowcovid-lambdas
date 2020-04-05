@@ -1,9 +1,9 @@
 import unittest
 import uuid
 
-from stopcovid.dialog.dialog import CompletedPrompt, AdvancedToNextPrompt
+from stopcovid.dialog.models.events import CompletedPrompt, AdvancedToNextPrompt, DialogEventBatch
 from stopcovid.dialog.persistence import DynamoDBDialogRepository
-from stopcovid.dialog.types import DialogState, UserProfile, DialogEventBatch
+from stopcovid.dialog.models.state import DialogState, UserProfile
 from stopcovid.drills.drills import Prompt, PromptMessage
 
 

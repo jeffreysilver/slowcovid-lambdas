@@ -3,23 +3,22 @@ import sys
 from time import sleep
 from typing import List
 
-from stopcovid.dialog.dialog import (
-    DialogRepository,
-    process_command,
-    StartDrill,
-    ProcessSMSMessage,
-    AdvancedToNextPrompt,
-    FailedPrompt,
-    CompletedPrompt,
+from stopcovid.dialog.dialog import DialogRepository
+from stopcovid.dialog.models.events import (
+    DrillStarted,
     UserValidated,
     UserValidationFailed,
-    DrillStarted,
+    CompletedPrompt,
+    FailedPrompt,
+    AdvancedToNextPrompt,
     DrillCompleted,
-    NextDrillRequested,
     OptedOut,
+    NextDrillRequested,
+    DialogEventBatch,
 )
+from stopcovid.dialog.engine import process_command, StartDrill, ProcessSMSMessage
 from stopcovid.dialog.registration import RegistrationValidator, CodeValidationPayload
-from stopcovid.dialog.types import DialogStateSchema, DialogState, UserProfile, DialogEventBatch
+from stopcovid.dialog.types import DialogStateSchema, DialogState, UserProfile
 from stopcovid.drills.drills import get_drill
 from stopcovid.drills.localize import localize
 

@@ -25,18 +25,19 @@ from sqlalchemy.dialects.postgresql import UUID, JSONB
 from sqlalchemy.exc import DatabaseError
 
 from stopcovid import db
-from stopcovid.dialog.types import DialogEventBatch, DialogEvent
-from ..dialog.dialog import (
-    UserValidated,
+from ..dialog.models.events import (
     DrillStarted,
-    DrillCompleted,
+    ReminderTriggered,
+    UserValidated,
+    UserValidationFailed,
     CompletedPrompt,
     FailedPrompt,
     AdvancedToNextPrompt,
-    ReminderTriggered,
-    UserValidationFailed,
-    NextDrillRequested,
+    DrillCompleted,
     OptedOut,
+    NextDrillRequested,
+    DialogEvent,
+    DialogEventBatch,
 )
 
 ALL_DRILL_SLUGS = [

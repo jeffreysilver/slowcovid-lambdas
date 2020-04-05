@@ -2,16 +2,17 @@ import unittest
 import uuid
 from copy import copy
 import datetime
-from stopcovid.dialog.dialog import (
-    UserValidated,
+from stopcovid.dialog.models.events import (
     DrillStarted,
-    DrillCompleted,
+    UserValidated,
     CompletedPrompt,
     FailedPrompt,
+    DrillCompleted,
     OptedOut,
+    DialogEventBatch,
 )
 from stopcovid.dialog.registration import CodeValidationPayload
-from stopcovid.dialog.types import UserProfile, DialogEventBatch
+from stopcovid.dialog.models.state import UserProfile
 from stopcovid.drills.drills import Prompt, Drill
 from stopcovid.db import get_test_sqlalchemy_engine
 from stopcovid.status.users import UserRepository, ALL_DRILL_SLUGS, DrillProgress
