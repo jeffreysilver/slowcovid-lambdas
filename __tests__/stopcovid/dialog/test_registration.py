@@ -36,7 +36,12 @@ class TestRegistration(unittest.TestCase):
                 json={
                     "valid": True,
                     "is_demo": False,
-                    "account_info": {"employer_id": 165, "unit_id": 429},
+                    "account_info": {
+                        "employer_id": 165,
+                        "employer_name": "Kai's Crab Shack",
+                        "unit_id": 429,
+                        "unit_name": "Kitchen",
+                    },
                 },
             )
             payload = DefaultRegistrationValidator().validate_code(
@@ -45,7 +50,15 @@ class TestRegistration(unittest.TestCase):
 
         self.assertTrue(payload.valid)
         self.assertFalse(payload.is_demo)
-        self.assertEqual({"employer_id": 165, "unit_id": 429}, payload.account_info)
+        self.assertEqual(
+            {
+                "employer_id": 165,
+                "employer_name": "Kai's Crab Shack",
+                "unit_id": 429,
+                "unit_name": "Kitchen",
+            },
+            payload.account_info,
+        )
 
     def test_cache_results(self):
         with requests_mock.Mocker() as m:

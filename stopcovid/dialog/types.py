@@ -14,6 +14,7 @@ SCHEMA_VERSION = 1
 
 class UserProfileSchema(Schema):
     validated = fields.Boolean(required=True)
+    opted_out = fields.Boolean(missing=False)
     language = fields.Str(allow_none=True)
     name = fields.Str(allow_none=True)
     account_info = fields.Mapping(keys=fields.Str(), allow_none=True)
@@ -34,6 +35,7 @@ class UserProfileSchema(Schema):
 @dataclass
 class UserProfile:
     validated: bool
+    opted_out: bool = False
     is_demo: bool = False
     name: Optional[str] = None
     language: Optional[str] = None
@@ -121,6 +123,8 @@ class DialogEventType(enum.Enum):
     FAILED_PROMPT = "FAILED_PROMPT"
     ADVANCED_TO_NEXT_PROMPT = "ADVANCED_TO_NEXT_PROMPT"
     DRILL_COMPLETED = "DRILL_COMPLETED"
+    NEXT_DRILL_REQUESTED = "NEXT_DRILL_REQUESTED"
+    OPTED_OUT = "OPTED_OUT"
 
 
 class EventTypeField(fields.Field):

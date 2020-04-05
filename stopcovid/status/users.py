@@ -35,6 +35,8 @@ from ..dialog.dialog import (
     AdvancedToNextPrompt,
     ReminderTriggered,
     UserValidationFailed,
+    NextDrillRequested,
+    OptedOut,
 )
 
 ALL_DRILL_SLUGS = [
@@ -192,12 +194,16 @@ class UserRepository:
                         self._mark_drill_started(user_id, event, connection)
                     elif isinstance(event, DrillCompleted):
                         self._mark_drill_completed(user_id, event, connection)
+                    elif isinstance(event, OptedOut):
+                        if event.drill_instance_id is not None:
+                            self._unmark_drill_started(event, connection)
                     elif (
                         isinstance(event, AdvancedToNextPrompt)
                         or isinstance(event, ReminderTriggered)
                         or isinstance(event, UserValidationFailed)
                         or isinstance(event, CompletedPrompt)
                         or isinstance(event, FailedPrompt)
+                        or isinstance(event, NextDrillRequested)
                     ):
                         logging.info(f"Ignoring event of type {event.event_type}")
                     else:
@@ -260,6 +266,20 @@ class UserRepository:
 
         if cur_drill_progress is not None:
             yield cur_drill_progress
+
+    def get_progress_for_user(self, user_id: uuid.UUID, phone_number: str) -> DrillProgress:
+        result = self.engine.execute(
+            select([drill_statuses])
+            .where(drill_statuses.c.user_id == func.uuid((str(user_id))))
+            .order_by(drill_statuses.c.place_in_sequence)
+        )
+        progress = DrillProgress(phone_number=phone_number, user_id=user_id)
+        for row in result:
+            if progress.first_incomplete_drill_slug is None and row["completed_time"] is None:
+                progress.first_incomplete_drill_slug = row["drill_slug"]
+            if progress.first_unstarted_drill_slug is None and row["started_time"] is None:
+                progress.first_unstarted_drill_slug = row["drill_slug"]
+        return progress
 
     @staticmethod
     def _get_user_for_phone_number(phone_number: str, connection) -> Optional[User]:
@@ -353,6 +373,14 @@ class UserRepository:
                 )
             )
             .values(started_time=event.created_time, drill_instance_id=str(event.drill_instance_id))
+        )
+
+    @staticmethod
+    def _unmark_drill_started(event: OptedOut, connection):
+        connection.execute(
+            drill_statuses.update()
+            .where(drill_statuses.c.drill_instance_id == func.uuid(str(event.drill_instance_id)))
+            .values(started_time=None)
         )
 
     @staticmethod
