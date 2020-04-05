@@ -3,7 +3,7 @@ import sys
 from time import sleep
 from typing import List
 
-from stopcovid.dialog.dialog import DialogRepository
+from stopcovid.dialog.persistence import DialogRepository
 from stopcovid.dialog.models.events import (
     DrillStarted,
     UserValidated,
@@ -18,7 +18,7 @@ from stopcovid.dialog.models.events import (
 )
 from stopcovid.dialog.engine import process_command, StartDrill, ProcessSMSMessage
 from stopcovid.dialog.registration import RegistrationValidator, CodeValidationPayload
-from stopcovid.dialog.types import DialogStateSchema, DialogState, UserProfile
+from stopcovid.dialog.models.state import DialogStateSchema, DialogState, UserProfile
 from stopcovid.drills.drills import get_drill
 from stopcovid.drills.localize import localize
 
