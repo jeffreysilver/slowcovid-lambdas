@@ -100,7 +100,8 @@ class InMemoryRepository(DialogRepository):
                         dialog_state.user_profile,
                         ["{{corrected_answer}}"],
                         correct_answer=localize(
-                            event.prompt.correct_response, dialog_state.user_profile.language
+                            event.prompt.correct_response,  # type: ignore
+                            dialog_state.user_profile.language,
                         ),
                     )
             elif isinstance(event, CompletedPrompt):
