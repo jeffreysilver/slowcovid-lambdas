@@ -96,7 +96,7 @@ class ProcessSMSMessage(types.Command):
             registration_validator = DEFAULT_REGISTRATION_VALIDATOR
         self.registration_validator = registration_validator
 
-    def execute(self, dialog_state: types.DialogState) -> List[types.DialogEvent]:
+    def execute(self, dialog_state: types.DialogState) -> List[types.DialogEvent]:  # noqa: C901
         base_args = {"phone_number": self.phone_number, "user_profile": dialog_state.user_profile}
 
         if self.content_lower == "help":
