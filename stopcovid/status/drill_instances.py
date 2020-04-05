@@ -30,6 +30,8 @@ from stopcovid.dialog.dialog import (
     UserValidated,
     UserValidationFailed,
     ReminderTriggered,
+    NextDrillRequested,
+    OptedOut,
 )
 from stopcovid.dialog.types import DialogEventBatch
 from stopcovid import db
@@ -78,6 +80,10 @@ class DrillInstanceRepository:
                         self._invalidate_prior_drills(user_id, batch.seq, connection)
                     elif isinstance(event, DrillStarted):
                         self._record_new_drill_instance(user_id, event, batch.seq, connection)
+                    elif isinstance(event, OptedOut):
+                        self._invalidate_drill_instance(
+                            event.drill_instance_id, batch.seq, connection
+                        )
                     elif isinstance(event, DrillCompleted):
                         self._mark_drill_instance_complete(event, batch.seq, connection)
                     elif isinstance(event, CompletedPrompt):
@@ -86,8 +92,10 @@ class DrillInstanceRepository:
                         self._update_current_prompt_response_time(event, batch.seq, connection)
                     elif isinstance(event, AdvancedToNextPrompt):
                         self._update_current_prompt(event, batch.seq, connection)
-                    elif isinstance(event, ReminderTriggered) or isinstance(
-                        event, UserValidationFailed
+                    elif (
+                        isinstance(event, ReminderTriggered)
+                        or isinstance(event, UserValidationFailed)
+                        or isinstance(event, NextDrillRequested)
                     ):
                         logging.info(f"Ignoring event of type {event.event_type}")
                     else:
@@ -111,9 +119,25 @@ class DrillInstanceRepository:
 
         connection.execute(
             drill_instances.update()
-            .where(drill_instances.c.drill_instance_id.in_(ids))
+            .where(
+                drill_instances.c.drill_instance_id.in_(
+                    [func.uuid(str(drill_instance_id)) for drill_instance_id in ids]
+                )
+            )
             .values(is_valid=False)
         )
+
+    def _invalidate_drill_instance(
+        self, drill_instance_id: Optional[uuid.UUID], seq: str, connection
+    ):
+        if drill_instance_id is None:
+            return
+        if self._is_not_stale(drill_instance_id, seq, connection):
+            connection.execute(
+                drill_instances.update()
+                .where(drill_instances.c.drill_instance_id == func.uuid(str(drill_instance_id)))
+                .values(is_valid=False, seq=seq)
+            )
 
     def _record_new_drill_instance(
         self, user_id: uuid.UUID, event: DrillStarted, seq: str, connection
@@ -172,7 +196,8 @@ class DrillInstanceRepository:
                 )
             )
 
-    def _deserialize(self, row):
+    @staticmethod
+    def _deserialize(row):
         return DrillInstance(
             drill_instance_id=uuid.UUID(row["drill_instance_id"]),
             seq=row["seq"],
@@ -230,7 +255,7 @@ class DrillInstanceRepository:
 
     def get_incomplete_drills(self, inactive_for_minutes=None) -> List[DrillInstance]:
         stmt = select([drill_instances]).where(
-            and_(drill_instances.c.completion_time == None, drill_instances.c.is_valid.is_(True))
+            and_(drill_instances.c.completion_time.is_(None), drill_instances.c.is_valid.is_(True))
         )  # noqa:  E711
         if inactive_for_minutes is not None:
             stmt = stmt.where(

@@ -9,6 +9,7 @@ from stopcovid.dialog.dialog import (
     CompletedPrompt,
     FailedPrompt,
     AdvancedToNextPrompt,
+    OptedOut,
 )
 from stopcovid.dialog.registration import CodeValidationPayload
 from stopcovid.dialog.types import UserProfile, DialogEventBatch
@@ -140,6 +141,24 @@ class TestDrillInstances(unittest.TestCase):
         self.assertIsNone(retrieved.current_prompt_last_response_time)
         self.assertIsNone(retrieved.current_prompt_start_time)
         self.assertIsNone(retrieved.current_prompt_slug)
+
+    def test_opted_out_during_drill(self):
+        self.repo._save_drill_instance(self.drill_instance)
+        event = OptedOut(
+            phone_number=self.phone_number,
+            user_profile=UserProfile(True),
+            drill_instance_id=self.drill_instance.drill_instance_id,
+        )
+        self.repo.update_drill_instances(self.drill_instance.user_id, self._make_batch([event]))
+        retrieved = self.repo.get_drill_instance(self.drill_instance.drill_instance_id)
+        self.assertFalse(retrieved.is_valid)
+
+    def test_opted_out_not_during_drill(self):
+        event = OptedOut(
+            phone_number=self.phone_number, user_profile=UserProfile(True), drill_instance_id=None
+        )
+        self.repo.update_drill_instances(self.drill_instance.user_id, self._make_batch([event]))
+        # make sure we don't crash
 
     def test_prompt_completed(self):
         self.repo._save_drill_instance(self.drill_instance)
