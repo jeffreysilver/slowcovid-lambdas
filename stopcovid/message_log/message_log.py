@@ -1,10 +1,8 @@
 from typing import List
-from stopcovid.utils.kinesis import get_payloads_from_kinesis_event
 
 from . import persistence
 
 from stopcovid.message_log.types import (
-    LogMessageCommandSchema,
     LogMessageCommand,
     LogMessageCommandType,
 )
@@ -29,10 +27,3 @@ def _command_to_dict(command: LogMessageCommand):
 def log_messages(commands: List[LogMessageCommand]):
     message_repo = persistence.MessageRepository()
     message_repo.upsert_messages([_command_to_dict(c) for c in commands])
-
-
-def handle(event, context):
-    raw_commands = get_payloads_from_kinesis_event(event)
-    commands = [LogMessageCommandSchema().load(command) for command in raw_commands]
-    log_messages(commands)
-    return {"statusCode": 200}
