@@ -5,8 +5,10 @@ import json
 
 from typing import List
 
-from stopcovid.clients import twilio, kinesis
-from stopcovid.outbound_sms.types import SMSBatch
+from stopcovid.clients import twilio
+from stopcovid.send_sms.types import SMSBatch
+
+from . import publish
 
 DELAY_SECONDS_BETWEEN_MESSAGES = 3
 
@@ -30,7 +32,7 @@ def send_sms_batches(batches: List[SMSBatch]):
     twilio_responses = [response for batch in twilio_batches for response in batch]
 
     try:
-        kinesis.publish_log_outbound_sms(twilio_responses)
+        publish.publish_outbound_sms(twilio_responses)
     except Exception:
         formatted_twilio_responses = [
             {

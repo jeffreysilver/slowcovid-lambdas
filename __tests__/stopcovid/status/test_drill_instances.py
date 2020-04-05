@@ -13,8 +13,8 @@ from stopcovid.dialog.dialog import (
 from stopcovid.dialog.registration import CodeValidationPayload
 from stopcovid.dialog.types import UserProfile, DialogEventBatch
 from stopcovid.drills.drills import Drill, Prompt
-from stopcovid.status import db
 from stopcovid.status.drill_instances import DrillInstanceRepository, DrillInstance
+from stopcovid import db
 
 
 class TestDrillInstances(unittest.TestCase):

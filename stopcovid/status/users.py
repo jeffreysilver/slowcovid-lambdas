@@ -24,7 +24,7 @@ from sqlalchemy import (
 from sqlalchemy.dialects.postgresql import UUID, JSONB
 from sqlalchemy.exc import DatabaseError
 
-from . import db
+from stopcovid import db
 from stopcovid.dialog.types import DialogEventBatch, DialogEvent
 from ..dialog.dialog import (
     UserValidated,
