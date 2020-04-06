@@ -20,17 +20,19 @@ def build_registration_payload(data):
         "last_name": data["last-name"],
         "title": data["title"],
     }
+    print(data)
 
     company = {
         "name": data["company-name"],
-        "country": data["country"],
-        "num_employees": data["employee-count"],
+        "state": data["state"],
+        "num_employees": data["employee-range"],
         "zip_code": data["postal-code"],
+        "business_type": data["business-type"]
     }
 
     labels = get_labels(data)
 
-    return {"company": company, "owner": owner, "labels": labels}
+    return {"company": company, "owner": owner, "labels": labels, "how_did_you_hear_about_us": data["how-did-you-hear-about-us"] }
 
 
 def handle_registration(event, context):

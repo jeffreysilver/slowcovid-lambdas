@@ -4,7 +4,7 @@ import os
 
 from serverless_sdk import tag_event  # type: ignore
 
-BASE_URL = "https://eslworks-api-production.herokuapp.com/slowcovid"
+BASE_URL = "https://eslworks-api-staging.herokuapp.com/slowcovid"
 
 
 def register(payload):
