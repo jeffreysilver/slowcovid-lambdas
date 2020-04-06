@@ -26,7 +26,6 @@ class TestDrillFileIntegrity(unittest.TestCase):
             drills_dict = json.loads(contents)
         for slug, drill_dict in drills_dict.items():
             self.assertEqual(slug, drill_dict["slug"])
-            drills.get_drill(slug)  # make sure it doesn't blow up
             drill = drills.get_drill(slug)
             for prompt in drill.prompts:
                 try:
