@@ -32,7 +32,10 @@ def publish_outbound_sms_messages(outbound_sms_messages: List[OutboundSMS]):
             "MessageBody": json.dumps(
                 {
                     "phone_number": phone,
-                    "messages": [{"body": message.body} for message in messages],
+                    "messages": [
+                        {"body": message.body, "media_url": message.media_url}
+                        for message in messages
+                    ],
                 }
             ),
             "MessageDeduplicationId": _get_message_deduplication_id(messages),

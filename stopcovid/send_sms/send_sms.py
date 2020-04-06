@@ -31,7 +31,7 @@ def _publish_send(twilio_response):
 def _send_batch(batch: SMSBatch):
     twilio_responses = []
     for i, message in enumerate(batch.messages):
-        res = twilio.send_message(batch.phone_number, message.body)
+        res = twilio.send_message(batch.phone_number, message.body, message.media_url)
         _publish_send(res)
         twilio_responses.append(res)
 
