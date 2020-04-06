@@ -3,9 +3,13 @@ import os
 import unittest
 from unittest.mock import patch
 
+from jinja2 import TemplateSyntaxError
+
 from stopcovid.drills import drills
 
 __location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
+
+from stopcovid.drills.localize import localize
 
 
 class TestGetDrill(unittest.TestCase):
@@ -20,9 +24,17 @@ class TestDrillFileIntegrity(unittest.TestCase):
         with open(filename) as r:
             contents = r.read()
             drills_dict = json.loads(contents)
-            for slug, drill_dict in drills_dict.items():
-                self.assertEqual(slug, drill_dict["slug"])
-                drills.get_drill(slug)  # make sure it doesn't blow up
+        for slug, drill_dict in drills_dict.items():
+            self.assertEqual(slug, drill_dict["slug"])
+            drill = drills.get_drill(slug)
+            for prompt in drill.prompts:
+                try:
+                    for message in prompt.messages:
+                        localize(message.text, "en", name="foo", company="WeWork")
+                    if prompt.correct_response is not None:
+                        localize(prompt.correct_response, "en")
+                except TemplateSyntaxError:
+                    self.fail(f"error localizing drill {slug} and prompt {prompt.slug}")
 
 
 class TestPrompt(unittest.TestCase):
