@@ -7,7 +7,7 @@ from typing import Iterable, Tuple
 import boto3
 from stopcovid.utils import dynamodb as dynamodb_utils
 
-from .users import UserRepository
+from .drill_progress import DrillProgressRepository
 from ..drills.drills import get_drill, Drill
 
 INACTIVITY_THRESHOLD_MINUTES = 720
@@ -20,7 +20,7 @@ class DrillInitiator:
         self.stage = os.environ.get("STAGE")
 
     def trigger_next_drills(self):
-        repo = UserRepository()
+        repo = DrillProgressRepository()
         drill_progresses = repo.get_progress_for_users_who_need_drills(INACTIVITY_THRESHOLD_MINUTES)
         to_trigger = []
         for drill_progress in drill_progresses:
@@ -53,7 +53,7 @@ class DrillInitiator:
     def trigger_next_drill_for_user(
         self, user_id: uuid.UUID, phone_number: str, idempotency_key: str
     ):
-        repo = UserRepository()
+        repo = DrillProgressRepository()
         drill_progress = repo.get_progress_for_user(user_id, phone_number)
         slug = drill_progress.next_drill_slug_to_trigger()
         if not self._was_recently_initiated(phone_number, slug, idempotency_key):
