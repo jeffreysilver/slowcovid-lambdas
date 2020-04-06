@@ -57,7 +57,6 @@ drill_instances = Table(
 class DrillInstance:
     drill_instance_id: uuid.UUID
     user_id: uuid.UUID
-    seq: str
     phone_number: str
     drill_slug: str
     current_prompt_slug: Optional[str] = None

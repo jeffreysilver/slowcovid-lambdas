@@ -102,7 +102,7 @@ class TestUsers(unittest.TestCase):
                 drill_instance_id=event.drill_instance_id,
             )
             self.repo._mark_drill_started(user_id, event, self.repo.engine)
-            self.repo._mark_drill_completed(user_id, event2, self.repo.engine)
+            self.repo._mark_drill_completed(event2, self.repo.engine)
             drill_status = self.repo.get_drill_status(user_id, slug)
             self.assertIsNotNone(drill_status.started_time)
             self.assertIsNotNone(drill_status.completed_time)
