@@ -24,7 +24,7 @@ def build_registration_payload(data):
     company = {
         "name": data["company-name"],
         "state": data["state"],
-        "num_employees": data["employee-range"],
+        "employee_range": data["employee-range"],
         "zip_code": data["postal-code"],
         "business_type": data["business-type"],
     }
