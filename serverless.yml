@@ -105,11 +105,21 @@ functions:
               - StreamArn
           startingPosition: LATEST
 
-  triggerNextDrills:
-    handler: aws_lambdas/trigger_next_drills.handler
+  scheduleNextDrillsToTrigger:
+    handler: aws_lambdas/schedule_next_drills_to_trigger.handler
     timeout: 60
     events:
       - schedule: cron(5 17 * * ? *)
+
+  triggerScheduledDrill:
+    handler: aws_lambdas/trigger_scheduled_drill.handler
+    timeout: 60
+    events:
+      - sqs:
+          arn:
+            Fn::GetAtt:
+              - DrillInitiationQueue
+              - Arn
 
   triggerReminders:
     handler: aws_lambdas/trigger_reminders.handler
@@ -264,3 +274,20 @@ resources:
           AttributeName: expiration_ts
           Enabled: true
         BillingMode: PAY_PER_REQUEST
+
+    # OUTBOUND SMS
+    DrillInitiationQueue:
+      Type: AWS::SQS::Queue
+      Properties:
+        QueueName: drill-initiation-${self:provider.stage}
+        RedrivePolicy:
+          deadLetterTargetArn:
+            Fn::GetAtt:
+            - OutboundSMSDeadLetterFifoQueue
+            - Arn
+          maxReceiveCount: 3
+
+    DrillInitiationDeadLetterQueue:
+      Type: AWS::SQS::Queue
+      Properties:
+        QueueName: drill-initiation-dlq-${self:provider.stage}
