@@ -10,7 +10,6 @@ from stopcovid.utils import dynamodb as dynamodb_utils
 from .drill_progress import DrillProgressRepository
 from ..drills.drills import get_drill, Drill
 
-INACTIVITY_THRESHOLD_MINUTES = 720
 FIRST_DRILL = get_drill("01-basics")
 
 
@@ -19,31 +18,7 @@ class DrillInitiator:
         self.dynamodb = boto3.client("dynamodb", **kwargs)
         self.stage = os.environ.get("STAGE")
 
-    def trigger_next_drills(self):
-        repo = DrillProgressRepository()
-        drill_progresses = repo.get_progress_for_users_who_need_drills(INACTIVITY_THRESHOLD_MINUTES)
-        to_trigger = []
-        for drill_progress in drill_progresses:
-            if not self._was_recently_initiated(
-                drill_progress.phone_number,
-                drill_progress.next_drill_slug_to_trigger(),
-                "scheduled",
-            ):
-                to_trigger.append(drill_progress)
-
-        if not to_trigger:
-            return
-
-        self._publish_start_drill_commands(
-            (drill_progress.phone_number, get_drill(drill_progress.next_drill_slug_to_trigger()))
-            for drill_progress in to_trigger
-        )
-        for drill_progress in to_trigger:
-            self._record_initiation(
-                drill_progress.phone_number,
-                drill_progress.next_drill_slug_to_trigger(),
-                "scheduled",
-            )
+        self.drill_progress_repository = DrillProgressRepository()
 
     def trigger_first_drill(self, phone_number: str, idempotency_key: str):
         if not self._was_recently_initiated(phone_number, FIRST_DRILL.slug, idempotency_key):
@@ -53,12 +28,28 @@ class DrillInitiator:
     def trigger_next_drill_for_user(
         self, user_id: uuid.UUID, phone_number: str, idempotency_key: str
     ):
-        repo = DrillProgressRepository()
-        drill_progress = repo.get_progress_for_user(user_id, phone_number)
-        slug = drill_progress.next_drill_slug_to_trigger()
-        if not self._was_recently_initiated(phone_number, slug, idempotency_key):
-            self._publish_start_drill_commands([(phone_number, get_drill(slug))])
-        self._record_initiation(phone_number, slug, idempotency_key)
+        drill_progress = self.drill_progress_repository.get_progress_for_user(user_id, phone_number)
+        drill_slug = drill_progress.next_drill_slug_to_trigger()
+        self.trigger_drill(phone_number, drill_slug, idempotency_key)
+
+    def trigger_drill_if_not_stale(
+        self, user_id: uuid.UUID, phone_number: str, drill_slug: str, idempotency_key: str
+    ):
+        drill_progress = self.drill_progress_repository.get_progress_for_user(user_id, phone_number)
+        if drill_progress.next_drill_slug_to_trigger() != drill_slug:
+            # the request is stale. Since it was enqueued, the user has started or
+            # completed a drill.
+            return
+        self.trigger_drill(
+            drill_progress.phone_number,
+            drill_progress.next_drill_slug_to_trigger(),
+            idempotency_key,
+        )
+
+    def trigger_drill(self, phone_number: str, drill_slug: str, idempotency_key: str):
+        if not self._was_recently_initiated(phone_number, drill_slug, idempotency_key):
+            self._publish_start_drill_commands([(phone_number, get_drill(drill_slug))])
+        self._record_initiation(phone_number, drill_slug, idempotency_key)
 
     def _get_kinesis_client(self):
         return boto3.client("kinesis")

@@ -4,6 +4,7 @@ import uuid
 from dataclasses import dataclass, field
 from typing import Dict, Any, Optional, Iterator, Union, List
 
+from marshmallow import fields, post_load, Schema
 from sqlalchemy import (
     Table,
     MetaData,
@@ -101,6 +102,17 @@ drill_instances = Table(
 )
 
 
+class DrillProgressSchema(Schema):
+    phone_number = fields.String(required=True)
+    user_id = fields.UUID(required=True)
+    first_unstarted_drill_slug = fields.String(allow_none=True)
+    first_incomplete_drill_slug = fields.String(allow_none=True)
+
+    @post_load
+    def make_drill_progress(self, data, **kwargs):
+        return DrillProgress(**data)
+
+
 @dataclass
 class DrillProgress:
     phone_number: str
@@ -112,6 +124,9 @@ class DrillProgress:
         if self.first_unstarted_drill_slug:
             return self.first_unstarted_drill_slug
         return self.first_incomplete_drill_slug  # type: ignore
+
+    def to_dict(self):
+        return DrillProgressSchema().dump(self)
 
 
 @dataclass
