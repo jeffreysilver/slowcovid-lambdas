@@ -3,16 +3,6 @@ import uuid
 from stopcovid.status.drill_progress import DrillInstance
 
 
-seq = 0
-
-
-def _seq():
-    global seq
-    result = str(seq)
-    seq += 1
-    return result
-
-
 def make_drill_instance(**overrides) -> DrillInstance:
     def _get_value(key, default):
         return overrides[key] if key in overrides else default
