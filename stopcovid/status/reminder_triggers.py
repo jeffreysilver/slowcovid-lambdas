@@ -17,7 +17,7 @@ from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.schema import UniqueConstraint
 from sqlalchemy.exc import DatabaseError, IntegrityError
 
-from . import db
+from stopcovid import db
 
 metadata = MetaData()
 reminder_triggers = Table(
