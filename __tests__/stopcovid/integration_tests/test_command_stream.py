@@ -1,6 +1,7 @@
 import unittest
 from unittest.mock import patch
 import json
+import uuid
 
 from aws_lambdas.handle_command import handler as handle_command
 from stopcovid.dialog.engine import StartDrill, TriggerReminder, ProcessSMSMessage
@@ -40,7 +41,10 @@ class TestHandleCommand(unittest.TestCase):
         command = args[0]
         self.assertTrue(isinstance(command, TriggerReminder))
         self.assertEqual(command.prompt_slug, "hand-washing")
-        self.assertEqual(command.drill_instance_id, "1234-1234-1234-1234")
+
+        self.assertEqual(
+            command.drill_instance_id, uuid.UUID("2e34a300-a9f3-47bd-9a41-005561f0532e")
+        )
 
         self.assertEqual(args[1], mock_kinesis_event["Records"][0]["kinesis"]["sequenceNumber"])
 
