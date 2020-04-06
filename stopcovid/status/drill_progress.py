@@ -128,7 +128,7 @@ class DrillStatus:
     completed_time: datetime.datetime
 
 
-class UserRepository:
+class DrillProgressRepository:
     def __init__(self, engine_factory=db.get_sqlalchemy_engine):
         self.engine_factory = engine_factory
         self.engine = engine_factory()

@@ -4,7 +4,7 @@ import uuid
 from unittest.mock import patch, MagicMock
 
 from stopcovid.status.initiation import DrillInitiator
-from stopcovid.status.users import DrillProgress
+from stopcovid.status.drill_progress import DrillProgress
 
 
 @patch("stopcovid.status.initiation.DrillInitiator._was_recently_initiated", return_value=False)
@@ -27,7 +27,7 @@ class TestInitiation(unittest.TestCase):
         self, get_kinesis_mock, record_initiation_mock, recently_initiated_mock
     ):
         with patch(
-            "stopcovid.status.initiation.UserRepository.get_progress_for_users_who_need_drills",
+            "stopcovid.status.initiation.DrillProgressRepository.get_progress_for_users_who_need_drills",
             return_value=[
                 DrillProgress(
                     phone_number="123456789",
@@ -52,7 +52,7 @@ class TestInitiation(unittest.TestCase):
 
     def test_publish_none(self, get_kinesis_mock, record_initiation_mock, recently_initiated_mock):
         with patch(
-            "stopcovid.status.initiation.UserRepository.get_progress_for_users_who_need_drills",
+            "stopcovid.status.initiation.DrillProgressRepository.get_progress_for_users_who_need_drills",
             return_value=[],
         ):
             get_kinesis_mock.return_value = self.kinesis_mock
@@ -100,7 +100,7 @@ class TestRecordInitiation(unittest.TestCase):
         get_kinesis_mock.return_value = self.kinesis_mock
 
         with patch(
-            "stopcovid.status.initiation.UserRepository.get_progress_for_users_who_need_drills",
+            "stopcovid.status.initiation.DrillProgressRepository.get_progress_for_users_who_need_drills",
             return_value=[
                 DrillProgress(
                     phone_number=str(uuid.uuid4()),
@@ -127,7 +127,7 @@ class TestRecordInitiation(unittest.TestCase):
         phone_number = str(uuid.uuid4())
         user_id = uuid.uuid4()
         with patch(
-            "stopcovid.status.initiation.UserRepository.get_progress_for_user",
+            "stopcovid.status.initiation.DrillProgressRepository.get_progress_for_user",
             return_value=DrillProgress(
                 phone_number=phone_number,
                 user_id=user_id,
