@@ -302,7 +302,7 @@ class TestSerialization(unittest.TestCase):
         self.prompt = Prompt(
             slug="my-prompt",
             messages=[
-                PromptMessage(text="one", media_url="giphy.com/puppies/1"),
+                PromptMessage(text="one", media_url="http://giphy.com/puppies/1"),
                 PromptMessage(text="two"),
             ],
         )

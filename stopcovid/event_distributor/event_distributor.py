@@ -2,7 +2,7 @@ from stopcovid.dialog.models.events import batch_from_dict
 from stopcovid.utils import dynamodb as dynamodb_utils
 
 
-from stopcovid.event_distributor.outbound_sms import distribute_outbound_sms_events
+from stopcovid.event_distributor.outbound_sms import distribute_outbound_sms_commands
 
 
 def distribute_dialog_events(event, context):
@@ -17,6 +17,6 @@ def distribute_dialog_events(event, context):
         for event in batch.events:
             dialog_events.append(event)
 
-    distribute_outbound_sms_events(dialog_events)
+    distribute_outbound_sms_commands(dialog_events)
 
     return {"statusCode": 200}

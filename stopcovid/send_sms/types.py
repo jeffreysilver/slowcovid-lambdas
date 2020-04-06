@@ -1,15 +1,17 @@
 from dataclasses import dataclass
-from typing import List
+from typing import List, Optional
 from marshmallow import Schema, fields, post_load
 
 
 @dataclass
 class SMS:
     body: str
+    media_url: Optional[str] = None
 
 
 class SMSSchema(Schema):
     body = fields.Str(required=True)
+    media_url = fields.URL(allow_none=True)
 
     @post_load
     def make_sms(self, data, **kwargs):
