@@ -34,7 +34,7 @@ from stopcovid.dialog.dialog import (
     OptedOut,
 )
 from stopcovid.dialog.types import DialogEventBatch
-from . import db
+from stopcovid import db
 
 metadata = MetaData()
 drill_instances = Table(

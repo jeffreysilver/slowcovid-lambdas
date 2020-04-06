@@ -1,5 +1,5 @@
-from stopcovid.outbound_sms.types import SMSBatchSchema
-from stopcovid.outbound_sms.send_sms import send_sms_batches
+from stopcovid.send_sms.types import SMSBatchSchema
+from stopcovid.send_sms.send_sms import send_sms_batches
 
 
 def handler(event, context):

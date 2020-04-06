@@ -13,7 +13,7 @@ from stopcovid.dialog.dialog import (
 from stopcovid.dialog.registration import CodeValidationPayload
 from stopcovid.dialog.types import UserProfile, DialogEventBatch
 from stopcovid.drills.drills import Prompt, Drill
-from stopcovid.status.db import get_test_sqlalchemy_engine
+from stopcovid.db import get_test_sqlalchemy_engine
 from stopcovid.status.users import UserRepository, ALL_DRILL_SLUGS, DrillProgress
 
 
