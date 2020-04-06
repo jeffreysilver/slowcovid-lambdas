@@ -1,5 +1,4 @@
 import unittest
-import uuid
 import datetime
 
 from stopcovid.dialog.models.events import (
@@ -17,6 +16,7 @@ from stopcovid.dialog.models.state import UserProfile
 from stopcovid.drills.drills import Drill, Prompt
 from stopcovid.status.drill_instances import DrillInstanceRepository, DrillInstance
 from stopcovid import db
+from __tests__.utils.factories import make_drill_instance
 
 
 class TestDrillInstances(unittest.TestCase):
@@ -28,7 +28,7 @@ class TestDrillInstances(unittest.TestCase):
         self.prompt2 = Prompt(slug="second", messages=[])
         self.drill = Drill(slug="slug", name="name", prompts=[self.prompt1])
         self.seq = 0
-        self.drill_instance = self._make_drill_instance()
+        self.drill_instance = make_drill_instance(phone_number=self.phone_number, seq=self._seq())
 
     def _seq(self) -> str:
         result = str(self.seq)
@@ -36,25 +36,7 @@ class TestDrillInstances(unittest.TestCase):
         return result
 
     def _make_drill_instance(self, **overrides) -> DrillInstance:
-        def _get_value(key, default):
-            return overrides[key] if key in overrides else default
-
-        return DrillInstance(
-            drill_instance_id=_get_value("drill_instance_id", uuid.uuid4()),
-            seq=_get_value("seq", self._seq()),
-            user_id=_get_value("user_id", uuid.uuid4()),
-            phone_number=_get_value("phone_number", self.phone_number),
-            drill_slug=_get_value("drill_slug", "test"),
-            current_prompt_slug=_get_value("current_prompt_slug", "test-prompt"),
-            current_prompt_start_time=_get_value(
-                "current_prompt_start_time", datetime.datetime.now(datetime.timezone.utc)
-            ),
-            current_prompt_last_response_time=_get_value(
-                "current_prompt_last_response_time", datetime.datetime.now(datetime.timezone.utc)
-            ),
-            completion_time=_get_value("completion_time", None),
-            is_valid=_get_value("is_valid", True),
-        )
+        return make_drill_instance(**overrides, seq=self._seq(), phone_number=self.phone_number)
 
     def _make_batch(self, events):
         return DialogEventBatch(phone_number=self.phone_number, events=events, seq=self._seq())

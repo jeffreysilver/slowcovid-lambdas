@@ -102,6 +102,12 @@ functions:
     events:
       - schedule: cron(5 17 * * ? *)
 
+  triggerReminders:
+    handler: aws_lambdas/trigger_reminders.handler
+    timeout: 60
+    events:
+      - schedule: rate(5 minutes)
+
   healthcheck:
     handler: stopcovid/healthcheck.healthcheck
     events:
