@@ -13,10 +13,26 @@ from . import publish
 DELAY_SECONDS_BETWEEN_MESSAGES = 3
 
 
+def _publish_send(twilio_response):
+    try:
+        publish.publish_outbound_sms([twilio_response])
+    except Exception:
+        twilio_dict = {
+            "twilio_message_id": twilio_response.sid,
+            "to": twilio_response.to,
+            "body": twilio_response.body,
+            "status": twilio_response.status,
+            "error_code": twilio_response.error_code,
+            "error_message": twilio_response.error_message,
+        }
+        logging.info(f"Failed to publisht to kinesis log: {json.dumps(twilio_dict)}")
+
+
 def _send_batch(batch: SMSBatch):
     twilio_responses = []
     for i, message in enumerate(batch.messages):
         res = twilio.send_message(batch.phone_number, message.body)
+        _publish_send(res)
         twilio_responses.append(res)
 
         # sleep after every  message besides the last one
@@ -27,24 +43,5 @@ def _send_batch(batch: SMSBatch):
 
 
 def send_sms_batches(batches: List[SMSBatch]):
-    twilio_batches = [_send_batch(batch) for batch in batches]
-
-    twilio_responses = [response for batch in twilio_batches for response in batch]
-
-    try:
-        publish.publish_outbound_sms(twilio_responses)
-    except Exception:
-        formatted_twilio_responses = [
-            {
-                "twilio_message_id": response.sid,
-                "to": response.to,
-                "body": response.body,
-                "status": response.status,
-                "error_code": response.error_code,
-                "error_message": response.error_message,
-            }
-            for response in twilio_responses
-        ]
-        logging.info(
-            f"send_sms_failed_to_write_to_kinesis_log: {json.dumps(formatted_twilio_responses)}"
-        )
+    for batch in batches:
+        _send_batch(batch)

@@ -70,7 +70,7 @@ functions:
 
 
   logMessage:
-    handler: stopcovid/message_log.log_message
+    handler: aws_lambdas/log_message.handle
     timeout: 60  # Give aurora cluster time to cold start
 
   distributeDialogEvents:

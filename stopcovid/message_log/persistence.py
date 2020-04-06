@@ -1,7 +1,5 @@
 import uuid
-
 from typing import List
-import re
 
 from sqlalchemy import (
     Table,
@@ -13,7 +11,7 @@ from sqlalchemy import (
 )
 from sqlalchemy.dialects.postgresql import UUID
 
-from sqlalchemy.exc import DatabaseError, IntegrityError
+from sqlalchemy.exc import DatabaseError
 
 from stopcovid import db
 
@@ -35,30 +33,27 @@ class MessageRepository:
         self.engine_factory = engine_factory
         self.engine = engine_factory()
 
-    def _integrity_error_is_dupe_twilio_message_id(self, exc):
-        exp = "violates unique constraint .*twilio_message_id"
-        return bool(re.search(exp, exc._sql_message(as_unicode=True)))
-
     def upsert_messages(self, values: List[dict]):
         def _prep_insert(obj):
             obj["id"] = uuid.uuid4()
             return obj
 
-        for value in values:
-            try:
-                stmt = insert(messages).values(**_prep_insert(value))
-                self.engine.execute(stmt)
-            except IntegrityError as exception:
-                # If the upsert error was anything besides a duplicate twilio_message_id reraise
-                if not self._integrity_error_is_dupe_twilio_message_id(exception):
-                    raise exception
-                twilio_message_id = value.pop("twilio_message_id")
-                stmt = (
-                    messages.update()
-                    .where(messages.c.twilio_message_id == twilio_message_id)
-                    .values(**value)
-                )
-                self.engine.execute(stmt)
+        with self.engine.connect() as connection:
+            with connection.begin():
+                for value in values:
+                    message_id = value["twilio_message_id"]
+                    result = connection.execute(
+                        select([messages]).where(messages.c.twilio_message_id == message_id)
+                    )
+                    row = result.fetchone()
+                    if row is None:
+                        connection.execute(insert(messages).values(**_prep_insert(value)))
+                    else:
+                        connection.execute(
+                            messages.update()
+                            .where(messages.c.twilio_message_id == message_id)
+                            .values(**value)
+                        )
 
     def _get_messages(self):
         results = self.engine.execute(select([messages]))
