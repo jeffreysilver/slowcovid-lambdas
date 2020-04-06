@@ -1,4 +1,4 @@
 {
-  "include": ["stopcovid/**", "__tests__/**"],
+  "include": ["stopcovid/**", "__tests__/**", "aws_lambdas/**"],
   "pythonVersion": "3.7"
 }
