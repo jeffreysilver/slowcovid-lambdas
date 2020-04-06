@@ -3,7 +3,7 @@ import json
 import boto3
 import os
 
-from stopcovid.status.drill_instances import DrillInstance, DrillInstanceRepository
+from stopcovid.status.drill_progress import DrillInstance, DrillProgressRepository
 
 from . import persistence
 
@@ -15,13 +15,13 @@ class ReminderTriggerer:
     def __init__(self, **kwargs):
         self.stage = os.environ.get("STAGE")
         self.reminder_trigger_repo = self._get_reminder_trigger_repo()
-        self.drill_instance_repo = self._get_drill_instance_repo()
+        self.drill_progress_repo = self._get_drill_progress_repo()
 
     def _get_reminder_trigger_repo(self) -> persistence.ReminderTriggerRepository:
         return persistence.ReminderTriggerRepository()
 
-    def _get_drill_instance_repo(self):
-        return DrillInstanceRepository()
+    def _get_drill_progress_repo(self):
+        return DrillProgressRepository()
 
     def _get_kinesis_client(self):
         return boto3.client("kinesis")
@@ -47,7 +47,7 @@ class ReminderTriggerer:
         kinesis.put_records(Records=records, StreamName=f"command-stream-{self.stage}")
 
     def trigger_reminders(self):
-        drill_instances = self.drill_instance_repo.get_incomplete_drills(
+        drill_instances = self.drill_progress_repo.get_incomplete_drills(
             inactive_for_minutes_floor=REMINDER_TRIGGER_FLOOR_MINUTES,
             inactive_for_minutes_ceil=REMINDER_TRIGGER_CEIL_MINUTES,
         )

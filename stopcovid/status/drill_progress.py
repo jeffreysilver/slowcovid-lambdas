@@ -23,7 +23,7 @@ from sqlalchemy import (
     insert,
 )
 from sqlalchemy.dialects.postgresql import UUID, JSONB
-from sqlalchemy.exc import DatabaseError, IntegrityError
+from sqlalchemy.exc import DatabaseError
 
 from stopcovid import db
 from ..dialog.models.events import (
@@ -200,7 +200,7 @@ class DrillProgressRepository:
             completed_time=row["completed_time"],
         )
 
-    def update_user(self, batch: DialogEventBatch) -> uuid.UUID:
+    def update_user(self, batch: DialogEventBatch) -> uuid.UUID:  # noqa: C901
         with self.engine.connect() as connection:
             with connection.begin():
                 user = self._get_user_for_phone_number(batch.phone_number, connection)
@@ -547,13 +547,7 @@ class DrillProgressRepository:
             completion_time=drill_instance.completion_time,
             is_valid=drill_instance.is_valid,
         )
-        try:
-            connection.execute(stmt)
-        except IntegrityError:
-            logging.info(
-                f"Reprocessing a drill instance that was already "
-                f"created {drill_instance.drill_instance_id}. Ignoring."
-            )
+        connection.execute(stmt)
 
     def get_incomplete_drills(
         self, inactive_for_minutes_floor=None, inactive_for_minutes_ceil=None

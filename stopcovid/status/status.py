@@ -1,6 +1,5 @@
 from typing import List
 
-from .drill_instances import DrillInstanceRepository
 from .initiation import DrillInitiator
 from .drill_progress import DrillProgressRepository
 from ..dialog.models.events import UserValidated, NextDrillRequested, DialogEventBatch
@@ -15,12 +14,10 @@ def handle_dialog_event_batches(batches: List[DialogEventBatch]):
             initiator.trigger_first_drill(batch.phone_number, str(batch.batch_id))
 
     user_repo = DrillProgressRepository()
-    drill_instance_repo = DrillInstanceRepository()
     for batch in batches:
         user_id = user_repo.update_user(batch)
         if initiates_subsequent_drill(batch):
             initiator.trigger_next_drill_for_user(user_id, batch.phone_number, str(batch.batch_id))
-        drill_instance_repo.update_drill_instances(user_id, batch)
 
 
 def initiates_first_drill(batch: DialogEventBatch):

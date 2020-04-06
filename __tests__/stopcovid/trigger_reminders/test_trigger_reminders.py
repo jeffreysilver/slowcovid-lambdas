@@ -1,19 +1,35 @@
 import unittest
 import json
+import uuid
 from unittest.mock import patch, MagicMock
 import datetime
 
 from stopcovid import db
+from stopcovid.dialog.models.events import DialogEventBatch, UserValidated
+from stopcovid.dialog.models.state import UserProfile
+from stopcovid.dialog.registration import CodeValidationPayload
 from stopcovid.trigger_reminders.persistence import ReminderTriggerRepository
 from stopcovid.trigger_reminders.trigger_reminders import ReminderTriggerer
-from stopcovid.status.drill_instances import DrillInstanceRepository
+from stopcovid.status.drill_progress import DrillProgressRepository
 from __tests__.utils.factories import make_drill_instance
 
 
 class TestReminderTriggers(unittest.TestCase):
     def setUp(self):
-        self.drill_instance_repo = DrillInstanceRepository(db.get_test_sqlalchemy_engine)
-        self.drill_instance_repo.drop_and_recreate_tables_testing_only()
+        self.drill_progress_repo = DrillProgressRepository(db.get_test_sqlalchemy_engine)
+        self.drill_progress_repo.drop_and_recreate_tables_testing_only()
+        self.phone_number = "123456789"
+        self.user_id = self.drill_progress_repo._create_or_update_user(
+            DialogEventBatch(
+                events=[
+                    UserValidated(self.phone_number, UserProfile(True), CodeValidationPayload(True))
+                ],
+                phone_number=self.phone_number,
+                seq="0",
+                batch_id=uuid.uuid4(),
+            ),
+            self.drill_progress_repo.engine,
+        )
         self.reminder_trigger_repo = ReminderTriggerRepository(db.get_test_sqlalchemy_engine)
         self.reminder_trigger_repo.drop_and_recreate_tables_testing_only()
         reminder_db_patch = patch(
@@ -23,8 +39,8 @@ class TestReminderTriggers(unittest.TestCase):
         reminder_db_patch.start()
 
         drill_db_patch = patch(
-            "stopcovid.trigger_reminders.trigger_reminders.ReminderTriggerer._get_drill_instance_repo",
-            return_value=self.drill_instance_repo,
+            "stopcovid.trigger_reminders.trigger_reminders.ReminderTriggerer._get_drill_progress_repo",
+            return_value=self.drill_progress_repo,
         )
         drill_db_patch.start()
 
@@ -44,6 +60,7 @@ class TestReminderTriggers(unittest.TestCase):
             current_prompt_start_time=datetime.datetime.now(datetime.timezone.utc)
             - datetime.timedelta(minutes=min_ago),
             completion_time=None,
+            user_id=self.user_id,
         )
 
     def assert_kinesis_publish(self, drill_instance):
@@ -59,7 +76,7 @@ class TestReminderTriggers(unittest.TestCase):
                             "drill_instance_id": str(drill_instance.drill_instance_id),
                             "prompt_slug": drill_instance.current_prompt_slug,
                         },
-                    },
+                    }
                 ),
                 "PartitionKey": drill_instance.phone_number,
             }
@@ -68,7 +85,7 @@ class TestReminderTriggers(unittest.TestCase):
 
     def test_reminder_triggerer_ignores_drills_below_inactivity_threshold(self):
         drill_instance = self._get_incomplete_drill_with_last_prompt_started_min_ago(10)
-        self.drill_instance_repo._save_drill_instance(drill_instance)
+        self.drill_progress_repo._save_drill_instance(drill_instance)
         ReminderTriggerer().trigger_reminders()
         self.kinesis_client.put_records.assert_not_called()
         self.assertEqual(len(self.reminder_trigger_repo.get_reminder_triggers()), 0)
@@ -77,14 +94,14 @@ class TestReminderTriggers(unittest.TestCase):
         two_day_old_drill_instance = self._get_incomplete_drill_with_last_prompt_started_min_ago(
             60 * 24 * 2
         )
-        self.drill_instance_repo._save_drill_instance(two_day_old_drill_instance)
+        self.drill_progress_repo._save_drill_instance(two_day_old_drill_instance)
         ReminderTriggerer().trigger_reminders()
         self.kinesis_client.put_records.assert_not_called()
         self.assertEqual(len(self.reminder_trigger_repo.get_reminder_triggers()), 0)
 
     def test_reminder_triggerer_triggers_reminder(self):
         drill_instance = self._get_incomplete_drill_with_last_prompt_started_min_ago(5 * 60)
-        self.drill_instance_repo._save_drill_instance(drill_instance)
+        self.drill_progress_repo._save_drill_instance(drill_instance)
         ReminderTriggerer().trigger_reminders()
         persisted_reminder_triggers = self.reminder_trigger_repo.get_reminder_triggers()
         self.assertEqual(len(persisted_reminder_triggers), 1)
@@ -98,7 +115,7 @@ class TestReminderTriggers(unittest.TestCase):
 
     def test_does_not_double_trigger_reminders(self):
         drill_instance = self._get_incomplete_drill_with_last_prompt_started_min_ago(5 * 60)
-        self.drill_instance_repo._save_drill_instance(drill_instance)
+        self.drill_progress_repo._save_drill_instance(drill_instance)
         ReminderTriggerer().trigger_reminders()
         persisted_reminder_triggers = self.reminder_trigger_repo.get_reminder_triggers()
         self.assertEqual(len(persisted_reminder_triggers), 1)
