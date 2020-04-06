@@ -108,15 +108,6 @@ functions:
     events:
       - schedule: rate(5 minutes)
 
-  healthcheck:
-    handler: stopcovid/healthcheck.healthcheck
-    events:
-      - http:
-          path: /healthcheck
-          method: get
-          cors: true
-
-
 resources:
   Resources:
     AWSLambdaVPCAccessExecutionRole:
