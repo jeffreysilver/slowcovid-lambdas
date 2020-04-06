@@ -1,4 +1,4 @@
 {
-  "include": ["stopcovid/**", "__tests__/**", "simulator.py"],
+  "include": ["stopcovid/**", "__tests__/**", "simulator.py", "aws_lambdas/**"],
   "pythonVersion": "3.7"
 }
