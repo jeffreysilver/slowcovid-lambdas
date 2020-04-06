@@ -8,7 +8,7 @@ import uuid
 from typing import List, Iterable
 from collections import defaultdict
 from stopcovid.event_distributor.outbound_sms import OutboundSMS
-from stopcovid.status.users import DrillProgress
+from stopcovid.status.drill_progress import DrillProgress
 
 
 def _get_message_deduplication_id(messages):

@@ -2,7 +2,7 @@ import json
 from typing import Dict
 
 from stopcovid.status.initiation import DrillInitiator
-from stopcovid.status.users import DrillProgressSchema, DrillProgress
+from stopcovid.status.drill_progress import DrillProgressSchema, DrillProgress
 
 
 def handler(event, context):

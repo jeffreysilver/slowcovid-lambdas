@@ -50,7 +50,7 @@ class TestInitiation(unittest.TestCase):
         user_id = uuid.uuid4()
         idempotency_key = str(uuid.uuid4())
         with patch(
-            "stopcovid.status.initiation.UserRepository.get_progress_for_user",
+            "stopcovid.status.initiation.DrillProgressRepository.get_progress_for_user",
             return_value=DrillProgress(
                 phone_number=phone_number,
                 user_id=user_id,

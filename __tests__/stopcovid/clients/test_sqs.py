@@ -4,7 +4,7 @@ import json
 import uuid
 from stopcovid.event_distributor.outbound_sms import OutboundSMS
 from stopcovid.clients.sqs import publish_outbound_sms_messages, publish_drills_to_trigger
-from stopcovid.status.users import DrillProgress
+from stopcovid.status.drill_progress import DrillProgress
 
 
 @patch("stopcovid.clients.sqs.boto3")
