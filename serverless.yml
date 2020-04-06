@@ -63,6 +63,15 @@ functions:
 
   handleCommand:
     handler: aws_lambdas/handle_command.handler
+    events:
+      - stream:
+          type: kinesis
+          arn:
+            Fn::GetAtt:
+              - CommandStream
+              - Arn
+          startingPosition: TRIM_HORIZON
+          maximumRetryAttempts: 10000
     environment:
       DIALOG_TABLE_NAME_SUFFIX: ${self:provider.stage}
       REGISTRATION_VALIDATION_URL: https://eslworks-api-production.herokuapp.com/slowcovid/lookup
@@ -132,20 +141,6 @@ resources:
       Properties:
         Name: command-stream-${self:provider.stage}
         ShardCount: 2
-
-    HandleCommand:
-      Type: AWS::Lambda::EventSourceMapping
-      Properties:
-        EventSourceArn:
-          Fn::GetAtt:
-            - CommandStream
-            - Arn
-        FunctionName:
-          Fn::GetAtt:
-            - HandleCommandLambdaFunction
-            - Arn
-        StartingPosition: LATEST
-        MaximumRetryAttempts: 10000
 
     # MESSAGE LOG STREAM
     MessageLogStream:
