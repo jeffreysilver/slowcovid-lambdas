@@ -3,7 +3,7 @@ from unittest.mock import patch
 import json
 
 from aws_lambdas.handle_command import handler as handle_command
-from stopcovid.dialog.dialog import ProcessSMSMessage, TriggerReminder, StartDrill
+from stopcovid.dialog.engine import StartDrill, TriggerReminder, ProcessSMSMessage
 
 
 @patch("stopcovid.command_stream.command_stream.process_command")

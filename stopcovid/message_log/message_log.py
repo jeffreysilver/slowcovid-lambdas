@@ -2,10 +2,7 @@ from typing import List
 
 from . import persistence
 
-from stopcovid.message_log.types import (
-    LogMessageCommand,
-    LogMessageCommandType,
-)
+from stopcovid.message_log.types import LogMessageCommand, LogMessageCommandType
 
 
 def _command_to_dict(command: LogMessageCommand):

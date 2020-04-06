@@ -2,17 +2,18 @@ import unittest
 import uuid
 import datetime
 
-from stopcovid.dialog.dialog import (
-    UserValidated,
+from stopcovid.dialog.models.events import (
     DrillStarted,
-    DrillCompleted,
+    UserValidated,
     CompletedPrompt,
     FailedPrompt,
     AdvancedToNextPrompt,
+    DrillCompleted,
     OptedOut,
+    DialogEventBatch,
 )
 from stopcovid.dialog.registration import CodeValidationPayload
-from stopcovid.dialog.types import UserProfile, DialogEventBatch
+from stopcovid.dialog.models.state import UserProfile
 from stopcovid.drills.drills import Drill, Prompt
 from stopcovid.status.drill_instances import DrillInstanceRepository, DrillInstance
 from stopcovid import db

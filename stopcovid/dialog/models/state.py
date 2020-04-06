@@ -1,15 +1,12 @@
-import enum
 import uuid
-from abc import abstractmethod, ABC
 import datetime
 from dataclasses import dataclass, field
-from typing import Optional, List, Dict, Any
+from typing import Optional, Dict, Any
 
-from marshmallow import Schema, fields, post_load, utils
+from marshmallow import Schema, fields, post_load
+
+from stopcovid.dialog.models import SCHEMA_VERSION
 from stopcovid.drills import drills
-
-
-SCHEMA_VERSION = 1
 
 
 class UserProfileSchema(Schema):
@@ -112,95 +109,3 @@ class DialogState:
 
     def to_dict(self) -> Dict:
         return DialogStateSchema().dump(self)
-
-
-class DialogEventType(enum.Enum):
-    DRILL_STARTED = "DRILL_STARTED"
-    REMINDER_TRIGGERED = "REMINDER_TRIGGERED"
-    USER_VALIDATED = "USER_VALIDATED"
-    USER_VALIDATION_FAILED = "USER_VALIDATION_FAILED"
-    COMPLETED_PROMPT = "COMPLETED_PROMPT"
-    FAILED_PROMPT = "FAILED_PROMPT"
-    ADVANCED_TO_NEXT_PROMPT = "ADVANCED_TO_NEXT_PROMPT"
-    DRILL_COMPLETED = "DRILL_COMPLETED"
-    NEXT_DRILL_REQUESTED = "NEXT_DRILL_REQUESTED"
-    OPTED_OUT = "OPTED_OUT"
-
-
-class EventTypeField(fields.Field):
-    """Field that serializes to a title case string and deserializes
-    to a lower case string.
-    """
-
-    def _serialize(self, value, attr, obj, **kwargs):
-        return value.name
-
-    def _deserialize(self, value, attr, data, **kwargs):
-        return DialogEventType[value]
-
-
-class DialogEventSchema(Schema):
-    phone_number = fields.String(required=True)
-    created_time = fields.DateTime(required=True)
-    event_id = fields.UUID(required=True)
-    event_type = EventTypeField(required=True)
-    user_profile = fields.Nested(UserProfileSchema, required=True)
-    schema_version = fields.Integer(missing=1)
-
-
-class DialogEvent(ABC):
-    def __init__(
-        self,
-        schema: Schema,
-        event_type: DialogEventType,
-        phone_number: str,
-        user_profile: UserProfile,
-        **kwargs,
-    ):
-        self.schema = schema
-        self.phone_number = phone_number
-
-        # relying on created time to determine ordering. We should be fine and it's simpler than
-        # sequence numbers. Events are processed in order by phone number and are relatively
-        # infrequent. And the lambda environment has some clock guarantees.
-        self.created_time = kwargs.get("created_time", datetime.datetime.now(datetime.timezone.utc))
-        self.event_id = kwargs.get("event_id", uuid.uuid4())
-        self.event_type = event_type
-        self.user_profile = user_profile
-        self.schema_version = SCHEMA_VERSION
-
-    @abstractmethod
-    def apply_to(self, dialog_state: DialogState):
-        pass
-
-    def to_dict(self) -> Dict:
-        return self.schema.dump(self)
-
-
-@dataclass
-class DialogEventBatch:
-    events: List[DialogEvent]
-    phone_number: str
-    seq: str
-    batch_id: uuid.UUID = field(default_factory=uuid.uuid4)
-    created_time: datetime.datetime = field(
-        default_factory=lambda: datetime.datetime.now(datetime.timezone.utc)
-    )
-
-    def to_dict(self):
-        return {
-            "batch_id": str(self.batch_id),
-            "seq": self.seq,
-            "phone_number": self.phone_number,
-            "created_time": utils.isoformat(self.created_time),
-            "events": [event.to_dict() for event in self.events],
-        }
-
-
-class Command(ABC):
-    def __init__(self, phone_number: str):
-        self.phone_number = phone_number
-
-    @abstractmethod
-    def execute(self, dialog_state: DialogState) -> List[DialogEvent]:
-        pass

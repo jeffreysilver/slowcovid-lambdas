@@ -8,15 +8,16 @@ from stopcovid.event_distributor.outbound_sms import (
     USER_VALIDATION_FAILED_COPY,
     CORRECT_ANSWER_COPY,
 )
-from stopcovid.dialog.types import UserProfileSchema, DialogEvent
-from stopcovid.dialog.dialog import (
-    UserValidationFailed,
-    UserValidated,
-    DrillCompleted,
+from stopcovid.dialog.models.state import UserProfileSchema
+from stopcovid.dialog.models.events import (
     DrillStarted,
+    UserValidated,
+    UserValidationFailed,
     CompletedPrompt,
     FailedPrompt,
     AdvancedToNextPrompt,
+    DrillCompleted,
+    DialogEvent,
 )
 from stopcovid.drills.drills import Drill, Prompt, PromptMessage
 from stopcovid.dialog.registration import CodeValidationPayload

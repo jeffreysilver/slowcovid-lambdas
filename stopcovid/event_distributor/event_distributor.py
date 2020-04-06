@@ -1,4 +1,4 @@
-from stopcovid.dialog.dialog import batch_from_dict
+from stopcovid.dialog.models.events import batch_from_dict
 from stopcovid.utils import dynamodb as dynamodb_utils
 
 

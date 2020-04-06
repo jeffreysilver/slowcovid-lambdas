@@ -1,10 +1,9 @@
 from typing import List
 
-from stopcovid.dialog.types import DialogEventBatch
 from .drill_instances import DrillInstanceRepository
 from .initiation import DrillInitiator
 from .users import UserRepository
-from ..dialog.dialog import UserValidated, NextDrillRequested
+from ..dialog.models.events import UserValidated, NextDrillRequested, DialogEventBatch
 
 
 def handle_dialog_event_batches(batches: List[DialogEventBatch]):
