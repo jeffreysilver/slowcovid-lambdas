@@ -73,6 +73,15 @@ class TestReminderTriggers(unittest.TestCase):
         self.kinesis_client.put_records.assert_not_called()
         self.assertEqual(len(self.reminder_trigger_repo.get_reminder_triggers()), 0)
 
+    def test_reminder_triggerer_ignores_drills_above_inactivity_threshold(self):
+        two_day_old_drill_instance = self._get_incomplete_drill_with_last_prompt_started_min_ago(
+            60 * 24 * 2
+        )
+        self.drill_instance_repo._save_drill_instance(two_day_old_drill_instance)
+        ReminderTriggerer().trigger_reminders()
+        self.kinesis_client.put_records.assert_not_called()
+        self.assertEqual(len(self.reminder_trigger_repo.get_reminder_triggers()), 0)
+
     def test_reminder_triggerer_triggers_reminder(self):
         drill_instance = self._get_incomplete_drill_with_last_prompt_started_min_ago(5 * 60)
         self.drill_instance_repo._save_drill_instance(drill_instance)
