@@ -504,7 +504,7 @@
             "text": "{{drill_practice_caps}} 5: \n\n{{disinfect_phone_practice_5}}"
           }
         ],
-        "correct_response": "d) {{all of the above}}"
+        "correct_response": "d) {{all_of_the_above}}"
       },
       {
         "slug": "07 - Celebration",
