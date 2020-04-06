@@ -102,15 +102,6 @@ functions:
     events:
       - schedule: cron(5 17 * * ? *)
 
-  healthcheck:
-    handler: stopcovid/healthcheck.healthcheck
-    events:
-      - http:
-          path: /healthcheck
-          method: get
-          cors: true
-
-
 resources:
   Resources:
     AWSLambdaVPCAccessExecutionRole:
