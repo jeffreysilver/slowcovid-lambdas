@@ -2,7 +2,7 @@ import unittest
 import uuid
 
 
-from stopcovid.status import db
+from stopcovid import db
 from stopcovid.status.reminder_triggers import ReminderTriggerRepository, ReminderTrigger
 
 
