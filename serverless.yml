@@ -106,7 +106,7 @@ functions:
     handler: aws_lambdas/trigger_reminders.handler
     timeout: 60
     events:
-      - schedule: rate(5 minutes)
+      - schedule: cron(0/5 14-23 * * ? *)
 
 resources:
   Resources:

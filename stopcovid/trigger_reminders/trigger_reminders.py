@@ -8,7 +8,7 @@ from stopcovid.status.drill_instances import DrillInstance, DrillInstanceReposit
 from . import persistence
 
 REMINDER_TRIGGER_FLOOR_MINUTES = 60 * 4
-REMINDER_TRIGGER_CEIL_MINUTES = 60 * 12
+REMINDER_TRIGGER_CEIL_MINUTES = 60 * 24
 
 
 class ReminderTriggerer:
