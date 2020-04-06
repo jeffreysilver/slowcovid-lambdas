@@ -194,6 +194,7 @@ resources:
       Properties:
         QueueName: outbound-sms-${self:provider.stage}.fifo
         FifoQueue: true
+        VisibilityTimeout: 60
         RedrivePolicy:
           deadLetterTargetArn:
             Fn::GetAtt:
