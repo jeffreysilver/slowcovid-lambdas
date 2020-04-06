@@ -48,7 +48,8 @@ class ReminderTriggerer:
 
     def trigger_reminders(self):
         drill_instances = self.drill_instance_repo.get_incomplete_drills(
-            inactive_for_minutes=REMINDER_TRIGGER_FLOOR_MINUTES
+            inactive_for_minutes_floor=REMINDER_TRIGGER_FLOOR_MINUTES,
+            inactive_for_minutes_ceil=REMINDER_TRIGGER_CEIL_MINUTES,
         )
         drill_instances_to_remind_on = [
             drill_instance

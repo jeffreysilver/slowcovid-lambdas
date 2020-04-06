@@ -253,15 +253,23 @@ class DrillInstanceRepository:
                 f"created {drill_instance.drill_instance_id}. Ignoring."
             )
 
-    def get_incomplete_drills(self, inactive_for_minutes=None) -> List[DrillInstance]:
+    def get_incomplete_drills(
+        self, inactive_for_minutes_floor=None, inactive_for_minutes_ceil=None
+    ) -> List[DrillInstance]:
         stmt = select([drill_instances]).where(
             and_(drill_instances.c.completion_time.is_(None), drill_instances.c.is_valid.is_(True))
         )  # noqa:  E711
-        if inactive_for_minutes is not None:
+        if inactive_for_minutes_floor is not None:
             stmt = stmt.where(
                 drill_instances.c.current_prompt_start_time
                 <= datetime.datetime.now(datetime.timezone.utc)
-                - datetime.timedelta(minutes=inactive_for_minutes)
+                - datetime.timedelta(minutes=inactive_for_minutes_floor)
+            )
+        if inactive_for_minutes_ceil is not None:
+            stmt = stmt.where(
+                drill_instances.c.current_prompt_start_time
+                >= datetime.datetime.now(datetime.timezone.utc)
+                - datetime.timedelta(minutes=inactive_for_minutes_ceil)
             )
         return [self._deserialize(row) for row in self.engine.execute(stmt)]
 

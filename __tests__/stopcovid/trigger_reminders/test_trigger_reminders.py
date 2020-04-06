@@ -35,6 +35,10 @@ class TestReminderTriggers(unittest.TestCase):
         )
         kinesis_patch.start()
 
+        self.addCleanup(reminder_db_patch.stop)
+        self.addCleanup(drill_db_patch.stop)
+        self.addCleanup(kinesis_patch.stop)
+
     def _get_incomplete_drill_with_last_prompt_started_min_ago(self, min_ago):
         return make_drill_instance(
             current_prompt_start_time=datetime.datetime.now(datetime.timezone.utc)

@@ -28,7 +28,7 @@ class TestDrillInstances(unittest.TestCase):
         self.prompt2 = Prompt(slug="second", messages=[])
         self.drill = Drill(slug="slug", name="name", prompts=[self.prompt1])
         self.seq = 0
-        self.drill_instance = make_drill_instance(phone_number=self.phone_number, seq=self._seq())
+        self.drill_instance = self._make_drill_instance()
 
     def _seq(self) -> str:
         result = str(self.seq)
@@ -226,10 +226,31 @@ class TestDrillInstances(unittest.TestCase):
         self.repo._save_drill_instance(stale_drill_instance_1)
         self.repo._save_drill_instance(stale_drill_instance_2)
         self.repo._save_drill_instance(complete_drill_instance)
-        results = self.repo.get_incomplete_drills(inactive_for_minutes=60)
+        results = self.repo.get_incomplete_drills(inactive_for_minutes_floor=60)
         self.assertEqual(len(results), 2)
         self.assertEqual(results[0].drill_instance_id, stale_drill_instance_1.drill_instance_id)
         self.assertEqual(results[1].drill_instance_id, stale_drill_instance_2.drill_instance_id)
+
+    def test_get_incomplete_drills_with_inactive_for_minutes_ceil(self):
+        recent_drill_instance = self._make_drill_instance(
+            current_prompt_start_time=datetime.datetime.now(datetime.timezone.utc)
+            - datetime.timedelta(minutes=65),
+            completion_time=None,
+        )
+        really_old_drill_instance = self._make_drill_instance(
+            current_prompt_start_time=datetime.datetime.now(datetime.timezone.utc)
+            - datetime.timedelta(days=40),
+            completion_time=None,
+        )
+
+        self.repo._save_drill_instance(recent_drill_instance)
+        self.repo._save_drill_instance(really_old_drill_instance)
+
+        results = self.repo.get_incomplete_drills(
+            inactive_for_minutes_floor=60, inactive_for_minutes_ceil=60 * 24
+        )
+        self.assertEqual(len(results), 1)
+        self.assertEqual(results[0].drill_instance_id, recent_drill_instance.drill_instance_id)
 
     def test_general_idempotence(self):
         self.repo._save_drill_instance(self.drill_instance)

@@ -23,7 +23,6 @@ class TestReminderTriggerRepo(unittest.TestCase):
         results = self.repo.get_reminder_triggers()
         self.assertEqual(len(results), 3)
         for obj, persisted_obj in zip(drills, results):
-            # self.assertEqual(obj.id, persisted_obj.id)
             self.assertEqual(obj.drill_instance_id, persisted_obj.drill_instance_id)
             self.assertEqual(obj.current_prompt_slug, persisted_obj.prompt_slug)
 
