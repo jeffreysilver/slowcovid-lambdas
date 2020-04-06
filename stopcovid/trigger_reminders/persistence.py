@@ -3,7 +3,7 @@ from dataclasses import dataclass
 from typing import List
 import logging
 
-from sqlalchemy import Table, MetaData, Column, String, select, exists, and_, insert
+from sqlalchemy import Table, MetaData, Column, String, select, exists, and_, insert, func
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.schema import UniqueConstraint
 from sqlalchemy.exc import DatabaseError, IntegrityError
@@ -77,7 +77,7 @@ class ReminderTriggerRepository:
             exists([reminder_triggers])
             .where(
                 and_(
-                    reminder_triggers.c.drill_instance_id == str(drill_instance_id),
+                    reminder_triggers.c.drill_instance_id == func.uuid(str(drill_instance_id)),
                     reminder_triggers.c.prompt_slug == prompt_slug,
                 )
             )

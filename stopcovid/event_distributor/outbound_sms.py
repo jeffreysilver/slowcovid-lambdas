@@ -13,12 +13,13 @@ from stopcovid.dialog.models.events import (
     OptedOut,
     NextDrillRequested,
     DialogEvent,
+    ReminderTriggered,
 )
 from stopcovid.drills.drills import PromptMessage
 from stopcovid.drills.localize import localize
 
 TRY_AGAIN = "{{incorrect_answer}}"
-
+REMINDER = "{{drill_reminder}}"
 USER_VALIDATION_FAILED_COPY = (
     "Invalid Code. Check with your administrator and make sure you have the right code."
 )
@@ -93,6 +94,9 @@ def get_messages_for_event(event: DialogEvent):  # noqa: C901
     ):
         # Drills include a drill completed message
         pass
+
+    elif isinstance(event, ReminderTriggered):
+        return get_localized_messages(event, [PromptMessage(text=REMINDER)])
 
     else:
         logging.info(f"Unknown event type: {event.event_type}")
