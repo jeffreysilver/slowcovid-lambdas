@@ -1141,11 +1141,6 @@
       "language": "en"
     },
     {
-      "label": "drill_intro_2",
-      "translation": "La formation d'aujourd'hui est: \n",
-      "language": "fr"
-    },
-    {
       "label": "ready_for_drill",
       "translation": "Hola, {{name}}. {{company}} requiere que todos los empleados completen un simulacro de capacitación de {{lesson_label}} de 5 minutos. Puedes completarlo a través de WhatsApp. Responda SI para comenzar.",
       "language": "es"
@@ -1157,13 +1152,18 @@
     },
     {
       "label": "drill_intro_2",
-      "translation": "Today's drill is:",
+      "translation": "Your next drill is:",
       "language": "en"
     },
     {
       "label": "drill_intro_2",
-      "translation": "El entrenamiento de hoy:",
+      "translation": "Su próxima entrenamiento es:",
       "language": "es"
+    },
+    {
+      "label": "drill_intro_2",
+      "translation": "Sa prochaine formation est:\n",
+      "language": "fr"
     },
     {
       "label": "drill_self_assess_1",
@@ -1188,11 +1188,6 @@
     {
       "label": "likert_1_10_knowledge",
       "translation": "(1 = I don't know anything, 10 = I'm great and I teach others)",
-      "language": "en"
-    },
-    {
-      "label": "drill_self_assess_2",
-      "translation": "On a scale of 1-10, how would you rate your current knowledge of today's topic:",
       "language": "en"
     },
     {
@@ -1249,6 +1244,11 @@
       "label": "drill_how_to_practice_5",
       "translation": "Quelle est la façon la plus sûre de se sécher les mains? \n\na) Sur un torchon\nb) En les essuyant sur son tablier\nc) En les secouant\nd) Sur votre t-shirt\ne) Avec de l’essuie-tout ou un séchoir",
       "language": "fr"
+    },
+    {
+      "label": "drill_self_assess_2",
+      "translation": "On a scale of 1-10, rate your current knowledge of today's topic:",
+      "language": "en"
     },
     {
       "label": "drill_how_to_practice_4",
@@ -1326,14 +1326,14 @@
       "language": "es"
     },
     {
+      "label": "drill_complete_congrats",
+      "translation": "¡Felicidades {{name}}! Tu entrenamiento ha terminado.\n\nLe haremos saber a {{company}} que lo completó.",
+      "language": "es"
+    },
+    {
       "label": "audio_instructions_wa",
       "translation": "🎤  * Use o WhatsApp para enviar seu correio de voz! * 🎤",
       "language": "pt"
-    },
-    {
-      "label": "drill_complete_congrats",
-      "translation": "Congrats {{name}}! Your training drill for today is complete.\n\nWe’ll let {{company}} know you finished.",
-      "language": "en"
     },
     {
       "label": "drill_self_assess_3",
@@ -1372,11 +1372,6 @@
     },
     {
       "label": "drill_complete_congrats",
-      "translation": "¡Felicidades {{name}}! Tu entrenamiento para hoy ha terminado.\n\nLe haremos saber a {{company}} que lo completó.",
-      "language": "es"
-    },
-    {
-      "label": "drill_complete_congrats",
       "translation": "Félicitations {{name}}! La formation est terminée pour aujourd’hui. \n\nNous dirons à {{company}} que vous avez terminé cet exercice.",
       "language": "fr"
     },
@@ -1384,6 +1379,11 @@
       "label": "drill_how_to_practice_3",
       "translation": "Choisissez la meilleure option pour compléter la phrase. \n\nLavez les paumes et le dessus de vos mains. N’oubliez pas de frotter entre [---].\n\na) Vos doigts\nb) Vos orteils\nc) Vos doigts et en-dessous des ongles",
       "language": "fr"
+    },
+    {
+      "label": "drill_complete_congrats",
+      "translation": "Congrats {{name}}! Your training drill is complete.\n\nWe’ll let {{company}} know you finished.",
+      "language": "en"
     },
     {
       "label": "drill_self_assess_3",
@@ -1811,11 +1811,6 @@
       "language": "en"
     },
     {
-      "label": "drill_when_to_fact_2",
-      "translation": "FACT: Single-use (latex/nitrile) gloves are great, but they are not a replacement for washing your hands. In fact, you should your hands before you put on gloves. ",
-      "language": "en"
-    },
-    {
       "label": "drill_when_to_practice_3",
       "translation": "Lávese las manos después de que usted haya [---].\n\na) utilizado su teléfono\nb) tocado la basura \nc) utilizado el baño\nd) dado la mano a alguien\ne) todos los anteriores\n",
       "language": "es"
@@ -1894,6 +1889,11 @@
       "label": "drill_when_to_practice_2",
       "translation": "Elija la mejor opción para llenar el blanco.\n\nLos guantes de látex son [---] una sustitución para el lavado de manos. \n\na) siempre\nb) a veces\nc) nunca\n",
       "language": "es"
+    },
+    {
+      "label": "drill_when_to_fact_2",
+      "translation": "FACT: Single-use (latex/nitrile) gloves are great, but they are not a replacement for washing your hands. In fact, you should wash your hands before you put on gloves. ",
+      "language": "en"
     },
     {
       "label": "drill_2_when_to_intro",
@@ -2016,11 +2016,6 @@
       "language": "zh"
     },
     {
-      "label": "drill_intro_2",
-      "translation": "今天的主题是",
-      "language": "zh"
-    },
-    {
       "label": "drill_self_assess_2",
       "translation": "给自己关于今天主题的了解打个分吧？",
       "language": "zh"
@@ -2033,6 +2028,11 @@
     {
       "label": "thank_you",
       "translation": "谢谢你！",
+      "language": "zh"
+    },
+    {
+      "label": "drill_intro_2",
+      "translation": "他的下一个培训是：\n",
       "language": "zh"
     },
     {
@@ -3091,6 +3091,11 @@
       "language": "zh"
     },
     {
+      "label": "drill_intro_2",
+      "translation": "Seu próximo treinamento é:\n",
+      "language": "pt"
+    },
+    {
       "label": "covid_2_title",
       "translation": "2019 新型冠状病毒(COVID-19)：预防措施",
       "language": "zh"
@@ -3168,11 +3173,6 @@
     {
       "label": "covid_1_title",
       "translation": "O que você precisa saber sobre o COVID-19",
-      "language": "pt"
-    },
-    {
-      "label": "drill_intro_2",
-      "translation": "O exercício de hoje é: ",
       "language": "pt"
     },
     {
@@ -4251,24 +4251,89 @@
       "language": "pt"
     },
     {
-      "label": "drill_complete_next",
-      "translation": "You will get your next drill tomorrow afternoon! ",
-      "language": "en"
-    },
-    {
-      "label": "drill_complete_next",
-      "translation": "¡Tendrás tu próximo ejercicio mañana por la tarde!\n\n",
-      "language": "es"
-    },
-    {
-      "label": "drill_complete_next",
-      "translation": "Vous aurez votre prochain exercice demain après-midi!\n",
+      "label": "more",
+      "translation": "Félicitations {{name}}! L’exercice est terminé. Nous dirons à {{company}} que vous avez terminé cet exercice. \n\nPour recevoir un autre exercice dès maintenant, tapez le mot MORE",
       "language": "fr"
     },
     {
-      "label": "drill_complete_next",
-      "translation": "Você fará seu próximo exercício amanhã à tarde!\n",
+      "label": "more",
+      "translation": "恭喜{{name}}！ 该培训演习已完成。 我们将通知{{company}}您已完成。 \n\n要进行下一次练习，请输入单词 MORE",
+      "language": "zh"
+    },
+    {
+      "label": "more",
+      "translation": "Parabéns {{name}}! Este treinamento está completo. Informaremos {{company}} que você terminou. \n\nPara obter o próximo treinamento, escreva a palavra MORE",
       "language": "pt"
+    },
+    {
+      "label": "face_covering_practice_4",
+      "translation": "It is important to wear a face covering. Even if someone is not showing symptoms, they can still [---] Coronavirus and give it to you. \n\na) carry\nb) cure\nc) eliminate \n",
+      "language": "en"
+    },
+    {
+      "label": "covid_8_title",
+      "translation": "Wearing a face covering",
+      "language": "en"
+    },
+    {
+      "label": "face_covering_practice_5",
+      "translation": "Cloth face coverings need to [---]\n\na) fit closely against your face\nb) be secured with ties or loops\nc) have many layers of fabric but allow for breathing\nd) be washed frequently\ne) all of the above",
+      "language": "en"
+    },
+    {
+      "label": "more",
+      "translation": "Congrats {{name}}! This training drill is complete. We’ll let {{company}} know you finished. \n\nTo get your next drill, type the word MORE",
+      "language": "en"
+    },
+    {
+      "label": "more",
+      "translation": "¡Felicidades {{name}}! Este entrenamiento ha terminado. Le haremos saber a {{company}} que lo completó. \n\nPara obtener el proximo entrenamiento, escriba la palabra MÁS ",
+      "language": "es"
+    },
+    {
+      "label": "face_covering_practice_1",
+      "translation": "You should always wear face covering in public places. \n\na) true\nb) false",
+      "language": "en"
+    },
+    {
+      "label": "face_covering_practice_2",
+      "translation": "Wearing a face covering while you are outside in public is [---] wearing one while you are inside a store. \n\na) not as important as\nb) just as important as\nc) more important than\n",
+      "language": "en"
+    },
+    {
+      "label": "face_covering_practice_3",
+      "translation": "You can make your own face covering by using a [---].\n\na) bandana\nb) scarf\nc) hand towel\nd) tee shirt\ne) all of the above ",
+      "language": "en"
+    },
+    {
+      "label": "face_covering_fact_1",
+      "translation": "FACT:  This is a new guideline. Wearing a face covering, even if you are not sick, will help slow the spread of Coronavirus. ",
+      "language": "en"
+    },
+    {
+      "label": "face_covering_fact_3",
+      "translation": "FACT: There is currently a shortage of surgical masks or N-95 respirators. These are critical supplies that should be reserved for healthcare workers and medical first responders. ",
+      "language": "en"
+    },
+    {
+      "label": "face_covering_fact_4",
+      "translation": "FACT: Coronavirus can pass from person to person just by speaking. If you can smell someone's bad breath then you are standing too close! ",
+      "language": "en"
+    },
+    {
+      "label": "face_covering_fact_5",
+      "translation": "FACT: When you remove a face covering, do not touch your face. Wash your hands immediately after you remove it. ",
+      "language": "en"
+    },
+    {
+      "label": "face_covering_bonus",
+      "translation": "BONUS: Learn how to make your own face covering. Watch this video: https://youtu.be/tPx1yqvJgf4\n",
+      "language": "en"
+    },
+    {
+      "label": "face_covering_fact_2",
+      "translation": "FACT: Wear a face covering inside and outside! Public places include parks, grocery stores, restaurants, pharmacies, corner stores, sidewalks, busses and trains, shared cars. ",
+      "language": "en"
     }
   ]
 }
