@@ -9,6 +9,7 @@ from sqlalchemy.schema import UniqueConstraint
 from sqlalchemy.exc import DatabaseError, IntegrityError
 
 from stopcovid import db
+from stopcovid.status.drill_instances import DrillInstance
 
 metadata = MetaData()
 reminder_triggers = Table(
@@ -48,21 +49,23 @@ class ReminderTriggerRepository:
             prompt_slug=row["prompt_slug"],
         )
 
-    def save_reminder_triggers(self, values: List[ReminderTrigger]):
+    def save_reminder_triggers_for_drills(self, drills: List[DrillInstance]):
+        def _prep(drill: DrillInstance):
+            return {
+                "id": str(uuid.uuid4()),
+                "drill_instance_id": str(drill.drill_instance_id),
+                "prompt_slug": drill.current_prompt_slug,
+            }
+
         with self.engine.connect() as connection:
             with connection.begin():
-                for value in values:
-                    stmt = insert(reminder_triggers).values(
-                        id=str(value.id),
-                        drill_instance_id=str(value.drill_instance_id),
-                        prompt_slug=value.prompt_slug,
-                    )
+                for drill in drills:
                     try:
-                        self.engine.execute(stmt)
+                        self.engine.execute(insert(reminder_triggers).values(**_prep(drill)))
                     except IntegrityError:
                         logging.info(
-                            "Reprocessing a reminder_trigger instance that was already "
-                            f"created {value.id}. Ignoring."
+                            "Reprocessing a reminder trigger for a drill instance that was already "
+                            f"created {drill.drill_instance_id} <> {drill.current_prompt_slug}. Ignoring."
                         )
 
     def get_reminder_triggers(self):
