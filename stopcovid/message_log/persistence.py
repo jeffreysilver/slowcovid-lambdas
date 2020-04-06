@@ -1,14 +1,7 @@
 import uuid
 from typing import List
 
-from sqlalchemy import (
-    Table,
-    MetaData,
-    Column,
-    String,
-    select,
-    insert,
-)
+from sqlalchemy import Table, MetaData, Column, String, select, insert
 from sqlalchemy.dialects.postgresql import UUID
 
 from sqlalchemy.exc import DatabaseError

@@ -1,6 +1,6 @@
 from typing import List
 
-from stopcovid.dialog.dialog import process_command, ProcessSMSMessage, StartDrill, TriggerReminder
+from stopcovid.dialog.engine import process_command, StartDrill, TriggerReminder, ProcessSMSMessage
 from stopcovid.drills.drills import drill_from_dict
 from stopcovid.command_stream.types import InboundCommand, InboundCommandType
 

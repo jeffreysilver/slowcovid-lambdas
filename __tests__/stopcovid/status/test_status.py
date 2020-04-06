@@ -1,8 +1,13 @@
 import unittest
 
-from stopcovid.dialog.dialog import UserValidated, DrillStarted, NextDrillRequested
+from stopcovid.dialog.models.events import (
+    DrillStarted,
+    UserValidated,
+    NextDrillRequested,
+    DialogEventBatch,
+)
 from stopcovid.dialog.registration import CodeValidationPayload
-from stopcovid.dialog.types import DialogEventBatch, UserProfile
+from stopcovid.dialog.models.state import UserProfile
 from stopcovid.drills.drills import get_drill
 from stopcovid.status.status import initiates_first_drill, initiates_subsequent_drill
 

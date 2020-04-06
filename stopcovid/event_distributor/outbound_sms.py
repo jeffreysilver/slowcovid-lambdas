@@ -2,17 +2,17 @@ import logging
 from typing import List
 from dataclasses import dataclass
 import uuid
-from stopcovid.dialog.types import DialogEvent
-from stopcovid.dialog.dialog import (
-    DrillCompleted,
-    AdvancedToNextPrompt,
-    FailedPrompt,
-    CompletedPrompt,
-    UserValidated,
+from stopcovid.dialog.models.events import (
     DrillStarted,
+    UserValidated,
     UserValidationFailed,
-    NextDrillRequested,
+    CompletedPrompt,
+    FailedPrompt,
+    AdvancedToNextPrompt,
+    DrillCompleted,
     OptedOut,
+    NextDrillRequested,
+    DialogEvent,
 )
 from stopcovid.drills.localize import localize
 
