@@ -49,13 +49,17 @@ def process_command(command: Command, seq: str, repo: DialogRepository = None):
         )
         return
 
+    logging.info(f"({command.phone_number}) Processing command {command}")
+
     events = command.execute(dialog_state)
     for event in events:
+        logging.info(f"({event.phone_number}) Applying event of type {event.event_type}")
         # deep copying the event so that modifications to the dialog_state don't have
         # side effects on the events that we're persisting. The user_profile on the event
         # should reflect the user_profile *before* the event is applied to the dialog_state.
         deepcopy(event).apply_to(dialog_state)
     dialog_state.seq = seq
+    logging.info(f"{dialog_state}")
     repo.persist_dialog_state(
         DialogEventBatch(events=events, phone_number=command.phone_number, seq=seq), dialog_state
     )

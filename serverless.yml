@@ -71,7 +71,12 @@ functions:
               - CommandStream
               - Arn
           startingPosition: TRIM_HORIZON
-          maximumRetryAttempts: 10000
+          maximumRetryAttempts: 5
+          destinationConfig:
+            onFailure:
+              Fn::GetAtt:
+                - CommandFailureQueue
+                - Arn
     environment:
       DIALOG_TABLE_NAME_SUFFIX: ${self:provider.stage}
       REGISTRATION_VALIDATION_URL: https://eslworks-api-production.herokuapp.com/slowcovid/lookup
@@ -292,3 +297,9 @@ resources:
       Type: AWS::SQS::Queue
       Properties:
         QueueName: drill-initiation-dlq-${self:provider.stage}
+
+    # Command failures
+    CommandFailureQueue:
+      Type: AWS::SQS::Queue
+      Properties:
+        QueueName: command-failures-${self:provider.stage}
