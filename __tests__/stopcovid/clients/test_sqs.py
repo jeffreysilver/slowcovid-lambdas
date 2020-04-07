@@ -54,7 +54,7 @@ class TestPublishOutboundSMS(unittest.TestCase):
 
         self.assertEqual(len(entries), 1)
         entry = entries[0]
-        self.assertEqual(entry["MessageDeduplicationId"], str(event_id))
+        self.assertTrue(1 <= len(entry["MessageDeduplicationId"]) <= 128)
         self.assertEqual(
             entry["MessageBody"],
             json.dumps(
@@ -87,8 +87,7 @@ class TestPublishOutboundSMS(unittest.TestCase):
 
         self.assertEqual(len(entries), 1)
         entry = entries[0]
-        self.assertIn(str(event_1_id), entry["MessageDeduplicationId"])
-        self.assertIn(str(event_2_id), entry["MessageDeduplicationId"])
+        self.assertTrue(1 <= len(entry["MessageDeduplicationId"]) <= 128)
         self.assertEqual(
             entry["MessageBody"],
             json.dumps(
@@ -124,7 +123,7 @@ class TestPublishOutboundSMS(unittest.TestCase):
 
         # first entry
         entry = entries[0]
-        self.assertIn(str(event_1_id), entry["MessageDeduplicationId"])
+        self.assertTrue(1 <= len(entry["MessageDeduplicationId"]) <= 128)
         self.assertEqual(
             entry["MessageBody"],
             json.dumps(
@@ -141,7 +140,7 @@ class TestPublishOutboundSMS(unittest.TestCase):
 
         # second entry
         entry = entries[1]
-        self.assertIn(str(event_2_id), entry["MessageDeduplicationId"])
+        self.assertTrue(1 <= len(entry["MessageDeduplicationId"]) <= 128)
         self.assertEqual(
             entry["MessageBody"],
             json.dumps(
@@ -194,8 +193,7 @@ class TestPublishOutboundSMS(unittest.TestCase):
 
         # first entry
         entry = entries[0]
-        for event_id in phone_number_1_event_ids:
-            self.assertIn(str(event_id), entry["MessageDeduplicationId"])
+        self.assertTrue(1 <= len(entry["MessageDeduplicationId"]) <= 128)
 
         self.assertEqual(
             entry["MessageBody"],
@@ -213,8 +211,7 @@ class TestPublishOutboundSMS(unittest.TestCase):
 
         # second entry
         entry = entries[1]
-        for event_id in phone_number_2_event_ids:
-            self.assertIn(str(event_id), entry["MessageDeduplicationId"])
+        self.assertTrue(1 <= len(entry["MessageDeduplicationId"]) <= 128)
 
         self.assertEqual(
             entry["MessageBody"],
@@ -232,8 +229,7 @@ class TestPublishOutboundSMS(unittest.TestCase):
 
         # third entry
         entry = entries[2]
-        for event_id in phone_number_3_event_ids:
-            self.assertIn(str(event_id), entry["MessageDeduplicationId"])
+        self.assertTrue(1 <= len(entry["MessageDeduplicationId"]) <= 128)
 
         self.assertEqual(
             entry["MessageBody"],
