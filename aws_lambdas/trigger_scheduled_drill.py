@@ -10,7 +10,7 @@ configure_logging()
 
 
 def handler(event, context):
-    items = [json.loads(record) for record in event["Records"]]
+    items = [json.loads(record["body"]) for record in event["Records"]]
     drill_progresses_to_schedule: Dict[str, DrillProgress] = {
         item["idempotency_key"]: DrillProgressSchema().load(item["drill_progress"])
         for item in items
