@@ -1,3 +1,4 @@
+import hashlib
 import random
 
 import boto3
@@ -13,7 +14,10 @@ from stopcovid.status.drill_progress import DrillProgress
 
 def _get_message_deduplication_id(messages):
     unique_message_ids = sorted(list(set([str(message.event_id) for message in messages])))
-    return "-".join(unique_message_ids)
+    combined = "-".join(unique_message_ids)
+    m = hashlib.shake_256()
+    m.update(combined.encode("utf-8"))
+    return m.hexdigest(64)  # the length of a hex digest will be up to 64 * 2 or 128
 
 
 def publish_outbound_sms_messages(outbound_sms_messages: List[OutboundSMS]):
