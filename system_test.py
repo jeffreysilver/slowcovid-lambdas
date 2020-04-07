@@ -25,7 +25,7 @@ class SystemTest:
     def respond(self, body):
         logging.info(f"Responding: {body}")
         self.twilio_client.messages.create(
-            to=STOPCOVID_DEV_PHONE_NUMBER, from_=SYSTEM_TEST_PHONE_NUMBER, body=body,
+            to=STOPCOVID_DEV_PHONE_NUMBER, from_=SYSTEM_TEST_PHONE_NUMBER, body=body
         )
 
     def kick_off_drill(self):
