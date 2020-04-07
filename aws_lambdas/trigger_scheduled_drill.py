@@ -4,6 +4,10 @@ from typing import Dict
 from stopcovid.status.initiation import DrillInitiator
 from stopcovid.status.drill_progress import DrillProgressSchema, DrillProgress
 
+from stopcovid.utils.logging import configure_logging
+
+configure_logging()
+
 
 def handler(event, context):
     items = [json.loads(record) for record in event["Records"]]
