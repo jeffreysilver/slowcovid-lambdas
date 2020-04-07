@@ -88,7 +88,7 @@ class InMemoryRepository(DialogRepository):
                 fake_sms(
                     event.phone_number,
                     dialog_state.user_profile,
-                    [message.text for message in event.prompt.messages],
+                    [message.text for message in event.prompt.messages if message.text is not None],
                     with_initial_pause=True,
                 )
             elif isinstance(event, FailedPrompt):
@@ -132,7 +132,11 @@ class InMemoryRepository(DialogRepository):
                 fake_sms(
                     event.phone_number,
                     dialog_state.user_profile,
-                    [message.text for message in event.first_prompt.messages],
+                    [
+                        message.text
+                        for message in event.first_prompt.messages
+                        if message.text is not None
+                    ],
                 )
             elif isinstance(event, DrillCompleted):
                 print("(The drill is complete. Type 'more' for another drill or crtl-D to exit.)")
