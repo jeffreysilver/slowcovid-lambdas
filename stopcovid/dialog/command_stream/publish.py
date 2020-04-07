@@ -78,5 +78,5 @@ class CommandPublisher:
                 record["SequenceNumberForOrdering"] = last_seq
             records.append(record)
         response = kinesis.put_records(StreamName=f"command-stream-{self.stage}", Records=records)
-        for i, result in response["Records"]:
+        for i, result in enumerate(response["Records"]):
             self._try_record_seq(records[i]["PartitionKey"], result["SequenceNumber"])
