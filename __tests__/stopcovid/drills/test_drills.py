@@ -30,7 +30,9 @@ class TestDrillFileIntegrity(unittest.TestCase):
             for prompt in drill.prompts:
                 try:
                     for message in prompt.messages:
-                        localize(message.text, "en", name="foo", company="WeWork")
+                        if message.text is not None:
+                            self.assertNotEqual("", message.text)
+                            localize(message.text, "en", name="foo", company="WeWork")
                     if prompt.correct_response is not None:
                         localize(prompt.correct_response, "en")
                 except TemplateSyntaxError:

@@ -17,7 +17,7 @@ def drill_from_dict(obj):
 
 
 class PromptMessageSchema(Schema):
-    text = fields.String(required=True)
+    text = fields.String(required=True, allow_none=True)
     media_url = fields.URL(allow_none=True)
 
     @post_load
@@ -27,7 +27,7 @@ class PromptMessageSchema(Schema):
 
 @dataclass
 class PromptMessage:
-    text: str
+    text: Optional[str]
     media_url: Optional[str] = None
 
 

@@ -590,7 +590,7 @@
             "text": "{{drill_when_to_fact_3}}"
           },
           {
-            "text": "",
+            "text": null,
             "media_url": "https://eslworks-api-production.herokuapp.com/rails/active_storage/blobs/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBbFZBIiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--34add7a64bc344d0d6b7cb174c11bcca099c4b85/man_coughing.jpg"
           },
           {
@@ -618,7 +618,7 @@
             "text": "{{more}}"
           },
           {
-            "text": "",
+            "text": null,
             "media_url": "https://eslworks-api-production.herokuapp.com/rails/active_storage/blobs/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBaTQ0IiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--b9d8316d6801206dde014ce3347e015ec5d394ad/fireworks5.jpg"
           }
         ]
