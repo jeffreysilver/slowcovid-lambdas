@@ -14,7 +14,9 @@ class SystemTest:
     def __init__(self):
         sqs = boto3.resource("sqs")
         self.queue = sqs.get_queue_by_name(QueueName="system-test-dev")
-        self.twilio_client = Client(os.environ["TWILIO_ACCOUNT_SID"], os.environ["TWILIO_AUTH_TOKEN"])
+        self.twilio_client = Client(
+            os.environ["TWILIO_ACCOUNT_SID"], os.environ["TWILIO_AUTH_TOKEN"]
+        )
         self.drill_complete = False
 
     def respond(self, body):
