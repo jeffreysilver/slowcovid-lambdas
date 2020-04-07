@@ -15,12 +15,12 @@ from stopcovid.dialog.registration import CodeValidationPayload
 from stopcovid.dialog.models.state import UserProfile
 from stopcovid.drills.drills import Prompt, Drill
 from stopcovid.db import get_test_sqlalchemy_engine
-from stopcovid.status.users import UserRepository, ALL_DRILL_SLUGS, DrillProgress
+from stopcovid.status.drill_progress import DrillProgressRepository, ALL_DRILL_SLUGS, DrillProgress
 
 
 class TestUsers(unittest.TestCase):
     def setUp(self):
-        self.repo = UserRepository(get_test_sqlalchemy_engine)
+        self.repo = DrillProgressRepository(get_test_sqlalchemy_engine)
         self.repo.drop_and_recreate_tables_testing_only()
         self.phone_number = "123456789"
         self.prompt = Prompt(slug="first", messages=[])
@@ -102,7 +102,7 @@ class TestUsers(unittest.TestCase):
                 drill_instance_id=event.drill_instance_id,
             )
             self.repo._mark_drill_started(user_id, event, self.repo.engine)
-            self.repo._mark_drill_completed(user_id, event2, self.repo.engine)
+            self.repo._mark_drill_completed(event2, self.repo.engine)
             drill_status = self.repo.get_drill_status(user_id, slug)
             self.assertIsNotNone(drill_status.started_time)
             self.assertIsNotNone(drill_status.completed_time)

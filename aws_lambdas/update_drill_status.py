@@ -1,6 +1,9 @@
 from stopcovid.dialog.models.events import batch_from_dict
 from stopcovid.utils import dynamodb as dynamodb_utils
 from stopcovid.status import status
+from stopcovid.utils.logging import configure_logging
+
+configure_logging()
 
 
 def handler(event, context):

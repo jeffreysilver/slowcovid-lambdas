@@ -2,8 +2,9 @@ import datetime
 import logging
 import uuid
 from dataclasses import dataclass, field
-from typing import Dict, Any, Optional, Iterator
+from typing import Dict, Any, Optional, Iterator, Union, List
 
+from marshmallow import fields, post_load, Schema
 from sqlalchemy import (
     Table,
     MetaData,
@@ -20,6 +21,7 @@ from sqlalchemy import (
     and_,
     exists,
     or_,
+    insert,
 )
 from sqlalchemy.dialects.postgresql import UUID, JSONB
 from sqlalchemy.exc import DatabaseError
@@ -85,6 +87,31 @@ drill_statuses = Table(
     Index("user_id_completed", "user_id", "completed_time"),
 )
 
+drill_instances = Table(
+    "drill_instances",
+    metadata,
+    Column("drill_instance_id", UUID, primary_key=True),
+    Column("user_id", UUID, ForeignKey("users.user_id"), nullable=False),
+    Column("phone_number", String, nullable=False),
+    Column("drill_slug", String, nullable=False),
+    Column("current_prompt_slug", String, nullable=True),
+    Column("current_prompt_start_time", DateTime(timezone=True), nullable=True),
+    Column("current_prompt_last_response_time", DateTime(timezone=True), nullable=True),
+    Column("completion_time", DateTime(timezone=True), nullable=True),
+    Column("is_valid", Boolean, nullable=False, default=True),
+)
+
+
+class DrillProgressSchema(Schema):
+    phone_number = fields.String(required=True)
+    user_id = fields.UUID(required=True)
+    first_unstarted_drill_slug = fields.String(allow_none=True)
+    first_incomplete_drill_slug = fields.String(allow_none=True)
+
+    @post_load
+    def make_drill_progress(self, data, **kwargs):
+        return DrillProgress(**data)
+
 
 @dataclass
 class DrillProgress:
@@ -97,6 +124,9 @@ class DrillProgress:
         if self.first_unstarted_drill_slug:
             return self.first_unstarted_drill_slug
         return self.first_incomplete_drill_slug  # type: ignore
+
+    def to_dict(self):
+        return DrillProgressSchema().dump(self)
 
 
 @dataclass
@@ -128,7 +158,20 @@ class DrillStatus:
     completed_time: datetime.datetime
 
 
-class UserRepository:
+@dataclass
+class DrillInstance:
+    drill_instance_id: uuid.UUID
+    user_id: uuid.UUID
+    phone_number: str
+    drill_slug: str
+    current_prompt_slug: Optional[str] = None
+    current_prompt_start_time: Optional[datetime.datetime] = None
+    current_prompt_last_response_time: Optional[datetime.datetime] = None
+    completion_time: Optional[datetime.datetime] = None
+    is_valid: bool = True
+
+
+class DrillProgressRepository:
     def __init__(self, engine_factory=db.get_sqlalchemy_engine):
         self.engine_factory = engine_factory
         self.engine = engine_factory()
@@ -172,7 +215,7 @@ class UserRepository:
             completed_time=row["completed_time"],
         )
 
-    def update_user(self, batch: DialogEventBatch) -> uuid.UUID:
+    def update_user(self, batch: DialogEventBatch) -> uuid.UUID:  # noqa: C901
         with self.engine.connect() as connection:
             with connection.begin():
                 user = self._get_user_for_phone_number(batch.phone_number, connection)
@@ -191,19 +234,26 @@ class UserRepository:
                     self._mark_interacted_time(user_id, event, connection)
                     if isinstance(event, UserValidated):
                         self._reset_drill_statuses(user_id, connection)
+                        self._invalidate_prior_drills(user_id, connection)
                     elif isinstance(event, DrillStarted):
                         self._mark_drill_started(user_id, event, connection)
+                        self._record_new_drill_instance(user_id, event, connection)
                     elif isinstance(event, DrillCompleted):
-                        self._mark_drill_completed(user_id, event, connection)
+                        self._mark_drill_completed(event, connection)
+                        self._mark_drill_instance_complete(event, connection)
                     elif isinstance(event, OptedOut):
                         if event.drill_instance_id is not None:
                             self._unmark_drill_started(event, connection)
+                            self._invalidate_drill_instance(event.drill_instance_id, connection)
+                    elif isinstance(event, CompletedPrompt):
+                        self._update_current_prompt_response_time(event, connection)
+                    elif isinstance(event, FailedPrompt):
+                        self._update_current_prompt_response_time(event, connection)
+                    elif isinstance(event, AdvancedToNextPrompt):
+                        self._update_current_prompt(event, connection)
                     elif (
-                        isinstance(event, AdvancedToNextPrompt)
-                        or isinstance(event, ReminderTriggered)
+                        isinstance(event, ReminderTriggered)
                         or isinstance(event, UserValidationFailed)
-                        or isinstance(event, CompletedPrompt)
-                        or isinstance(event, FailedPrompt)
                         or isinstance(event, NextDrillRequested)
                     ):
                         logging.info(f"Ignoring event of type {event.event_type}")
@@ -385,7 +435,7 @@ class UserRepository:
         )
 
     @staticmethod
-    def _mark_drill_completed(user_id: uuid.UUID, event: DrillCompleted, connection):
+    def _mark_drill_completed(event: DrillCompleted, connection):
         connection.execute(
             drill_statuses.update()
             .where((drill_statuses.c.drill_instance_id == func.uuid(str(event.drill_instance_id))))
@@ -400,6 +450,140 @@ class UserRepository:
             .values(last_interacted_time=event.created_time)
         )
 
+    @staticmethod
+    def _invalidate_prior_drills(user_id: uuid.UUID, connection):
+        connection.execute(
+            drill_instances.update()
+            .where(
+                and_(
+                    drill_instances.c.user_id == func.uuid(str(user_id)),
+                    drill_instances.c.is_valid.is_(True),
+                )
+            )
+            .values(is_valid=False)
+        )
+
+    @staticmethod
+    def _invalidate_drill_instance(drill_instance_id: Optional[uuid.UUID], connection):
+        if drill_instance_id is None:
+            return
+        connection.execute(
+            drill_instances.update()
+            .where(drill_instances.c.drill_instance_id == func.uuid(str(drill_instance_id)))
+            .values(is_valid=False)
+        )
+
+    def _record_new_drill_instance(self, user_id: uuid.UUID, event: DrillStarted, connection):
+        drill_instance = DrillInstance(
+            drill_instance_id=event.drill_instance_id,
+            user_id=user_id,
+            phone_number=event.phone_number,
+            drill_slug=event.drill.slug,
+            current_prompt_slug=event.first_prompt.slug,
+            current_prompt_start_time=event.created_time,
+        )
+        self._save_drill_instance(drill_instance, connection)
+
+    @staticmethod
+    def _mark_drill_instance_complete(event: DrillCompleted, connection):
+        connection.execute(
+            drill_instances.update()
+            .where(drill_instances.c.drill_instance_id == func.uuid(str(event.drill_instance_id)))
+            .values(
+                completion_time=event.created_time,
+                current_prompt_slug=None,
+                current_prompt_start_time=None,
+                current_prompt_last_response_time=None,
+            )
+        )
+
+    @staticmethod
+    def _update_current_prompt_response_time(
+        event: Union[FailedPrompt, CompletedPrompt], connection
+    ):
+        connection.execute(
+            drill_instances.update()
+            .where(drill_instances.c.drill_instance_id == func.uuid(str(event.drill_instance_id)))
+            .values(current_prompt_last_response_time=event.created_time)
+        )
+
+    @staticmethod
+    def _update_current_prompt(event: AdvancedToNextPrompt, connection):
+        connection.execute(
+            drill_instances.update()
+            .where(drill_instances.c.drill_instance_id == func.uuid(str(event.drill_instance_id)))
+            .values(
+                current_prompt_last_response_time=None,
+                current_prompt_start_time=event.created_time,
+                current_prompt_slug=event.prompt.slug,
+            )
+        )
+
+    @staticmethod
+    def _deserialize(row):
+        return DrillInstance(
+            drill_instance_id=uuid.UUID(row["drill_instance_id"]),
+            user_id=uuid.UUID(row["user_id"]),
+            phone_number=row["phone_number"],
+            drill_slug=row["drill_slug"],
+            current_prompt_slug=row["current_prompt_slug"],
+            current_prompt_start_time=row["current_prompt_start_time"],
+            current_prompt_last_response_time=row["current_prompt_last_response_time"],
+            completion_time=row["completion_time"],
+            is_valid=row["is_valid"],
+        )
+
+    def get_drill_instance(
+        self, drill_instance_id: uuid.UUID, connection=None
+    ) -> Optional[DrillInstance]:
+        if connection is None:
+            connection = self.engine
+        result = connection.execute(
+            select([drill_instances]).where(
+                drill_instances.c.drill_instance_id == func.uuid(str(drill_instance_id))
+            )
+        )
+        row = result.fetchone()
+        if row is None:
+            return None
+        return self._deserialize(row)
+
+    def _save_drill_instance(self, drill_instance: DrillInstance, connection=None):
+        if connection is None:
+            connection = self.engine
+        stmt = insert(drill_instances).values(
+            drill_instance_id=str(drill_instance.drill_instance_id),
+            user_id=str(drill_instance.user_id),
+            phone_number=drill_instance.phone_number,
+            drill_slug=str(drill_instance.drill_slug),
+            current_prompt_slug=str(drill_instance.current_prompt_slug),
+            current_prompt_start_time=drill_instance.current_prompt_start_time,
+            current_prompt_last_response_time=drill_instance.current_prompt_last_response_time,
+            completion_time=drill_instance.completion_time,
+            is_valid=drill_instance.is_valid,
+        )
+        connection.execute(stmt)
+
+    def get_incomplete_drills(
+        self, inactive_for_minutes_floor=None, inactive_for_minutes_ceil=None
+    ) -> List[DrillInstance]:
+        stmt = select([drill_instances]).where(
+            and_(drill_instances.c.completion_time.is_(None), drill_instances.c.is_valid.is_(True))
+        )  # noqa:  E711
+        if inactive_for_minutes_floor is not None:
+            stmt = stmt.where(
+                drill_instances.c.current_prompt_start_time
+                <= datetime.datetime.now(datetime.timezone.utc)
+                - datetime.timedelta(minutes=inactive_for_minutes_floor)
+            )
+        if inactive_for_minutes_ceil is not None:
+            stmt = stmt.where(
+                drill_instances.c.current_prompt_start_time
+                >= datetime.datetime.now(datetime.timezone.utc)
+                - datetime.timedelta(minutes=inactive_for_minutes_ceil)
+            )
+        return [self._deserialize(row) for row in self.engine.execute(stmt)]
+
     def drop_and_recreate_tables_testing_only(self):
         if self.engine_factory == db.get_sqlalchemy_engine:
             raise ValueError("This function should not be called against databases in RDS")
@@ -409,6 +593,10 @@ class UserRepository:
             pass
         try:
             phone_numbers.drop(bind=self.engine)
+        except DatabaseError:
+            pass
+        try:
+            drill_instances.drop(bind=self.engine)
         except DatabaseError:
             pass
         try:

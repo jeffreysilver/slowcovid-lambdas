@@ -22,7 +22,7 @@ from stopcovid.dialog.models.events import (
 from stopcovid.dialog.persistence import DialogRepository, DynamoDBDialogRepository
 from stopcovid.dialog.registration import RegistrationValidator, DefaultRegistrationValidator
 from stopcovid.dialog.models.state import DialogState
-from stopcovid.drills import drills
+from stopcovid.drills.drills import get_drill
 
 DEFAULT_REGISTRATION_VALIDATOR = DefaultRegistrationValidator()
 
@@ -49,8 +49,11 @@ def process_command(command: Command, seq: str, repo: DialogRepository = None):
         )
         return
 
+    logging.info(f"({command.phone_number}) Processing command {command}")
+
     events = command.execute(dialog_state)
     for event in events:
+        logging.info(f"({event.phone_number}) Applying event of type {event.event_type}")
         # deep copying the event so that modifications to the dialog_state don't have
         # side effects on the events that we're persisting. The user_profile on the event
         # should reflect the user_profile *before* the event is applied to the dialog_state.
@@ -62,19 +65,20 @@ def process_command(command: Command, seq: str, repo: DialogRepository = None):
 
 
 class StartDrill(Command):
-    def __init__(self, phone_number: str, drill: drills.Drill):
+    def __init__(self, phone_number: str, drill_slug: str):
         super().__init__(phone_number)
-        self.drill = drill
+        self.drill_slug = drill_slug
 
     def execute(
         self, dialog_state: DialogState
     ) -> List[stopcovid.dialog.models.events.DialogEvent]:
+        drill = get_drill(self.drill_slug)
         return [
             DrillStarted(
                 phone_number=self.phone_number,
                 user_profile=dialog_state.user_profile,
-                drill=self.drill,
-                first_prompt=self.drill.first_prompt(),
+                drill=drill,
+                first_prompt=drill.first_prompt(),
             )
         ]
 

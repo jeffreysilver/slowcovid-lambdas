@@ -31,7 +31,7 @@ CORRECT_ANSWER_COPY = "{{match_correct_answer}}"
 class OutboundSMS:
     event_id: uuid.UUID
     phone_number: str
-    body: str
+    body: Optional[str]
     media_url: Optional[str] = None
 
 
@@ -52,7 +52,9 @@ def get_localized_messages(
         OutboundSMS(
             event_id=dialog_event.event_id,
             phone_number=dialog_event.phone_number,
-            body=localize(message.text, language, **additional_args),
+            body=localize(message.text, language, **additional_args)
+            if message.text is not None
+            else None,
             media_url=message.media_url,
         )
         for i, message in enumerate(messages)

@@ -5,12 +5,12 @@ from marshmallow import Schema, fields, post_load
 
 @dataclass
 class SMS:
-    body: str
+    body: Optional[str]
     media_url: Optional[str] = None
 
 
 class SMSSchema(Schema):
-    body = fields.Str(required=True)
+    body = fields.Str(required=True, allow_none=True)
     media_url = fields.URL(allow_none=True)
 
     @post_load
