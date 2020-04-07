@@ -1,5 +1,4 @@
 import datetime
-import json
 import logging
 import os
 import uuid
@@ -8,6 +7,7 @@ import boto3
 from stopcovid.utils import dynamodb as dynamodb_utils
 
 from .drill_progress import DrillProgressRepository
+from ..dialog.command_stream.publish import CommandPublisher
 
 FIRST_DRILL_SLUG = "01-basics"
 
@@ -18,6 +18,7 @@ class DrillInitiator:
         self.stage = os.environ.get("STAGE")
 
         self.drill_progress_repository = DrillProgressRepository()
+        self.command_publisher = CommandPublisher()
 
     def trigger_first_drill(self, phone_number: str, idempotency_key: str):
         self.trigger_drill(phone_number, FIRST_DRILL_SLUG, idempotency_key)
@@ -48,28 +49,8 @@ class DrillInitiator:
 
     def trigger_drill(self, phone_number: str, drill_slug: str, idempotency_key: str):
         if not self._was_recently_initiated(phone_number, drill_slug, idempotency_key):
-            self._publish_start_drill_command(phone_number, drill_slug)
-        self._record_initiation(phone_number, drill_slug, idempotency_key)
-
-    @staticmethod
-    def _get_kinesis_client():
-        return boto3.client("kinesis")
-
-    def _publish_start_drill_command(self, phone_number: str, drill_slug: str):
-        kinesis = self._get_kinesis_client()
-        records = [
-            {
-                "Data": json.dumps(
-                    {
-                        "type": "START_DRILL",
-                        "payload": {"phone_number": phone_number, "drill_slug": drill_slug},
-                    }
-                ),
-                "PartitionKey": phone_number,
-            }
-        ]
-        logging.info(f"Sending command to start drill {drill_slug} for {phone_number}")
-        kinesis.put_records(Records=records, StreamName=f"command-stream-{self.stage}")
+            self.command_publisher.publish_start_drill_command(phone_number, drill_slug)
+            self._record_initiation(phone_number, drill_slug, idempotency_key)
 
     def _was_recently_initiated(
         self, phone_number: str, drill_slug: str, idempotency_key: str
