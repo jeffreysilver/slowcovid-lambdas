@@ -40,6 +40,8 @@ def handle_redrive_sqs(args):
                 for message in messages
             ]
         )
+        for message in messages:
+            message.delete()
         total_redriven += len(messages)
 
 
