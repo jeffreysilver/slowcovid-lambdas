@@ -1,7 +1,6 @@
 import unittest
-import json
 import uuid
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch
 import datetime
 
 from stopcovid import db

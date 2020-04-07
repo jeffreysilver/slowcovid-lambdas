@@ -1,7 +1,7 @@
 import os
 import unittest
 import uuid
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch
 
 from stopcovid.status.initiation import DrillInitiator, FIRST_DRILL_SLUG
 from stopcovid.status.drill_progress import DrillProgress
