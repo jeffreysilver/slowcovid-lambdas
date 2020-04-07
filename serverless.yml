@@ -280,10 +280,11 @@ resources:
       Type: AWS::SQS::Queue
       Properties:
         QueueName: drill-initiation-${self:provider.stage}
+        VisibilityTimeout: 60
         RedrivePolicy:
           deadLetterTargetArn:
             Fn::GetAtt:
-            - OutboundSMSDeadLetterFifoQueue
+            - DrillInitiationDeadLetterQueue
             - Arn
           maxReceiveCount: 3
 
