@@ -3,7 +3,6 @@ import json
 import logging
 import os
 import uuid
-from typing import Iterable, Tuple
 
 import boto3
 from stopcovid.utils import dynamodb as dynamodb_utils
