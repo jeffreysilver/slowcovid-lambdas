@@ -5,7 +5,7 @@ from stopcovid.utils.logging import configure_logging
 configure_logging()
 
 INACTIVITY_THRESHOLD_MINUTES = 720
-SCHEDULING_WINDOW_MINUTES = 120
+SCHEDULING_WINDOW_MINUTES = 15
 
 
 def handler(event, context):
