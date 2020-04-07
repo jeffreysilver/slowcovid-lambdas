@@ -217,6 +217,13 @@ resources:
       Properties:
         FifoQueue: true
         QueueName: outbound-sms-dlq-${self:provider.stage}.fifo
+
+    # SYSTEM TEST
+    SystemTestQueue:
+      Type: AWS::SQS::Queue
+      Properties:
+        QueueName: system-test-dev
+        MessageRetentionPeriod: 60
   
     # DIALOG STATE AND EVENTS (DynamoDB)
     DialogState:
