@@ -10,7 +10,7 @@ from stopcovid.dialog.engine import StartDrill, TriggerReminder, ProcessSMSMessa
 __location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
 
 
-@patch("stopcovid.command_stream.command_stream.process_command")
+@patch("stopcovid.dialog.command_stream.command_stream.process_command")
 class TestHandleCommand(unittest.TestCase):
     def test_inbound_sms(self, process_command_mock):
         with open(os.path.join(__location__, "../../../sample_events/inbound_sms_event.json")) as f:
