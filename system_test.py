@@ -2,6 +2,9 @@ import boto3
 from time import sleep
 import json
 import os
+import logging
+
+from stopcovid.utils.logging import configure_logging
 
 from twilio.rest import Client
 
@@ -20,7 +23,7 @@ class SystemTest:
         self.drill_complete = False
 
     def respond(self, body):
-        print("Responding:", body)
+        logging.info(f"Responding: {body}")
         self.twilio_client.messages.create(
             to=STOPCOVID_DEV_PHONE_NUMBER, from_=SYSTEM_TEST_PHONE_NUMBER, body=body,
         )
@@ -58,14 +61,14 @@ class SystemTest:
             if idle_count > 5:
                 raise RuntimeError("System is not responding in time.")
 
-            print(".")
+            logging.info(".")
             messages = self.queue.receive_messages(WaitTimeSeconds=1)
             if messages:
                 idle_count = 0
                 for message in messages:
                     sms = json.loads(message.body)
                     text = sms["Body"]
-                    print("Received:", text)
+                    logging.info(f"Received: {text}")
                     self._handle_response(text)
                     message.delete()
             else:
@@ -76,8 +79,9 @@ class SystemTest:
     def execute(self):
         self.kick_off_drill()
         self.proceed_through_drill()
-        print("System test complete")
+        logging.info("System test complete")
 
 
 if __name__ == "__main__":
+    configure_logging()
     SystemTest().execute()
