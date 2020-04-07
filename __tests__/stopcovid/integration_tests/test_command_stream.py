@@ -1,3 +1,4 @@
+import os
 import unittest
 from unittest.mock import patch
 import json
@@ -6,11 +7,13 @@ import uuid
 from aws_lambdas.handle_command import handler as handle_command
 from stopcovid.dialog.engine import StartDrill, TriggerReminder, ProcessSMSMessage
 
+__location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
+
 
 @patch("stopcovid.command_stream.command_stream.process_command")
 class TestHandleCommand(unittest.TestCase):
     def test_inbound_sms(self, process_command_mock):
-        with open("sample_events/inbound_sms_event.json") as f:
+        with open(os.path.join(__location__, "../../../sample_events/inbound_sms_event.json")) as f:
             mock_kinesis_event = json.load(f)
 
         handle_command(mock_kinesis_event, None)
@@ -28,7 +31,9 @@ class TestHandleCommand(unittest.TestCase):
         self.assertEqual(args[1], mock_kinesis_event["Records"][0]["kinesis"]["sequenceNumber"])
 
     def test_trigger_reminder(self, process_command_mock):
-        with open("sample_events/trigger_reminder_command.json") as f:
+        with open(
+            os.path.join(__location__, "../../../sample_events/trigger_reminder_command.json")
+        ) as f:
             mock_kinesis_event = json.load(f)
 
         handle_command(mock_kinesis_event, None)
@@ -49,7 +54,9 @@ class TestHandleCommand(unittest.TestCase):
         self.assertEqual(args[1], mock_kinesis_event["Records"][0]["kinesis"]["sequenceNumber"])
 
     def test_start_drill(self, process_command_mock):
-        with open("sample_events/start_drill_command.json") as f:
+        with open(
+            os.path.join(__location__, "../../../sample_events/start_drill_command.json")
+        ) as f:
             mock_kinesis_event = json.load(f)
 
         handle_command(mock_kinesis_event, None)
@@ -61,20 +68,11 @@ class TestHandleCommand(unittest.TestCase):
 
         command = args[0]
         self.assertTrue(isinstance(command, StartDrill))
-
-        self.assertEqual(command.drill.name, "Hand washing")
-        self.assertEqual(len(command.drill.prompts), 1)
-        prompt = command.drill.prompts[0]
-        self.assertEqual(prompt.slug, "hand-washing")
-        self.assertEqual(
-            [message.text for message in prompt.messages], ["a) hello", "b) how are you?"]
-        )
-        self.assertEqual(prompt.correct_response, "a) hello")
-
+        self.assertTrue("hand-washing", command.drill_slug)
         self.assertEqual(args[1], mock_kinesis_event["Records"][0]["kinesis"]["sequenceNumber"])
 
     def test_unknown_command(self, process_command_mock):
-        with open("sample_events/unknown_command.json") as f:
+        with open(os.path.join(__location__, "../../../sample_events/unknown_command.json")) as f:
             mock_kinesis_event = json.load(f)
 
         with self.assertRaises(RuntimeError):

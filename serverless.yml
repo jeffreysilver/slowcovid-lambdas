@@ -70,7 +70,7 @@ functions:
             Fn::GetAtt:
               - CommandStream
               - Arn
-          startingPosition: TRIM_HORIZON
+          startingPosition: LATEST
           maximumRetryAttempts: 5
           destinationConfig:
             onFailure:

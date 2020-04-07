@@ -96,8 +96,8 @@ class TestUserValidationEvents(unittest.TestCase):
         self.assertFalse(dialog_state.user_profile.validated)
 
 
-class TestStartDrill(unittest.TestCase):
-    def test_start_drill(self):
+class TestDrillStarted(unittest.TestCase):
+    def test_drill_started(self):
         profile = UserProfile(validated=True)
         event = DrillStarted(
             phone_number="123456789",

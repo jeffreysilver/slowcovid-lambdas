@@ -8,9 +8,8 @@ import boto3
 from stopcovid.utils import dynamodb as dynamodb_utils
 
 from .drill_progress import DrillProgressRepository
-from ..drills.drills import get_drill, Drill
 
-FIRST_DRILL = get_drill("01-basics")
+FIRST_DRILL_SLUG = "01-basics"
 
 
 class DrillInitiator:
@@ -21,9 +20,7 @@ class DrillInitiator:
         self.drill_progress_repository = DrillProgressRepository()
 
     def trigger_first_drill(self, phone_number: str, idempotency_key: str):
-        if not self._was_recently_initiated(phone_number, FIRST_DRILL.slug, idempotency_key):
-            self._publish_start_drill_commands([(phone_number, FIRST_DRILL)])
-        self._record_initiation(phone_number, FIRST_DRILL.slug, idempotency_key)
+        self.trigger_drill(phone_number, FIRST_DRILL_SLUG, idempotency_key)
 
     def trigger_next_drill_for_user(
         self, user_id: uuid.UUID, phone_number: str, idempotency_key: str
@@ -48,25 +45,26 @@ class DrillInitiator:
 
     def trigger_drill(self, phone_number: str, drill_slug: str, idempotency_key: str):
         if not self._was_recently_initiated(phone_number, drill_slug, idempotency_key):
-            self._publish_start_drill_commands([(phone_number, get_drill(drill_slug))])
+            self._publish_start_drill_commands([(phone_number, drill_slug)])
         self._record_initiation(phone_number, drill_slug, idempotency_key)
 
-    def _get_kinesis_client(self):
+    @staticmethod
+    def _get_kinesis_client():
         return boto3.client("kinesis")
 
-    def _publish_start_drill_commands(self, drills: Iterable[Tuple[str, Drill]]):
+    def _publish_start_drill_commands(self, drills: Iterable[Tuple[str, str]]):
         kinesis = self._get_kinesis_client()
         records = [
             {
                 "Data": json.dumps(
                     {
                         "type": "START_DRILL",
-                        "payload": {"phone_number": phone_number, "drill": drill.to_dict()},
+                        "payload": {"phone_number": phone_number, "drill_slug": drill_slug},
                     }
                 ),
                 "PartitionKey": phone_number,
             }
-            for phone_number, drill in drills
+            for phone_number, drill_slug in drills
         ]
         kinesis.put_records(Records=records, StreamName=f"command-stream-{self.stage}")
 
