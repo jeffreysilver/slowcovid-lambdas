@@ -4266,9 +4266,9 @@
       "language": "pt"
     },
     {
-      "label": "face_covering_practice_4",
-      "translation": "It is important to wear a face covering. Even if someone is not showing symptoms, they can still [---] Coronavirus and give it to you. \n\na) carry\nb) cure\nc) eliminate \n",
-      "language": "en"
+      "label": "face_covering_bonus",
+      "translation": "BONIFICACIÓN: aprenda a cubrirse la cara. Mire este video: https://youtu.be/tPx1yqvJgf4",
+      "language": "es"
     },
     {
       "label": "covid_8_title",
@@ -4306,8 +4306,13 @@
       "language": "en"
     },
     {
-      "label": "face_covering_fact_1",
-      "translation": "FACT:  This is a new guideline. Wearing a face covering, even if you are not sick, will help slow the spread of Coronavirus. ",
+      "label": "face_covering_fact_4",
+      "translation": "FACT: COVID-19 can pass from person to person just by speaking. If you can smell someone's bad breath then you are standing too close! ",
+      "language": "en"
+    },
+    {
+      "label": "face_covering_practice_4",
+      "translation": "It is important to wear a face covering. Even if someone is not showing symptoms, they can still [---] COVID-19 and give it to you. \n\na) carry\nb) cure\nc) eliminate \n",
       "language": "en"
     },
     {
@@ -4316,9 +4321,9 @@
       "language": "en"
     },
     {
-      "label": "face_covering_fact_4",
-      "translation": "FACT: Coronavirus can pass from person to person just by speaking. If you can smell someone's bad breath then you are standing too close! ",
-      "language": "en"
+      "label": "face_covering_practice_5",
+      "translation": "Un masque en tissu doit [---]\n\na) être serré sur votre visage\nb) être sécurisé avec des boucles ou des élastiques\nc) avoir plusieurs couches de tissu mais permettre de respirer\nd) être lavé fréquemment\ne) Toutes les options ci-dessus\n",
+      "language": "fr"
     },
     {
       "label": "face_covering_fact_5",
@@ -4331,9 +4336,184 @@
       "language": "en"
     },
     {
+      "label": "face_covering_bonus",
+      "translation": "BÔNUS: Aprenda a fazer seu próprio rosto. Assista a este vídeo: https://youtu.be/tPx1yqvJgf4",
+      "language": "pt"
+    },
+    {
       "label": "face_covering_fact_2",
       "translation": "FACT: Wear a face covering inside and outside! Public places include parks, grocery stores, restaurants, pharmacies, corner stores, sidewalks, busses and trains, shared cars. ",
       "language": "en"
+    },
+    {
+      "label": "covid_8_title",
+      "translation": "Se couvrir la bouche et le nez",
+      "language": "fr"
+    },
+    {
+      "label": "covid_8_title",
+      "translation": "Usar una cubierta facial",
+      "language": "es"
+    },
+    {
+      "label": "face_covering_practice_1",
+      "translation": "Você sempre deve usar cobertura de rosto em locais públicos.\n\na) Verdadeiro\nb) Falso",
+      "language": "pt"
+    },
+    {
+      "label": "face_covering_practice_1",
+      "translation": "Siempre debe usar cobertura facial en lugares públicos.\n\na) Verdadero\nb) Falso ",
+      "language": "es"
+    },
+    {
+      "label": "face_covering_practice_1",
+      "translation": "Vous devez toujours porter un masque ou un tissu qui couvre la bouche et le nez dans les lieux publics. \n\na) Vrai\nb) Faux",
+      "language": "fr"
+    },
+    {
+      "label": "face_covering_fact_1",
+      "translation": "LES FAITS: Ceci est une nouvelle recommandation. Même lorsque vous n’êtes pas malade, se couvrir la bouche et le nez aide à ralentir la propagation du COVID-19.",
+      "language": "fr"
+    },
+    {
+      "label": "face_covering_fact_1",
+      "translation": "HECHO: Esta es una nueva directriz. El uso de una cubierta facial, incluso si no está enfermo, ayudará a retrasar la propagación del coronavirus.",
+      "language": "es"
+    },
+    {
+      "label": "face_covering_fact_1",
+      "translation": "FATO: Esta é uma nova diretriz. Usar uma cobertura de rosto, mesmo se você não estiver doente, ajudará a retardar a propagação do Coronavírus.",
+      "language": "pt"
+    },
+    {
+      "label": "face_covering_practice_2",
+      "translation": "Usar una cubierta para la cara mientras está afuera en público es [---] usar una mientras está dentro de una tienda.\n\na) no tan importante como\nb) tan importante como\nc) más importante que",
+      "language": "es"
+    },
+    {
+      "label": "face_covering_practice_2",
+      "translation": "Usar um rosto cobrindo o exterior enquanto em público está [---] usando um enquanto está dentro de uma loja.\n\na) não é tão importante quanto\nb) tão importante quanto\nc) mais importante que",
+      "language": "pt"
+    },
+    {
+      "label": "face_covering_practice_2",
+      "translation": "Se couvrir la bouche et le nez lorsque vous êtes à l’extérieur dans un lieu public est [---] que quand vous êtes à l’intérieur d’un magasin. \n\na) pas aussi important\nb) aussi important\nc) plus important ",
+      "language": "fr"
+    },
+    {
+      "label": "face_covering_fact_2",
+      "translation": "LES FAITS: Couvrez vous le nez et la bouche dehors également. Les lieux publics sont par exemple les parcs, les magasins, les pharmacies, les bus ou trains, les voitures. ",
+      "language": "fr"
+    },
+    {
+      "label": "face_covering_fact_2",
+      "translation": "HECHO: ¡Use una cubierta para la cara por dentro y por fuera! Los lugares públicos incluyen parques, supermercados, restaurantes, farmacias, tiendas de la esquina, aceras, autobuses y trenes, automóviles compartidos.",
+      "language": "es"
+    },
+    {
+      "label": "face_covering_fact_2",
+      "translation": "FATO: Use um rosto cobrindo por dentro e por fora! Os locais públicos incluem parques, supermercados, restaurantes, farmácias, esquinas, calçadas, ônibus e trens, carros compartilhados.",
+      "language": "pt"
+    },
+    {
+      "label": "face_covering_practice_3",
+      "translation": "Puede cubrirse la cara con un [---].\n\na) pañuelo\nb) bufanda\nc) toalla de mano\nd) camiseta\ne) todo lo anterior",
+      "language": "es"
+    },
+    {
+      "label": "face_covering_practice_3",
+      "translation": "Você pode fazer sua própria cobertura de rosto usando um [---].\n\na) bandana\nb) cachecol\nc) toalha de mão\nd) camiseta\ne) todos os itens acima",
+      "language": "pt"
+    },
+    {
+      "label": "face_covering_practice_3",
+      "translation": "Vous pouvez vous couvrir la bouche et le nez en utilisant [---]. \n\na) un bandana\nb) une écharpe\nc) un torchon\nd) un T-shirt\ne) toutes les options ci-dessus",
+      "language": "fr"
+    },
+    {
+      "label": "face_covering_fact_3",
+      "translation": "LES FAITS: Actuellement, les masques chirurgicaux ou les respirateurs N95 sont à court de stock. Ils sont essentiels pour le personnel médical. ",
+      "language": "fr"
+    },
+    {
+      "label": "face_covering_fact_3",
+      "translation": "FATO: Atualmente, há uma escassez de máscaras cirúrgicas ou respiradores N-95. Estes são suprimentos essenciais que devem ser reservados para profissionais de saúde e socorristas.",
+      "language": "pt"
+    },
+    {
+      "label": "face_covering_fact_3",
+      "translation": "HECHO: Actualmente hay una escasez de máscaras quirúrgicas o respiradores N-95. Estos son suministros críticos que deben reservarse para los trabajadores de la salud y los socorristas médicos.",
+      "language": "es"
+    },
+    {
+      "label": "face_covering_practice_4",
+      "translation": "É importante usar uma cobertura de rosto. Mesmo que alguém não apresente sintomas, ele ainda pode [---] COVID-19 e fornecer a eles.\n\na) transportar\nb) curar\nd) excluir",
+      "language": "pt"
+    },
+    {
+      "label": "face_covering_practice_4",
+      "translation": "Es importante usar una cubierta facial. Incluso si alguien no muestra síntomas, aún puede [---] COVID-19 y dárselo.\n\na) llevar\nb) sanar\nd) eliminar",
+      "language": "es"
+    },
+    {
+      "label": "face_covering_fact_4",
+      "translation": "LES FAITS: Le COVID-19 peut passer d’une personne à l’autre lorsqu’elle sont en train de se parler. Si vous pouvez sentir l’haleine de quelqu’un, cela veut dire que vous êtes trop proche! ",
+      "language": "fr"
+    },
+    {
+      "label": "face_covering_fact_4",
+      "translation": "HECHO: COVID-19 puede pasar de persona a persona con solo hablar. Si puedes oler el mal aliento de alguien, ¡entonces estás parado demasiado cerca!",
+      "language": "es"
+    },
+    {
+      "label": "face_covering_fact_4",
+      "translation": "FATO: COVID-19 pode passar de pessoa para pessoa apenas falando. Se você sentir o mau hálito de alguém, estará muito perto!",
+      "language": "pt"
+    },
+    {
+      "label": "face_covering_practice_5",
+      "translation": "Los revestimientos de la cara de tela deben [---]\n\na) ajustarse bien a tu cara\nb) estar asegurado con lazos\nc) tiene múltiples capas de tela pero permite respirar\nd) ser lavado con frecuencia\ne) Todas las anteriores",
+      "language": "es"
+    },
+    {
+      "label": "face_covering_practice_5",
+      "translation": "Os revestimentos de rosto de pano precisam [---]\n\na) encaixe bem no seu rosto\nb) ser preso com laços\nc) tem várias camadas de tecido, mas permite respirar\nd) ser lavado frequentemente\ne) tudo acima",
+      "language": "pt"
+    },
+    {
+      "label": "face_covering_fact_5",
+      "translation": "HECHO: Cuando quite una cubierta facial, no toque su cara. Lávese las manos inmediatamente después de quitarlo.",
+      "language": "es"
+    },
+    {
+      "label": "face_covering_bonus",
+      "translation": "BONUS: Pour apprendre comment faire votre propre masque, regardez cette vidéo: ttps://youtu.be/tPx1yqvJgf4",
+      "language": "fr"
+    },
+    {
+      "label": "face_covering_fact_5",
+      "translation": "LES FAITS: Quand vous retirez ce qui vous permet de vous couvrir la bouche et le nez, ne vous touchez pas le visage. Lavez vous les mains immédiatement après l’avoir enlevé.",
+      "language": "fr"
+    },
+    {
+      "label": "face_covering_fact_5",
+      "translation": "FATO: Ao remover uma cobertura de rosto, não toque em seu rosto. Lave as mãos imediatamente após removê-lo.",
+      "language": "pt"
+    },
+    {
+      "label": "face_covering_fact_1",
+      "translation": "FACT: This is a new guideline. Wearing a face covering, even if you are not sick, will help slow the spread of Coronavirus. ",
+      "language": "en"
+    },
+    {
+      "label": "face_covering_practice_4",
+      "translation": "C’est important de se couvrir le nez et la bouche avec un masque en tissu. Même quand quelqu’un n’a pas de symptôme, il ou elle peut [---] le COVID-19 et vous le transmettre. \n\na) porter\nb) guérir \nc) éliminer",
+      "language": "fr"
+    },
+    {
+      "label": "covid_8_title",
+      "translation": "Usando uma cobertura de rosto",
+      "language": "pt"
     }
   ]
 }

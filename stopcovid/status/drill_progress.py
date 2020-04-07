@@ -50,6 +50,7 @@ ALL_DRILL_SLUGS = [
     "05-disinfect-phone",
     "06-hand-washing-when",
     "07-sanitizing-surfaces",
+    "08-face-covering",
 ]
 
 metadata = MetaData()

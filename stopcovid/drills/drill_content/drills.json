@@ -726,5 +726,105 @@
         ]
       }
     ]
+  },
+  "08-face-covering": {
+    "name": "08. Wearing a face covering",
+    "slug": "08-face-covering",
+    "prompts": [
+      {
+        "slug": "00 - GO",
+        "messages": [
+          {
+            "text": "{{drill_intro_2}} {{covid_8_title}}\n\n{{text_go}}"
+          }
+        ]
+      },
+      {
+        "slug": "01 - Self assessment",
+        "messages": [
+          {
+            "text": "{{drill_self_assess_1}}"
+          },
+          {
+            "text": "{{drill_self_assess_2}} {{covid_8_title}}.\n\n{{likert_1_10_knowledge}}"
+          }
+        ]
+      },
+      {
+        "slug": "02 - Q1",
+        "messages": [
+          {
+            "text": "{{thank_you}}"
+          },
+          {
+            "text": "{{drill_practice_caps}} 1: {{answer_the_question}}\n\n{{face_covering_practice_1}}"
+          }
+        ],
+        "correct_response": "a) true"
+      },
+      {
+        "slug": "03 - Q2",
+        "messages": [
+          {
+            "text": "{{face_covering_fact_1}}"
+          },
+          {
+            "text": "{{drill_practice_caps}} 2: \n\n{{face_covering_practice_2}}"
+          }
+        ],
+        "correct_response": "b) just as important as"
+      },
+      {
+        "slug": "04 - Q3",
+        "messages": [
+          {
+            "text": "{{face_covering_fact_2}}"
+          },
+          {
+            "text": "{{drill_practice_caps}} 3: \n\n{{face_covering_practice_3}}"
+          }
+        ],
+        "correct_response": "e) {{all_of_the_above}}"
+      },
+      {
+        "slug": "05 - Q4",
+        "messages": [
+          {
+            "text": "{{face_covering_fact_3}}"
+          },
+          {
+            "text": "{{drill_practice_caps}} 4: \n\n{{face_covering_practice_4}}"
+          }
+        ],
+        "correct_response": "a) carry"
+      },
+      {
+        "slug": "06 - Q5",
+        "messages": [
+          {
+            "text": "{{face_covering_fact_4}}"
+          },
+          {
+            "text": "{{drill_practice_caps}} 5: \n\n{{face_covering_practice_5}}"
+          }
+        ],
+        "correct_response": "e) {{all_of_the_above}}"
+      },
+      {
+        "slug": "07 - Celebration",
+        "messages": [
+          {
+            "text": "{{face_covering_fact_5}}"
+          },
+          {
+            "text": "{{drill_complete_congrats}}",
+            "media_url": "https://eslworks-api-production.herokuapp.com/rails/active_storage/blobs/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBaGRIIiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--59b26cda7c9fccdaf16a8372ba47eb35bbcb9323/fireworks3.jpg"
+          },
+          {
+            "text": "{{face_covering_bonus}}"
+          }
+        ]
+      }
+    ]
   }
 }
