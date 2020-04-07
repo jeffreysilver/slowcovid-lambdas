@@ -2,6 +2,7 @@ import unittest
 import uuid
 from copy import copy
 import datetime
+from decimal import Decimal
 from stopcovid.dialog.models.events import (
     DrillStarted,
     UserValidated,
@@ -39,7 +40,9 @@ class TestUsers(unittest.TestCase):
             events=[
                 DrillCompleted(
                     phone_number=self.phone_number,
-                    user_profile=UserProfile(True, account_info={"foo": "bar"}),
+                    user_profile=UserProfile(
+                        True, account_info={"employer_id": Decimal(123), "unit_id": Decimal(456)}
+                    ),
                     drill_instance_id=uuid.uuid4(),
                 )
             ],
@@ -47,7 +50,7 @@ class TestUsers(unittest.TestCase):
         user_id = self.repo._create_or_update_user(batch, self.repo.engine)
         user = self.repo.get_user(user_id)
         self.assertEqual(user_id, user.user_id)
-        self.assertEqual({"foo": "bar"}, user.account_info)
+        self.assertEqual({"employer_id": 123, "unit_id": 456}, user.account_info)
         self.assertIsNone(user.last_interacted_time)
         self.assertEqual(batch.seq, user.seq)
 

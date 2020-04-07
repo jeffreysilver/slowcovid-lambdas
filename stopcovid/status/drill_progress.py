@@ -367,7 +367,7 @@ class DrillProgressRepository:
             connection.execute(
                 users.insert().values(
                     user_id=str(user_record.user_id),
-                    account_info=user_record.account_info,
+                    account_info=self._get_json_serializable_account_info(user_record.account_info),
                     seq=batch.seq,
                 )
             )
@@ -402,7 +402,10 @@ class DrillProgressRepository:
         connection.execute(
             users.update()
             .where(users.c.user_id == func.uuid(str(phone_number_record.user_id)))
-            .values(account_info=profile.account_info, seq=batch.seq)
+            .values(
+                account_info=self._get_json_serializable_account_info(profile.account_info),
+                seq=batch.seq,
+            )
         )
         return phone_number_record.user_id
 
@@ -584,6 +587,15 @@ class DrillProgressRepository:
                 - datetime.timedelta(minutes=inactive_for_minutes_ceil)
             )
         return [self._deserialize(row) for row in self.engine.execute(stmt)]
+
+    def _get_json_serializable_account_info(self, account_info):
+        if "employer_id" in account_info:
+            account_info["employer_id"] = int(account_info["employer_id"])
+
+        if "unit_id" in account_info:
+            account_info["unit_id"] = int(account_info["unit_id"])
+
+        return account_info
 
     def drop_and_recreate_tables_testing_only(self):
         if self.engine_factory == db.get_sqlalchemy_engine:
