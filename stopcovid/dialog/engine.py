@@ -22,7 +22,7 @@ from stopcovid.dialog.models.events import (
 from stopcovid.dialog.persistence import DialogRepository, DynamoDBDialogRepository
 from stopcovid.dialog.registration import RegistrationValidator, DefaultRegistrationValidator
 from stopcovid.dialog.models.state import DialogState
-from stopcovid.drills import drills
+from stopcovid.drills.drills import get_drill
 
 DEFAULT_REGISTRATION_VALIDATOR = DefaultRegistrationValidator()
 
@@ -66,19 +66,20 @@ def process_command(command: Command, seq: str, repo: DialogRepository = None):
 
 
 class StartDrill(Command):
-    def __init__(self, phone_number: str, drill: drills.Drill):
+    def __init__(self, phone_number: str, drill_slug: str):
         super().__init__(phone_number)
-        self.drill = drill
+        self.drill_slug = drill_slug
 
     def execute(
         self, dialog_state: DialogState
     ) -> List[stopcovid.dialog.models.events.DialogEvent]:
+        drill = get_drill(self.drill_slug)
         return [
             DrillStarted(
                 phone_number=self.phone_number,
                 user_profile=dialog_state.user_profile,
-                drill=self.drill,
-                first_prompt=self.drill.first_prompt(),
+                drill=drill,
+                first_prompt=drill.first_prompt(),
             )
         ]
 

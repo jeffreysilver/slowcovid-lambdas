@@ -6,7 +6,7 @@
                 "kinesisSchemaVersion": "1.0",
                 "partitionKey": "+14707190649",
                 "sequenceNumber": "49605580127467948727818985106596552159333226222465318946",
-                "data": "eyJwYXlsb2FkIjogeyJwaG9uZV9udW1iZXIiOiAiKzE1NTU0MzM1NTg4IiwgImRyaWxsIjogeyJwcm9tcHRzIjogW3sic2x1ZyI6ICJoYW5kLXdhc2hpbmciLCAibWVzc2FnZXMiOiBbeyJ0ZXh0IjogImEpIGhlbGxvIn0sIHsidGV4dCI6ICJiKSBob3cgYXJlIHlvdT8ifV0sICJyZXNwb25zZV91c2VyX3Byb2ZpbGVfa2V5IjogIisxNTU1NDMzNTU4OCIsICJjb3JyZWN0X3Jlc3BvbnNlIjogImEpIGhlbGxvIn1dLCAibmFtZSI6ICJIYW5kIHdhc2hpbmciLCAic2x1ZyI6ICJoYW5kLXdhc2hpbmcifX0sICJ0eXBlIjogIlNUQVJUX0RSSUxMIn0=",
+                "data": "eyJwYXlsb2FkIjogeyJwaG9uZV9udW1iZXIiOiAiKzE1NTU0MzM1NTg4IiwgImRyaWxsX3NsdWciOiAiaGFuZC13YXNoaW5nIn0sICJ0eXBlIjogIlNUQVJUX0RSSUxMIn0=",
                 "approximateArrivalTimestamp": 1585511919.595
             },
             "eventSource": "aws:kinesis",
