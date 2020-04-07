@@ -1,7 +1,7 @@
 from stopcovid.utils.kinesis import get_payload_from_kinesis_record
 
-from stopcovid.command_stream.types import InboundCommandSchema
-from stopcovid.command_stream.command_stream import handle_inbound_commands
+from stopcovid.dialog.command_stream.types import InboundCommandSchema
+from stopcovid.dialog.command_stream.command_stream import handle_inbound_commands
 from stopcovid.utils.logging import configure_logging
 
 configure_logging()

@@ -49,6 +49,9 @@ functions:
           method: post
           cors: true
 
+  handleInboundSMS:
+    handler: aws_lambdas/handle_inbound_sms.handler
+
   sendMessage:
     handler: aws_lambdas/send_sms_batch.handler
     timeout: 60

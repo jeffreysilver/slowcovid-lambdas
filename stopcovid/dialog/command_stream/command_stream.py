@@ -2,7 +2,7 @@ from typing import List
 import uuid
 
 from stopcovid.dialog.engine import process_command, StartDrill, TriggerReminder, ProcessSMSMessage
-from stopcovid.command_stream.types import InboundCommand, InboundCommandType
+from .types import InboundCommand, InboundCommandType
 
 
 def handle_inbound_commands(commands: List[InboundCommand]):
