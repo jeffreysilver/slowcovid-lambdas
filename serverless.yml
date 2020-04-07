@@ -222,7 +222,8 @@ resources:
     SystemTestQueue:
       Type: AWS::SQS::Queue
       Properties:
-        QueueName: system-test-${self:provider.stage}
+        QueueName: system-test-dev
+        MessageRetentionPeriod: 60
   
     # DIALOG STATE AND EVENTS (DynamoDB)
     DialogState:
