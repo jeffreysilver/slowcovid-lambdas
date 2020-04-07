@@ -1,4 +1,5 @@
 import hashlib
+import logging
 import random
 
 import boto3
@@ -10,6 +11,9 @@ from typing import List, Iterable
 from collections import defaultdict
 from stopcovid.event_distributor.outbound_sms import OutboundSMS
 from stopcovid.status.drill_progress import DrillProgress
+from stopcovid.utils.logging import configure_logging
+
+configure_logging()
 
 
 def _get_message_deduplication_id(messages):
@@ -57,15 +61,21 @@ def publish_outbound_sms_messages(outbound_sms_messages: List[OutboundSMS]):
 def publish_drills_to_trigger(
     drill_progresses: Iterable[DrillProgress], distribute_over_minutes: int
 ):
+    if not drill_progresses:
+        logging.info("No drills to trigger")
+        return
+
     sqs = boto3.resource("sqs")
 
     queue_name = f"drill-initiation-{os.getenv('STAGE')}"
     queue = sqs.get_queue_by_name(QueueName=queue_name)
 
     for drill_progress in drill_progresses:
+        delay_seconds = random.randint(1, distribute_over_minutes * 60)
+        logging.info(f"Scheduling to run in {delay_seconds}s: {drill_progress}")
         queue.send_message(
             MessageBody=json.dumps(
                 {"idempotency_key": str(uuid.uuid4()), "drill_progress": drill_progress.to_dict()}
             ),
-            DelaySeconds=random.randint(1, distribute_over_minutes * 60),
+            DelaySeconds=delay_seconds,
         )

@@ -1,5 +1,6 @@
 import datetime
 import json
+import logging
 import os
 import uuid
 from typing import Iterable, Tuple
@@ -36,6 +37,9 @@ class DrillInitiator:
         if drill_progress.next_drill_slug_to_trigger() != drill_slug:
             # the request is stale. Since it was enqueued, the user has started or
             # completed a drill.
+            logging.info(
+                f"Ignoring request to trigger {drill_slug} for {phone_number} because it is stale"
+            )
             return
         self.trigger_drill(
             drill_progress.phone_number,
@@ -45,14 +49,14 @@ class DrillInitiator:
 
     def trigger_drill(self, phone_number: str, drill_slug: str, idempotency_key: str):
         if not self._was_recently_initiated(phone_number, drill_slug, idempotency_key):
-            self._publish_start_drill_commands([(phone_number, drill_slug)])
+            self._publish_start_drill_command(phone_number, drill_slug)
         self._record_initiation(phone_number, drill_slug, idempotency_key)
 
     @staticmethod
     def _get_kinesis_client():
         return boto3.client("kinesis")
 
-    def _publish_start_drill_commands(self, drills: Iterable[Tuple[str, str]]):
+    def _publish_start_drill_command(self, phone_number: str, drill_slug: str):
         kinesis = self._get_kinesis_client()
         records = [
             {
@@ -64,8 +68,8 @@ class DrillInitiator:
                 ),
                 "PartitionKey": phone_number,
             }
-            for phone_number, drill_slug in drills
         ]
+        logging.info(f"Sending command to start drill {drill_slug} for {phone_number}")
         kinesis.put_records(Records=records, StreamName=f"command-stream-{self.stage}")
 
     def _was_recently_initiated(
