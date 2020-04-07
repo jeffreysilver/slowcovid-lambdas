@@ -75,7 +75,10 @@ def publish_drills_to_trigger(
         logging.info(f"Scheduling to run in {delay_seconds}s: {drill_progress}")
         queue.send_message(
             MessageBody=json.dumps(
-                {"idempotency_key": str(uuid.uuid4()), "drill_progress": drill_progress.to_dict()}
+                {
+                    "idempotency_key": f"scheduled-{drill_progress.next_drill_slug_to_trigger()}",
+                    "drill_progress": drill_progress.to_dict(),
+                }
             ),
             DelaySeconds=delay_seconds,
         )
