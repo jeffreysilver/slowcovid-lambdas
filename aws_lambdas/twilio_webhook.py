@@ -15,7 +15,7 @@ configure_logging()
 
 def handler(event, context):
     kinesis = boto3.client("kinesis")
-    stage = os.getenv("STAGE")
+    stage = os.environ["STAGE"]
 
     form = extract_form(event)
     if not is_signature_valid(event, form, stage):
@@ -51,7 +51,7 @@ def extract_form(event):
 
 
 def is_signature_valid(event: Dict[str, Any], form: Dict[str, Any], stage: str) -> bool:
-    validator = RequestValidator(os.getenv("TWILIO_AUTH_TOKEN"))
+    validator = RequestValidator(os.environ["TWILIO_AUTH_TOKEN"])
     url = f"https://{event['headers']['Host']}/{stage}{event['path']}"
     signature = event["headers"].get("X-Twilio-Signature")
     return validator.validate(url, form, signature)
