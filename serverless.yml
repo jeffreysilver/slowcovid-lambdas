@@ -46,7 +46,6 @@ plugins:
   - serverless-dotenv-plugin
   - serverless-log-forwarding
 
-
 functions:
   registration:
     handler: stopcovid/registration.handle_registration
