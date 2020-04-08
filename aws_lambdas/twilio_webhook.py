@@ -28,7 +28,7 @@ def handler(event, context):
             PartitionKey=form["To"],
             StreamName=f"message-log-{stage}",
         )
-        return
+        return {"statusCode": 200}
 
     logging.info(f"Inbound message from {form['From']}: Recording INBOUND_SMS in message log")
     CommandPublisher().publish_process_sms_command(form["From"], form["Body"])
