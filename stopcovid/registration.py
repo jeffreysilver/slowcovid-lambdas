@@ -19,6 +19,7 @@ def build_registration_payload(data):
         "first_name": data["first-name"],
         "last_name": data["last-name"],
         "title": data["title"],
+        "intercom_id": data["intercom_id"],
     }
 
     company = {
