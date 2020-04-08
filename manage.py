@@ -115,13 +115,16 @@ def _get_dialog_events(phone_number: str, stage: str) -> Iterator[DialogEventBat
 
 def rebuild_drill_progress(args):
     environment = get_env(args.stage)
-    engine_factory = lambda: create_engine(
-        "postgresql+auroradataapi://:@/postgres",
-        connect_args=dict(
-            aurora_cluster_arn=environment["DB_CLUSTER_ARN"],
-            secret_arn=environment["DB_SECRET_ARN"],
-        ),
-    )
+
+    def engine_factory():
+        return create_engine(
+            "postgresql+auroradataapi://:@/postgres",
+            connect_args=dict(
+                aurora_cluster_arn=environment["DB_CLUSTER_ARN"],
+                secret_arn=environment["DB_SECRET_ARN"],
+            ),
+        )
+
     user_repo = DrillProgressRepository(engine_factory)
     for batch in _get_dialog_events(args.phone_number, args.stage):
         print(batch.seq)
