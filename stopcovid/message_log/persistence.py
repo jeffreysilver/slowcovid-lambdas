@@ -1,7 +1,7 @@
 import uuid
 from typing import List
 
-from sqlalchemy import Table, MetaData, Column, String, select, insert
+from sqlalchemy import Table, MetaData, Column, String, select, insert, DateTime, func
 from sqlalchemy.dialects.postgresql import UUID
 
 from sqlalchemy.exc import DatabaseError
@@ -13,6 +13,7 @@ messages = Table(
     "messages",
     metadata,
     Column("id", UUID(as_uuid=True), primary_key=True),
+    Column("created_at", DateTime(timezone=True), server_default=func.now()),
     Column("twilio_message_id", String, nullable=False, index=True, unique=True),
     Column("from_number", String, nullable=True, index=True),
     Column("to_number", String, nullable=False, index=True),
