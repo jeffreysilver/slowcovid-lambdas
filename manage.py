@@ -1,7 +1,18 @@
 import argparse
+import sys
 import uuid
 
 import boto3
+from sqlalchemy import create_engine, select, func
+
+
+def get_env(stage: str):
+    filename = {"dev": ".env.development", "prod": ".env.production"}[stage]
+    with open(filename) as file:
+        return {
+            line_part[0].strip(): line_part[1].strip()
+            for line_part in (line.split("=") for line in file.readlines())
+        }
 
 
 def handle_redrive_sqs(args):
@@ -45,8 +56,39 @@ def handle_redrive_sqs(args):
         total_redriven += len(messages)
 
 
+def handle_clear_seq(args):
+    dynamodb_table_name = f"dialog-state-{args.stage}"
+    dynamodb = boto3.client("dynamodb")
+    key = {"phone_number": {"S": args.phone_number}}
+    dynamodb.update_item(
+        TableName=dynamodb_table_name,
+        Key=key,
+        UpdateExpression="SET seq = :seq",
+        ExpressionAttributeValues={":seq": {"S": "0"}},
+    )
+
+    engine = create_engine(
+        "postgresql+auroradataapi://:@/postgres",
+        connect_args=dict(
+            aurora_cluster_arn=get_env(args.stage)["DB_CLUSTER_ARN"],
+            secret_arn=get_env(args.stage)["DB_SECRET_ARN"],
+        ),
+    )
+
+    from stopcovid.status.drill_progress import users, phone_numbers
+
+    row = engine.execute(
+        select([users.c.user_id]).where(phone_numbers.c.phone_number == args.phone_number)
+    ).fetchone()
+    engine.execute(
+        users.update().where(users.c.user_id == func.uuid(row["user_id"])).values(seq="0")
+    )
+    print("Done")
+
+
 def main():
     parser = argparse.ArgumentParser()
+    parser.add_argument("--stage", choices=["dev", "prod"], required=True)
     subparsers = parser.add_subparsers(
         required=True, title="subcommands", description="valid subcommands"
     )
@@ -54,9 +96,16 @@ def main():
         "redrive-sqs", description="Retry failures from an SQS queue"
     )
     sqs_parser.add_argument("queue", choices=["sms", "drill-initiation"])
-    sqs_parser.add_argument("--stage", choices=["dev", "prod"], required=True)
     sqs_parser.set_defaults(func=handle_redrive_sqs)
-    args = parser.parse_args()
+
+    clear_seq_parser = subparsers.add_parser(
+        "clear-seq",
+        description="Reset sequence numbers for a user so that older commands can be processed",
+    )
+    clear_seq_parser.add_argument("phone_number")
+    clear_seq_parser.set_defaults(func=handle_clear_seq)
+
+    args = parser.parse_args(sys.argv if len(sys.argv) == 1 else None)
     args.func(args)
 
 
