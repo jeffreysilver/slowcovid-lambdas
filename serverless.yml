@@ -52,6 +52,13 @@ functions:
   handleInboundSMS:
     handler: aws_lambdas/handle_inbound_sms.handler
 
+  twilioWebhook:
+    handler: aws_lambdas/twilio_webhook.handler
+    events:
+      - http:
+          path: webhooks/twilio
+          method: post
+
   sendMessage:
     handler: aws_lambdas/send_sms_batch.handler
     timeout: 60
