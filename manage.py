@@ -6,6 +6,15 @@ import boto3
 from sqlalchemy import create_engine, select, func
 
 
+def get_env(stage: str):
+    filename = {"dev": ".env.development", "prod": ".env.production"}[stage]
+    with open(filename) as file:
+        return {
+            line_part[0].strip(): line_part[1].strip()
+            for line_part in (line.split("=") for line in file.readlines())
+        }
+
+
 def handle_redrive_sqs(args):
     sqs = boto3.resource("sqs")
 
@@ -58,22 +67,11 @@ def handle_clear_seq(args):
         ExpressionAttributeValues={":seq": {"S": "0"}},
     )
 
-    aurora_info = {
-        "dev": {
-            "secret_arn": "arn:aws:secretsmanager:us-east-1:696991354966:secret:rds-db-credentials/cluster-4ZVDIMJW7RR5MVI4FQNFMNK4TQ/postgres-wIfT7f",
-            "cluster_arn": "arn:aws:rds:us-east-1:696991354966:cluster:dev",
-        },
-        "prod": {
-            "secret_arn": "arn:aws:secretsmanager:us-east-1:696991354966:secret:rds-db-credentials/cluster-PQD3BD7IFQ2QK33XBKIFSXANUQ/postgres-8WXal2",
-            "cluster_arn": "arn:aws:rds:us-east-1:696991354966:cluster:prod",
-        },
-    }
-
     engine = create_engine(
         "postgresql+auroradataapi://:@/postgres",
         connect_args=dict(
-            aurora_cluster_arn=aurora_info[args.stage]["cluster_arn"],
-            secret_arn=aurora_info[args.stage]["secret_arn"],
+            aurora_cluster_arn=get_env(args.stage)["DB_CLUSTER_ARN"],
+            secret_arn=get_env(args.stage)["DB_SECRET_ARN"],
         ),
     )
 
