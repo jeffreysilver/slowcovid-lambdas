@@ -3,6 +3,10 @@ app: slowcovid
 org: jeffreysilver
 
 custom:
+  enterprise:
+    collectLambdaLogs: false
+  logForwarding:
+      destinationARN: arn:aws:lambda:us-east-1:696991354966:function:datadog-forwarder-Forwarder-1VDUH0V5RXYDW
   pythonRequirements:
     slim: true
     slimPatterns:
@@ -40,6 +44,9 @@ provider:
 plugins:
   - serverless-python-requirements
   - serverless-dotenv-plugin
+  - serverless-log-forwarding
+
+
 functions:
   registration:
     handler: stopcovid/registration.handle_registration
