@@ -25,7 +25,7 @@ def handler(event, context):
         return {"statusCode": 403}
 
     idempotency_key = event["headers"]["I-Twilio-Idempotency-Token"]
-    if already_processed(idempotency_key):
+    if already_processed(idempotency_key, stage):
         return {"statusCode": 200}
     if "MessageStatus" in form:
         logging.info(f"Outbound message to {form['To']}: Recording STATUS_UPDATE in message log")
@@ -43,7 +43,7 @@ def handler(event, context):
             StreamName=f"message-log-{stage}",
         )
 
-    record_as_processed(idempotency_key)
+    record_as_processed(idempotency_key, stage)
     return {"statusCode": 200}
 
 
