@@ -9,6 +9,9 @@ from sqlalchemy import create_engine, select, func
 from stopcovid.dialog.models.events import batch_from_dict, DialogEventBatch
 from stopcovid.status.drill_progress import DrillProgressRepository
 from stopcovid.utils import dynamodb as dynamodb_utils
+from stopcovid.utils.logging import configure_logging
+
+configure_logging()
 
 
 def get_env(stage: str):
@@ -111,7 +114,15 @@ def _get_dialog_events(phone_number: str, stage: str) -> Iterator[DialogEventBat
 
 
 def rebuild_drill_progress(args):
-    user_repo = DrillProgressRepository()
+    environment = get_env(args.stage)
+    engine_factory = lambda: create_engine(
+        "postgresql+auroradataapi://:@/postgres",
+        connect_args=dict(
+            aurora_cluster_arn=environment["DB_CLUSTER_ARN"],
+            secret_arn=environment["DB_SECRET_ARN"],
+        ),
+    )
+    user_repo = DrillProgressRepository(engine_factory)
     for batch in _get_dialog_events(args.phone_number, args.stage):
         print(batch.seq)
         user_repo.update_user(batch)

@@ -8,6 +8,10 @@ def configure_logging():
 
     handler = logging.StreamHandler(sys.stdout)
     handler.setLevel(logging.INFO)
-    formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
+    formatter = logging.Formatter(
+        "%(levelname)-8s %(asctime)s "
+        "%(filename)s:%(lineno)s - %(name)s - %(funcName)s: "
+        "%(message)s"
+    )
     handler.setFormatter(formatter)
     root.addHandler(handler)
