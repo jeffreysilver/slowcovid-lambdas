@@ -22,6 +22,7 @@ def handler(event, context):
         logging.warning("signature validation failed")
         return {"statusCode": 403}
     if "MessageStatus" in form:
+        logging.info(f"Outbound message to {form['To']}: Recording STATUS_UPDATE in message log")
         kinesis.put_record(
             Data=json.dumps({"type": "STATUS_UPDATE", "payload": form}),
             PartitionKey=form["To"],
@@ -29,10 +30,11 @@ def handler(event, context):
         )
         return
 
+    logging.info(f"Inbound message from {form['From']}: Recording INBOUND_SMS in message log")
     CommandPublisher().publish_process_sms_command(form["From"], form["Body"])
     kinesis.put_record(
         Data=json.dumps({"type": "INBOUND_SMS", "payload": form}),
-        PartitionKey=form["To"],
+        PartitionKey=form["From"],
         StreamName=f"message-log-{stage}",
     )
 
