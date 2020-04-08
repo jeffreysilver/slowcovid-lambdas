@@ -1,3 +1,4 @@
+import datetime
 import json
 import logging
 import os
@@ -9,6 +10,7 @@ from twilio.request_validator import RequestValidator
 
 from stopcovid.dialog.command_stream.publish import CommandPublisher
 from stopcovid.utils.logging import configure_logging
+from stopcovid.utils import dynamodb as dynamodb_utils
 
 configure_logging()
 
@@ -21,6 +23,10 @@ def handler(event, context):
     if not is_signature_valid(event, form, stage):
         logging.warning("signature validation failed")
         return {"statusCode": 403}
+
+    idempotency_key = event["headers"]["I-Twilio-Idempotency-Token"]
+    if already_processed(idempotency_key):
+        return {"statusCode": 200}
     if "MessageStatus" in form:
         logging.info(f"Outbound message to {form['To']}: Recording STATUS_UPDATE in message log")
         kinesis.put_record(
@@ -28,16 +34,16 @@ def handler(event, context):
             PartitionKey=form["To"],
             StreamName=f"message-log-{stage}",
         )
-        return {"statusCode": 200}
+    else:
+        logging.info(f"Inbound message from {form['From']}: Recording INBOUND_SMS in message log")
+        CommandPublisher().publish_process_sms_command(form["From"], form["Body"])
+        kinesis.put_record(
+            Data=json.dumps({"type": "INBOUND_SMS", "payload": form}),
+            PartitionKey=form["From"],
+            StreamName=f"message-log-{stage}",
+        )
 
-    logging.info(f"Inbound message from {form['From']}: Recording INBOUND_SMS in message log")
-    CommandPublisher().publish_process_sms_command(form["From"], form["Body"])
-    kinesis.put_record(
-        Data=json.dumps({"type": "INBOUND_SMS", "payload": form}),
-        PartitionKey=form["From"],
-        StreamName=f"message-log-{stage}",
-    )
-
+    record_as_processed(idempotency_key)
     return {"statusCode": 200}
 
 
@@ -57,3 +63,28 @@ def is_signature_valid(event: Dict[str, Any], form: Dict[str, Any], stage: str) 
     url = f"https://{event['headers']['Host']}/{stage}{event['path']}"
     signature = event["headers"].get("X-Twilio-Signature")
     return validator.validate(url, form, signature)
+
+
+def already_processed(idempotency_key: str, stage: str) -> bool:
+    dynamodb = boto3.client("dynamodb")
+    response = dynamodb.get_item(
+        TableName=f"twilio-webhooks-{stage}", Key={"idempotency_key": {"S": idempotency_key}}
+    )
+    return "Item" in response
+
+
+def record_as_processed(idempotency_key: str, stage: str):
+    dynamodb = boto3.client("dynamodb")
+    dynamodb.put_item(
+        TableName=f"twilio-webhooks-{stage}",
+        Item=dynamodb_utils.serialize(
+            {
+                "idempotency_key": idempotency_key,
+                "expiration_ts": int(
+                    (
+                        datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(hours=1)
+                    ).timestamp()
+                ),
+            }
+        ),
+    )
