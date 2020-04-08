@@ -1,9 +1,17 @@
 import argparse
 import sys
 import uuid
+from typing import Iterator
 
 import boto3
 from sqlalchemy import create_engine, select, func
+
+from stopcovid.dialog.models.events import batch_from_dict, DialogEventBatch
+from stopcovid.status.drill_progress import DrillProgressRepository
+from stopcovid.utils import dynamodb as dynamodb_utils
+from stopcovid.utils.logging import configure_logging
+
+configure_logging()
 
 
 def get_env(stage: str):
@@ -86,6 +94,44 @@ def handle_clear_seq(args):
     print("Done")
 
 
+def _get_dialog_events(phone_number: str, stage: str) -> Iterator[DialogEventBatch]:
+    dynamodb = boto3.client("dynamodb")
+    table_name = f"dialog-event-batches-{stage}"
+    args = {}
+    while True:
+        result = dynamodb.query(
+            TableName=table_name,
+            IndexName="by_created_time",
+            KeyConditionExpression="phone_number=:phone_number",
+            ExpressionAttributeValues={":phone_number": {"S": phone_number}},
+            **args,
+        )
+        for item in result["Items"]:
+            yield batch_from_dict(dynamodb_utils.deserialize(item))
+        if not result.get("LastEvaluatedKey"):
+            break
+        args["ExclusiveStartKey"] = result["LastEvaluatedKey"]
+
+
+def rebuild_drill_progress(args):
+    environment = get_env(args.stage)
+
+    def engine_factory():
+        return create_engine(
+            "postgresql+auroradataapi://:@/postgres",
+            connect_args=dict(
+                aurora_cluster_arn=environment["DB_CLUSTER_ARN"],
+                secret_arn=environment["DB_SECRET_ARN"],
+            ),
+        )
+
+    user_repo = DrillProgressRepository(engine_factory)
+    for batch in _get_dialog_events(args.phone_number, args.stage):
+        print(batch.seq)
+        user_repo.update_user(batch)
+    print("Done")
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--stage", choices=["dev", "prod"], required=True)
@@ -104,6 +150,14 @@ def main():
     )
     clear_seq_parser.add_argument("phone_number")
     clear_seq_parser.set_defaults(func=handle_clear_seq)
+
+    rebuild_status_parser = subparsers.add_parser(
+        "rebuild-drill-progress",
+        description="rebuild drill progress information for the user in aurora (may require"
+        "clear-seq to be run first)",
+    )
+    rebuild_status_parser.add_argument("phone_number")
+    rebuild_status_parser.set_defaults(func=rebuild_drill_progress)
 
     args = parser.parse_args(sys.argv if len(sys.argv) == 1 else None)
     args.func(args)

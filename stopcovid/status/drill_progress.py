@@ -217,6 +217,7 @@ class DrillProgressRepository:
         )
 
     def update_user(self, batch: DialogEventBatch) -> uuid.UUID:  # noqa: C901
+        logging.info(f"Updating {batch.phone_number} at seq {batch.seq}")
         with self.engine.connect() as connection:
             with connection.begin():
                 user = self._get_user_for_phone_number(batch.phone_number, connection)
@@ -360,6 +361,7 @@ class DrillProgressRepository:
         )
         row = result.fetchone()
         if row is None:
+            logging.info(f"No record of {phone_number}. Creating a new entry.")
             user_record = User(account_info=profile.account_info, seq=batch.seq)
             phone_number_record = PhoneNumber(
                 phone_number=phone_number, user_id=user_record.user_id
@@ -388,6 +390,7 @@ class DrillProgressRepository:
                         place_in_sequence=i,
                     )
                 )
+            logging.info(f"New user ID for {phone_number} is {user_record.user_id}")
             return user_record.user_id
 
         phone_number_record = PhoneNumber(**row)
