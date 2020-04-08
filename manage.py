@@ -3,6 +3,7 @@ import sys
 import uuid
 
 import boto3
+from sqlalchemy import create_engine, select, func
 
 
 def handle_redrive_sqs(args):
@@ -56,7 +57,35 @@ def handle_clear_seq(args):
         UpdateExpression="SET seq = :seq",
         ExpressionAttributeValues={":seq": {"S": "0"}},
     )
-    print("Please manually reset the sequence number in the users table in aurora.")
+
+    aurora_info = {
+        "dev": {
+            "secret_arn": "arn:aws:secretsmanager:us-east-1:696991354966:secret:rds-db-credentials/cluster-4ZVDIMJW7RR5MVI4FQNFMNK4TQ/postgres-wIfT7f",
+            "cluster_arn": "arn:aws:rds:us-east-1:696991354966:cluster:dev",
+        },
+        "prod": {
+            "secret_arn": "arn:aws:secretsmanager:us-east-1:696991354966:secret:rds-db-credentials/cluster-PQD3BD7IFQ2QK33XBKIFSXANUQ/postgres-8WXal2",
+            "cluster_arn": "arn:aws:rds:us-east-1:696991354966:cluster:prod",
+        },
+    }
+
+    engine = create_engine(
+        "postgresql+auroradataapi://:@/postgres",
+        connect_args=dict(
+            aurora_cluster_arn=aurora_info[args.stage]["cluster_arn"],
+            secret_arn=aurora_info[args.stage]["secret_arn"],
+        ),
+    )
+
+    from stopcovid.status.drill_progress import users, phone_numbers
+
+    row = engine.execute(
+        select([users.c.user_id]).where(phone_numbers.c.phone_number == args.phone_number)
+    ).fetchone()
+    engine.execute(
+        users.update().where(users.c.user_id == func.uuid(row["user_id"])).values(seq="0")
+    )
+    print("Done")
 
 
 def main():
