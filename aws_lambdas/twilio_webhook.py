@@ -1,7 +1,7 @@
 import json
 import logging
 import os
-from urllib.parse import parse_qs, unquote_plus
+from urllib.parse import unquote_plus
 
 import boto3
 from twilio.request_validator import RequestValidator
