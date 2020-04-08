@@ -79,4 +79,5 @@ class CommandPublisher:
             records.append(record)
         response = kinesis.put_records(StreamName=f"command-stream-{self.stage}", Records=records)
         for i, result in enumerate(response["Records"]):
+            logging.info(f"seq: {result['SequenceNumber']}, shard: {result['ShardId']}")
             self._try_record_seq(records[i]["PartitionKey"], result["SequenceNumber"])
