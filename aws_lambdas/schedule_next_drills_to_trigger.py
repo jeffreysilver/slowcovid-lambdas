@@ -1,4 +1,4 @@
-from stopcovid.clients.sqs import publish_drills_to_trigger
+from stopcovid.status.sqs import publish_drills_to_trigger
 from stopcovid.status.drill_progress import DrillProgressRepository
 from stopcovid.utils.logging import configure_logging
 
