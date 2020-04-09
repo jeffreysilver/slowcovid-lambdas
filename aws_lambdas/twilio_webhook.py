@@ -26,6 +26,7 @@ def handler(event, context):
 
     idempotency_key = event["headers"]["I-Twilio-Idempotency-Token"]
     if already_processed(idempotency_key, stage):
+        logging.info(f"Already processed webhook with idempotency key {idempotency_key}. Skipping.")
         return {"statusCode": 200}
     if "MessageStatus" in form:
         logging.info(f"Outbound message to {form['To']}: Recording STATUS_UPDATE in message log")
