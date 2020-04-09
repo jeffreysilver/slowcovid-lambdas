@@ -9,7 +9,7 @@ import uuid
 
 from typing import List, Iterable
 from collections import defaultdict
-from stopcovid.event_distributor.outbound_sms import OutboundSMS
+from stopcovid.send_sms.enqueue_outbound_sms import OutboundSMS
 from stopcovid.status.drill_progress import DrillProgress
 from stopcovid.utils.logging import configure_logging
 

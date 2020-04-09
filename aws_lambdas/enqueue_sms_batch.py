@@ -1,11 +1,13 @@
+import logging
+
 from stopcovid.dialog.models.events import batch_from_dict
 from stopcovid.utils import dynamodb as dynamodb_utils
 
 
-from stopcovid.event_distributor.outbound_sms import distribute_outbound_sms_commands
+from stopcovid.send_sms.enqueue_outbound_sms import enqueue_outbound_sms_commands
 
 
-def distribute_dialog_events(event, context):
+def handler(event, context):
     event_batches = [
         batch_from_dict(dynamodb_utils.deserialize(record["dynamodb"]["NewImage"]))
         for record in event["Records"]
@@ -17,6 +19,8 @@ def distribute_dialog_events(event, context):
         for event in batch.events:
             dialog_events.append(event)
 
-    distribute_outbound_sms_commands(dialog_events)
+    enqueue_outbound_sms_commands(dialog_events)
+    for batch in event_batches:
+        logging.info(f"Enqueue SMS commands for {batch.phone_number} at seq {batch.seq}")
 
     return {"statusCode": 200}

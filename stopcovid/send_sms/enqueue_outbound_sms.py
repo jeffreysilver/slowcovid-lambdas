@@ -115,7 +115,7 @@ def get_outbound_sms_commands(dialog_events: List[DialogEvent]) -> List[Outbound
     return outbound_messages
 
 
-def distribute_outbound_sms_commands(dialog_events: List[DialogEvent]):
+def enqueue_outbound_sms_commands(dialog_events: List[DialogEvent]):
     from stopcovid.clients import sqs
 
     outbound_messages = get_outbound_sms_commands(dialog_events)
