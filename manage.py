@@ -106,7 +106,7 @@ def rebuild_drill_progress(args):
     drill_progress_repo = get_drill_progress_repo(args.stage)
     drill_progress_repo.delete_user_info(args.phone_number)
     for batch in _get_dialog_events(args.phone_number, args.stage):
-        print(batch.seq)
+        print(f"{batch.batch_id}: {batch.seq}")
         drill_progress_repo.update_user(batch)
     print("Done")
 
@@ -125,8 +125,7 @@ def main():
 
     rebuild_status_parser = subparsers.add_parser(
         "rebuild-drill-progress",
-        description="rebuild drill progress information for the user in aurora (may require"
-        "clear-seq to be run first)",
+        description="rebuild drill progress information for the user in aurora",
     )
     rebuild_status_parser.add_argument("phone_number")
     rebuild_status_parser.set_defaults(func=rebuild_drill_progress)
