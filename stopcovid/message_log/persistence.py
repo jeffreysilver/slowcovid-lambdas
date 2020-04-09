@@ -61,6 +61,7 @@ class MessageRepository:
             "delivered": 3,
             "undelivered": 3,
             "failed": 3,
+            "received": 3,
         }
         return status_ranks[status1.lower()] > status_ranks[status2.lower()]
 
