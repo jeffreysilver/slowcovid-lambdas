@@ -3,7 +3,9 @@ from stopcovid.message_log.message_log import log_messages
 from stopcovid.message_log.types import LogMessageCommandSchema
 
 from stopcovid.utils.logging import configure_logging
+from stopcovid.utils.verify_deploy_stage import verify_deploy_stage
 
+verify_deploy_stage()
 configure_logging()
 
 

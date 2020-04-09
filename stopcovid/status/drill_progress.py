@@ -404,7 +404,7 @@ class DrillProgressRepository:
             )
             connection.execute(
                 users.insert().values(
-                    user_id=str(user_record.user_id), profile=user_record.profile, seq=batch.seq,
+                    user_id=str(user_record.user_id), profile=user_record.profile, seq=batch.seq
                 )
             )
             connection.execute(
@@ -439,7 +439,7 @@ class DrillProgressRepository:
         connection.execute(
             users.update()
             .where(users.c.user_id == func.uuid(str(phone_number_record.user_id)))
-            .values(profile=profile, seq=batch.seq,)
+            .values(profile=profile, seq=batch.seq)
         )
         return phone_number_record.user_id
 

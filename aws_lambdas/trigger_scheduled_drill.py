@@ -5,7 +5,9 @@ from stopcovid.status.initiation import DrillInitiator
 from stopcovid.status.drill_progress import DrillProgressSchema, DrillProgress
 
 from stopcovid.utils.logging import configure_logging
+from stopcovid.utils.verify_deploy_stage import verify_deploy_stage
 
+verify_deploy_stage()
 configure_logging()
 
 
