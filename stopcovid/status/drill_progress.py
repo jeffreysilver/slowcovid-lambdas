@@ -220,7 +220,7 @@ class DrillProgressRepository:
         logging.info(f"Updating {batch.phone_number} at seq {batch.seq}")
         with self.engine.connect() as connection:
             with connection.begin():
-                user = self._get_user_for_phone_number(batch.phone_number, connection)
+                user = self.get_user_for_phone_number(batch.phone_number, connection)
                 if user is not None and int(user.seq) >= int(batch.seq):
                     logging.info(
                         f"Ignoring batch at {batch.seq} because a more recent user exists "
@@ -321,7 +321,7 @@ class DrillProgressRepository:
             yield cur_drill_progress
 
     def get_progress_for_user(self, phone_number: str) -> DrillProgress:
-        user = self._get_user_for_phone_number(phone_number, self.engine)
+        user = self.get_user_for_phone_number(phone_number)
         user_id = user.user_id
         result = self.engine.execute(
             select([drill_statuses])
@@ -340,7 +340,7 @@ class DrillProgressRepository:
         # useful for backfills and rebuilding users. Shouldn't be called regularly.
         with self.engine.connect() as connection:
             with connection.begin():
-                user = self._get_user_for_phone_number(phone_number, connection)
+                user = self.get_user_for_phone_number(phone_number, connection)
                 if user is None:
                     logging.info(f"No user exists for {phone_number}")
                 connection.execute(
@@ -362,8 +362,9 @@ class DrillProgressRepository:
                     users.delete().where(users.c.user_id == func.uuid(str(user.user_id)))
                 )
 
-    @staticmethod
-    def _get_user_for_phone_number(phone_number: str, connection) -> Optional[User]:
+    def get_user_for_phone_number(self, phone_number: str, connection=None) -> Optional[User]:
+        if connection is None:
+            connection = self.engine
         result = connection.execute(
             select([users])
             .select_from(users.join(phone_numbers, users.c.user_id == phone_numbers.c.user_id))

@@ -416,7 +416,7 @@ class TestUsers(unittest.TestCase):
         )
         self.repo.update_user(self._make_batch([event]))
         self.assertIsNotNone(
-            self.repo._get_user_for_phone_number(self.phone_number, self.repo.engine)
+            self.repo.get_user_for_phone_number(self.phone_number, self.repo.engine)
         )
         self.repo.delete_user_info(self.phone_number)
-        self.assertIsNone(self.repo._get_user_for_phone_number(self.phone_number, self.repo.engine))
+        self.assertIsNone(self.repo.get_user_for_phone_number(self.phone_number, self.repo.engine))
