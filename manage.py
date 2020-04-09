@@ -114,11 +114,13 @@ def rebuild_drill_progress(args):
 def show_drill_progress(args):
     drill_progress_repo = get_drill_progress_repo(args.stage)
     user = drill_progress_repo.get_user_for_phone_number(args.phone_number)
+    if not user:
+        print("User not found")
     progress = drill_progress_repo.get_progress_for_user(args.phone_number)
     print(f"{args.phone_number}:")
     print(f"\tid={user.user_id}")
     print(f"\tseq={user.seq}")
-    print(f"\taccount_info={user.account_info}")
+    print(f"\tprofile={user.profile}")
     print(f"\tlast_interacted_time={user.last_interacted_time.isoformat()}")
     print(f"\tfirst_unstarted_drill_slug={progress.first_unstarted_drill_slug}")
     print(f"\tfirst_incomplete_drill_slug={progress.first_incomplete_drill_slug}")
