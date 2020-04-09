@@ -1,3 +1,4 @@
+import logging
 import unittest
 import uuid
 from copy import copy
@@ -21,6 +22,7 @@ from stopcovid.status.drill_progress import DrillProgressRepository, ALL_DRILL_S
 
 class TestUsers(unittest.TestCase):
     def setUp(self):
+        logging.disable(logging.CRITICAL)
         self.repo = DrillProgressRepository(get_test_sqlalchemy_engine)
         self.repo.drop_and_recreate_tables_testing_only()
         self.phone_number = "123456789"
@@ -47,7 +49,7 @@ class TestUsers(unittest.TestCase):
                 )
             ],
         )
-        user_id = self.repo._create_or_update_user(batch, self.repo.engine)
+        user_id = self.repo._create_or_update_user(batch, None, self.repo.engine)
         user = self.repo.get_user(user_id)
         self.assertEqual(user_id, user.user_id)
         self.assertEqual({"employer_id": 123, "unit_id": 456}, user.account_info)
@@ -64,7 +66,7 @@ class TestUsers(unittest.TestCase):
             ]
         )
 
-        self.repo._create_or_update_user(batch2, self.repo.engine)
+        self.repo._create_or_update_user(batch2, None, self.repo.engine)
         user = self.repo.get_user(user_id)
         self.assertEqual({"foo": "bar", "one": "two"}, user.account_info)
         self.assertEqual(batch2.seq, user.seq)
@@ -80,6 +82,7 @@ class TestUsers(unittest.TestCase):
                     )
                 ]
             ),
+            None,
             self.repo.engine,
         )
 
@@ -264,9 +267,7 @@ class TestUsers(unittest.TestCase):
         )
         self.repo.update_user(self._make_batch([event]))
 
-        drill_progress = self.repo.get_progress_for_user(
-            user_id=user_id, phone_number=self.phone_number
-        )
+        drill_progress = self.repo.get_progress_for_user(phone_number=self.phone_number)
         self.assertEqual(
             DrillProgress(
                 user_id=user_id,
@@ -285,9 +286,7 @@ class TestUsers(unittest.TestCase):
             - datetime.timedelta(minutes=31),
         )
         self.repo.update_user(self._make_batch([event2]))
-        drill_progress = self.repo.get_progress_for_user(
-            user_id=user_id, phone_number=self.phone_number
-        )
+        drill_progress = self.repo.get_progress_for_user(phone_number=self.phone_number)
         self.assertEqual(
             DrillProgress(
                 user_id=user_id,
@@ -418,7 +417,7 @@ class TestUsers(unittest.TestCase):
         )
         self.repo.update_user(self._make_batch([event]))
         self.assertIsNotNone(
-            self.repo._get_user_for_phone_number(self.phone_number, self.repo.engine)
+            self.repo.get_user_for_phone_number(self.phone_number, self.repo.engine)
         )
         self.repo.delete_user_info(self.phone_number)
-        self.assertIsNone(self.repo._get_user_for_phone_number(self.phone_number, self.repo.engine))
+        self.assertIsNone(self.repo.get_user_for_phone_number(self.phone_number, self.repo.engine))

@@ -104,11 +104,24 @@ def get_drill_progress_repo(stage: str) -> DrillProgressRepository:
 
 def rebuild_drill_progress(args):
     drill_progress_repo = get_drill_progress_repo(args.stage)
-    drill_progress_repo.delete_user_info(args.phone_number)
+    user_id = drill_progress_repo.delete_user_info(args.phone_number)
     for batch in _get_dialog_events(args.phone_number, args.stage):
         print(f"{batch.batch_id}: {batch.seq}")
-        drill_progress_repo.update_user(batch)
+        drill_progress_repo.update_user(batch, ensure_user_id=user_id)
     print("Done")
+
+
+def show_drill_progress(args):
+    drill_progress_repo = get_drill_progress_repo(args.stage)
+    user = drill_progress_repo.get_user_for_phone_number(args.phone_number)
+    progress = drill_progress_repo.get_progress_for_user(args.phone_number)
+    print(f"{args.phone_number}:")
+    print(f"\tid={user.user_id}")
+    print(f"\tseq={user.seq}")
+    print(f"\taccount_info={user.account_info}")
+    print(f"\tlast_interacted_time={user.last_interacted_time.isoformat()}")
+    print(f"\tfirst_unstarted_drill_slug={progress.first_unstarted_drill_slug}")
+    print(f"\tfirst_incomplete_drill_slug={progress.first_incomplete_drill_slug}")
 
 
 def main():
@@ -123,12 +136,18 @@ def main():
     sqs_parser.add_argument("queue", choices=["sms", "drill-initiation"])
     sqs_parser.set_defaults(func=handle_redrive_sqs)
 
-    rebuild_status_parser = subparsers.add_parser(
+    rebuild_progress_parser = subparsers.add_parser(
         "rebuild-drill-progress",
         description="rebuild drill progress information for the user in aurora",
     )
-    rebuild_status_parser.add_argument("phone_number")
-    rebuild_status_parser.set_defaults(func=rebuild_drill_progress)
+    rebuild_progress_parser.add_argument("phone_number")
+    rebuild_progress_parser.set_defaults(func=rebuild_drill_progress)
+
+    show_progress_parser = subparsers.add_parser(
+        "show-drill-progress", description="print information on a user's drill progress"
+    )
+    show_progress_parser.add_argument("phone_number")
+    show_progress_parser.set_defaults(func=show_drill_progress)
 
     args = parser.parse_args(sys.argv if len(sys.argv) == 1 else None)
     args.func(args)

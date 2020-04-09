@@ -1,3 +1,4 @@
+import logging
 import unittest
 from unittest.mock import patch, MagicMock
 import json
@@ -9,6 +10,9 @@ from stopcovid.status.drill_progress import DrillProgress
 
 @patch("stopcovid.clients.sqs.boto3")
 class TestPublishOutboundSMS(unittest.TestCase):
+    def setUp(self) -> None:
+        logging.disable(logging.CRITICAL)
+
     def _get_mocked_send_messages(self, boto_mock):
         sqs_mock = MagicMock()
         boto_mock.resource.return_value = sqs_mock

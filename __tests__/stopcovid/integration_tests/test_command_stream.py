@@ -1,3 +1,4 @@
+import logging
 import os
 import unittest
 from unittest.mock import patch
@@ -12,6 +13,9 @@ __location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file
 
 @patch("stopcovid.dialog.command_stream.command_stream.process_command")
 class TestHandleCommand(unittest.TestCase):
+    def setUp(self) -> None:
+        logging.disable(logging.CRITICAL)
+
     def test_inbound_sms(self, process_command_mock):
         with open(os.path.join(__location__, "../../../sample_events/inbound_sms_event.json")) as f:
             mock_kinesis_event = json.load(f)
