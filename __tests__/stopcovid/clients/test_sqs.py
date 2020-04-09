@@ -3,7 +3,7 @@ import unittest
 from unittest.mock import patch, MagicMock
 import json
 import uuid
-from stopcovid.event_distributor.outbound_sms import OutboundSMS
+from stopcovid.send_sms.enqueue_outbound_sms import OutboundSMS
 from stopcovid.clients.sqs import publish_outbound_sms_messages, publish_drills_to_trigger
 from stopcovid.status.drill_progress import DrillProgress
 

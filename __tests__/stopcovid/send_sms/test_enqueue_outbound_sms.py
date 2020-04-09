@@ -3,7 +3,7 @@ import uuid
 from typing import List
 
 from stopcovid.drills.localize import localize
-from stopcovid.event_distributor.outbound_sms import (
+from stopcovid.send_sms.enqueue_outbound_sms import (
     get_outbound_sms_commands,
     USER_VALIDATION_FAILED_COPY,
     CORRECT_ANSWER_COPY,
