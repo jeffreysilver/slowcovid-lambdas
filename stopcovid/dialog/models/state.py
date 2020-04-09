@@ -1,6 +1,7 @@
 import uuid
 import datetime
-from dataclasses import dataclass, field
+from decimal import Decimal
+from dataclasses import dataclass, field, asdict
 from typing import Optional, Dict, Any
 
 from marshmallow import Schema, fields, post_load
@@ -47,6 +48,22 @@ class UserProfile:
 
     def __str__(self):
         return f"lang={self.language}, validated={self.validated}, " f"name={self.name}"
+
+    def json_serialize(self):
+        base = asdict(self)
+
+        def recursive_jsonify(obj):
+            for key in obj:
+                val = obj[key]
+                if isinstance(val, dict):
+                    obj[key] = recursive_jsonify(val)
+                if isinstance(val, Decimal):
+                    obj[key] = int(val)
+                if isinstance(val, uuid.UUID):
+                    obj[key] = str(val)
+            return obj
+
+        return recursive_jsonify(base)
 
 
 class PromptStateSchema(Schema):

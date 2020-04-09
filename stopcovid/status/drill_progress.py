@@ -59,7 +59,7 @@ users = Table(
     metadata,
     Column("user_id", UUID, primary_key=True),
     Column("seq", String, nullable=False),
-    Column("account_info", JSONB, nullable=False),
+    Column("profile", JSONB, nullable=True),
     Column("last_interacted_time", DateTime(timezone=True), index=True),
 )
 
@@ -134,7 +134,7 @@ class DrillProgress:
 class User:
     seq: str
     user_id: UUID = field(default_factory=uuid.uuid4)
-    account_info: Dict[str, Any] = field(default_factory=dict)
+    profile: Dict[str, Any] = field(default_factory=dict)
     last_interacted_time: Optional[datetime.datetime] = None
 
 
@@ -186,7 +186,7 @@ class DrillProgressRepository:
             return None
         return User(
             user_id=uuid.UUID(row["user_id"]),
-            account_info=row["account_info"],
+            profile=row["profile"],
             last_interacted_time=row["last_interacted_time"],
             seq=row["seq"],
         )
@@ -346,7 +346,7 @@ class DrillProgressRepository:
             return None
         return User(
             user_id=uuid.UUID(row["user_id"]),
-            account_info=row["account_info"],
+            profile=row["profile"],
             last_interacted_time=row["last_interacted_time"],
             seq=row["seq"],
         )
@@ -355,21 +355,20 @@ class DrillProgressRepository:
         event = batch.events[-1]
         phone_number = event.phone_number
         profile = event.user_profile
-
         result = connection.execute(
             select([phone_numbers]).where(phone_numbers.c.phone_number == phone_number)
         )
         row = result.fetchone()
         if row is None:
             logging.info(f"No record of {phone_number}. Creating a new entry.")
-            user_record = User(account_info=profile.account_info, seq=batch.seq)
+            user_record = User(profile=profile, seq=batch.seq)
             phone_number_record = PhoneNumber(
                 phone_number=phone_number, user_id=user_record.user_id
             )
             connection.execute(
                 users.insert().values(
                     user_id=str(user_record.user_id),
-                    account_info=self._get_json_serializable_account_info(user_record.account_info),
+                    profile=user_record.profile.json_serialize(),
                     seq=batch.seq,
                 )
             )
@@ -405,10 +404,7 @@ class DrillProgressRepository:
         connection.execute(
             users.update()
             .where(users.c.user_id == func.uuid(str(phone_number_record.user_id)))
-            .values(
-                account_info=self._get_json_serializable_account_info(profile.account_info),
-                seq=batch.seq,
-            )
+            .values(profile=profile.json_serialize(), seq=batch.seq,)
         )
         return phone_number_record.user_id
 
@@ -590,15 +586,6 @@ class DrillProgressRepository:
                 - datetime.timedelta(minutes=inactive_for_minutes_ceil)
             )
         return [self._deserialize(row) for row in self.engine.execute(stmt)]
-
-    def _get_json_serializable_account_info(self, account_info):
-        if "employer_id" in account_info:
-            account_info["employer_id"] = int(account_info["employer_id"])
-
-        if "unit_id" in account_info:
-            account_info["unit_id"] = int(account_info["unit_id"])
-
-        return account_info
 
     def drop_and_recreate_tables_testing_only(self):
         if self.engine_factory == db.get_sqlalchemy_engine:

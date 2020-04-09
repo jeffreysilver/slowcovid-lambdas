@@ -41,7 +41,9 @@ class TestUsers(unittest.TestCase):
                 DrillCompleted(
                     phone_number=self.phone_number,
                     user_profile=UserProfile(
-                        True, account_info={"employer_id": Decimal(123), "unit_id": Decimal(456)}
+                        True,
+                        language="zh",
+                        account_info={"employer_id": Decimal(123), "unit_id": Decimal(456)},
                     ),
                     drill_instance_id=uuid.uuid4(),
                 )
@@ -50,7 +52,9 @@ class TestUsers(unittest.TestCase):
         user_id = self.repo._create_or_update_user(batch, self.repo.engine)
         user = self.repo.get_user(user_id)
         self.assertEqual(user_id, user.user_id)
-        self.assertEqual({"employer_id": 123, "unit_id": 456}, user.account_info)
+        self.assertEqual({"employer_id": 123, "unit_id": 456}, user.profile["account_info"])
+        self.assertEqual(True, user.profile["validated"])
+        self.assertEqual("zh", user.profile["language"])
         self.assertIsNone(user.last_interacted_time)
         self.assertEqual(batch.seq, user.seq)
 
@@ -66,7 +70,7 @@ class TestUsers(unittest.TestCase):
 
         self.repo._create_or_update_user(batch2, self.repo.engine)
         user = self.repo.get_user(user_id)
-        self.assertEqual({"foo": "bar", "one": "two"}, user.account_info)
+        self.assertEqual({"foo": "bar", "one": "two"}, user.profile["account_info"])
         self.assertEqual(batch2.seq, user.seq)
 
     def _make_user_and_get_id(self, **overrides) -> uuid.UUID:
