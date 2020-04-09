@@ -1,3 +1,4 @@
+import logging
 import unittest
 import uuid
 from unittest.mock import patch, MagicMock
@@ -8,6 +9,7 @@ from stopcovid.status.drill_progress import DrillInstance
 
 class TestCommandPublisher(unittest.TestCase):
     def setUp(self) -> None:
+        logging.disable(logging.CRITICAL)
         kinesis_client = MagicMock()
         self.put_records_mock = MagicMock()
         kinesis_client.put_records = self.put_records_mock

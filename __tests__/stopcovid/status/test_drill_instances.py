@@ -1,3 +1,4 @@
+import logging
 import unittest
 import datetime
 import uuid
@@ -22,6 +23,7 @@ from __tests__.utils.factories import make_drill_instance
 
 class TestDrillInstances(unittest.TestCase):
     def setUp(self):
+        logging.disable(logging.CRITICAL)
         self.repo = DrillProgressRepository(db.get_test_sqlalchemy_engine)
         self.repo.drop_and_recreate_tables_testing_only()
         self.phone_number = "123456789"
@@ -38,6 +40,7 @@ class TestDrillInstances(unittest.TestCase):
                 seq="0",
                 batch_id=uuid.uuid4(),
             ),
+            None,
             self.repo.engine,
         )
         self.drill_instance = self._make_drill_instance()

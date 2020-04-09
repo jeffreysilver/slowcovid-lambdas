@@ -1,3 +1,4 @@
+import logging
 import unittest
 
 from stopcovid.dialog.models.events import (
@@ -14,6 +15,7 @@ from stopcovid.status.status import initiates_first_drill, initiates_subsequent_
 
 class TestStatus(unittest.TestCase):
     def setUp(self) -> None:
+        logging.disable(logging.CRITICAL)
         self.drill = get_drill("01-basics")
 
     def test_initiates_first_drill(self):

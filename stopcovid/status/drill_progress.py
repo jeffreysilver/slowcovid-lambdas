@@ -216,11 +216,13 @@ class DrillProgressRepository:
             completed_time=row["completed_time"],
         )
 
-    def update_user(self, batch: DialogEventBatch) -> uuid.UUID:  # noqa: C901
+    def update_user(  # noqa: C901
+        self, batch: DialogEventBatch, ensure_user_id: Optional[uuid.UUID] = None
+    ) -> uuid.UUID:
         logging.info(f"Updating {batch.phone_number} at seq {batch.seq}")
         with self.engine.connect() as connection:
             with connection.begin():
-                user = self._get_user_for_phone_number(batch.phone_number, connection)
+                user = self.get_user_for_phone_number(batch.phone_number, connection)
                 if user is not None and int(user.seq) >= int(batch.seq):
                     logging.info(
                         f"Ignoring batch at {batch.seq} because a more recent user exists "
@@ -230,7 +232,7 @@ class DrillProgressRepository:
 
                 # also updates sequence number for the user, which won't be committed unless the
                 # transaction succeeds
-                user_id = self._create_or_update_user(batch, connection)
+                user_id = self._create_or_update_user(batch, ensure_user_id, connection)
 
                 for event in batch.events:
                     self._mark_interacted_time(user_id, event, connection)
@@ -320,7 +322,9 @@ class DrillProgressRepository:
         if cur_drill_progress is not None:
             yield cur_drill_progress
 
-    def get_progress_for_user(self, user_id: uuid.UUID, phone_number: str) -> DrillProgress:
+    def get_progress_for_user(self, phone_number: str) -> DrillProgress:
+        user = self.get_user_for_phone_number(phone_number)
+        user_id = user.user_id
         result = self.engine.execute(
             select([drill_statuses])
             .where(drill_statuses.c.user_id == func.uuid((str(user_id))))
@@ -334,8 +338,37 @@ class DrillProgressRepository:
                 progress.first_unstarted_drill_slug = row["drill_slug"]
         return progress
 
-    @staticmethod
-    def _get_user_for_phone_number(phone_number: str, connection) -> Optional[User]:
+    def delete_user_info(self, phone_number: str) -> Optional[uuid.UUID]:
+        # useful for backfills and rebuilding users. Shouldn't be called regularly.
+        with self.engine.connect() as connection:
+            with connection.begin():
+                user = self.get_user_for_phone_number(phone_number, connection)
+                if user is None:
+                    logging.info(f"No user exists for {phone_number}")
+                    return None
+                connection.execute(
+                    phone_numbers.delete().where(
+                        phone_numbers.c.user_id == func.uuid(str(user.user_id))
+                    )
+                )
+                connection.execute(
+                    drill_statuses.delete().where(
+                        drill_statuses.c.user_id == func.uuid(str(user.user_id))
+                    )
+                )
+                connection.execute(
+                    drill_instances.delete().where(
+                        drill_instances.c.user_id == func.uuid(str(user.user_id))
+                    )
+                )
+                connection.execute(
+                    users.delete().where(users.c.user_id == func.uuid(str(user.user_id)))
+                )
+                return user.user_id
+
+    def get_user_for_phone_number(self, phone_number: str, connection=None) -> Optional[User]:
+        if connection is None:
+            connection = self.engine
         result = connection.execute(
             select([users])
             .select_from(users.join(phone_numbers, users.c.user_id == phone_numbers.c.user_id))
@@ -351,7 +384,9 @@ class DrillProgressRepository:
             seq=row["seq"],
         )
 
-    def _create_or_update_user(self, batch: DialogEventBatch, connection) -> uuid.UUID:
+    def _create_or_update_user(
+        self, batch: DialogEventBatch, ensure_user_id: Optional[uuid.UUID], connection
+    ) -> uuid.UUID:
         event = batch.events[-1]
         phone_number = event.phone_number
         profile = event.user_profile.json_serialize()
@@ -362,6 +397,8 @@ class DrillProgressRepository:
         if row is None:
             logging.info(f"No record of {phone_number}. Creating a new entry.")
             user_record = User(profile=profile, seq=batch.seq)
+            if ensure_user_id:
+                user_record.user_id = ensure_user_id
             phone_number_record = PhoneNumber(
                 phone_number=phone_number, user_id=user_record.user_id
             )

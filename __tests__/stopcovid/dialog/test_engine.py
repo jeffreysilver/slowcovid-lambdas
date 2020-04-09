@@ -1,4 +1,5 @@
 import datetime
+import logging
 import unittest
 import uuid
 from unittest.mock import MagicMock, patch, Mock
@@ -46,6 +47,7 @@ DRILL = Drill(
 @patch("stopcovid.dialog.engine.get_drill", return_value=DRILL)
 class TestProcessCommand(unittest.TestCase):
     def setUp(self) -> None:
+        logging.disable(logging.CRITICAL)
         self.phone_number = "123456789"
         self.dialog_state = DialogState(phone_number=self.phone_number, seq="0")
         self.drill = DRILL

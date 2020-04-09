@@ -28,6 +28,7 @@ class TestReminderTriggers(unittest.TestCase):
                 seq="0",
                 batch_id=uuid.uuid4(),
             ),
+            None,
             self.drill_progress_repo.engine,
         )
         self.reminder_trigger_repo = ReminderTriggerRepository(db.get_test_sqlalchemy_engine)
