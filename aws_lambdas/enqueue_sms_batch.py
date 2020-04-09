@@ -8,11 +8,11 @@ from stopcovid.send_sms.enqueue_outbound_sms import enqueue_outbound_sms_command
 from stopcovid.utils.logging import configure_logging
 from stopcovid.utils.verify_deploy_stage import verify_deploy_stage
 
-verify_deploy_stage()
 configure_logging()
 
 
 def handler(event, context):
+    verify_deploy_stage()
     event_batches = [
         batch_from_dict(dynamodb_utils.deserialize(record["dynamodb"]["NewImage"]))
         for record in event["Records"]

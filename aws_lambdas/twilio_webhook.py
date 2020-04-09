@@ -14,11 +14,11 @@ from stopcovid.utils import dynamodb as dynamodb_utils
 from stopcovid.utils.logging import configure_logging
 from stopcovid.utils.verify_deploy_stage import verify_deploy_stage
 
-verify_deploy_stage()
 configure_logging()
 
 
 def handler(event, context):
+    verify_deploy_stage()
     kinesis = boto3.client("kinesis")
     stage = os.environ["STAGE"]
 

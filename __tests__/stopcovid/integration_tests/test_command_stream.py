@@ -14,6 +14,8 @@ __location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file
 @patch("stopcovid.dialog.command_stream.command_stream.process_command")
 class TestHandleCommand(unittest.TestCase):
     def setUp(self) -> None:
+        os.environ["STAGE"] = "TEST"
+        os.environ["DEPLOY_STAGE"] = "TEST"
         logging.disable(logging.CRITICAL)
 
     def test_inbound_sms(self, process_command_mock):

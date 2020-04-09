@@ -5,7 +5,6 @@ from stopcovid.dialog.command_stream.command_stream import handle_inbound_comman
 from stopcovid.utils.logging import configure_logging
 from stopcovid.utils.verify_deploy_stage import verify_deploy_stage
 
-verify_deploy_stage()
 configure_logging()
 
 
@@ -21,6 +20,7 @@ def _make_inbound_command(record):
 
 
 def handler(event, context):
+    verify_deploy_stage()
     inbound_commands = [_make_inbound_command(record) for record in event["Records"]]
     handle_inbound_commands(inbound_commands)
     return {"statusCode": 200}
