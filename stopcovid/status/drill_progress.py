@@ -320,7 +320,9 @@ class DrillProgressRepository:
         if cur_drill_progress is not None:
             yield cur_drill_progress
 
-    def get_progress_for_user(self, user_id: uuid.UUID, phone_number: str) -> DrillProgress:
+    def get_progress_for_user(self, phone_number: str) -> DrillProgress:
+        user = self._get_user_for_phone_number(phone_number, self.engine)
+        user_id = user.user_id
         result = self.engine.execute(
             select([drill_statuses])
             .where(drill_statuses.c.user_id == func.uuid((str(user_id))))

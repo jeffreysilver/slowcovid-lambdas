@@ -111,6 +111,12 @@ def rebuild_drill_progress(args):
     print("Done")
 
 
+def show_drill_progress(args):
+    drill_progress_repo = get_drill_progress_repo(args.stage)
+    progress = drill_progress_repo.get_progress_for_user(args.phone_number)
+    print(progress)
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--stage", choices=["dev", "prod"], required=True)
@@ -123,12 +129,18 @@ def main():
     sqs_parser.add_argument("queue", choices=["sms", "drill-initiation"])
     sqs_parser.set_defaults(func=handle_redrive_sqs)
 
-    rebuild_status_parser = subparsers.add_parser(
+    rebuild_progress_parser = subparsers.add_parser(
         "rebuild-drill-progress",
         description="rebuild drill progress information for the user in aurora",
     )
-    rebuild_status_parser.add_argument("phone_number")
-    rebuild_status_parser.set_defaults(func=rebuild_drill_progress)
+    rebuild_progress_parser.add_argument("phone_number")
+    rebuild_progress_parser.set_defaults(func=rebuild_drill_progress)
+
+    show_progress_parser = subparsers.add_parser(
+        "show-drill-progress", description="print information on a user's drill progress"
+    )
+    show_progress_parser.add_argument("phone_number")
+    show_progress_parser.set_defaults(func=show_drill_progress)
 
     args = parser.parse_args(sys.argv if len(sys.argv) == 1 else None)
     args.func(args)

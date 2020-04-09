@@ -23,17 +23,13 @@ class DrillInitiator:
     def trigger_first_drill(self, phone_number: str, idempotency_key: str):
         self.trigger_drill(phone_number, FIRST_DRILL_SLUG, idempotency_key)
 
-    def trigger_next_drill_for_user(
-        self, user_id: uuid.UUID, phone_number: str, idempotency_key: str
-    ):
-        drill_progress = self.drill_progress_repository.get_progress_for_user(user_id, phone_number)
+    def trigger_next_drill_for_user(self, phone_number: str, idempotency_key: str):
+        drill_progress = self.drill_progress_repository.get_progress_for_user(phone_number)
         drill_slug = drill_progress.next_drill_slug_to_trigger()
         self.trigger_drill(phone_number, drill_slug, idempotency_key)
 
-    def trigger_drill_if_not_stale(
-        self, user_id: uuid.UUID, phone_number: str, drill_slug: str, idempotency_key: str
-    ):
-        drill_progress = self.drill_progress_repository.get_progress_for_user(user_id, phone_number)
+    def trigger_drill_if_not_stale(self, phone_number: str, drill_slug: str, idempotency_key: str):
+        drill_progress = self.drill_progress_repository.get_progress_for_user(phone_number)
         if drill_progress.next_drill_slug_to_trigger() != drill_slug:
             # the request is stale. Since it was enqueued, the user has started or
             # completed a drill.

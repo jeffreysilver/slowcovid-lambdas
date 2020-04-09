@@ -1,3 +1,4 @@
+import logging
 import os
 import unittest
 import uuid
@@ -10,6 +11,7 @@ from stopcovid.status.drill_progress import DrillProgress
 @patch("stopcovid.dialog.command_stream.publish.CommandPublisher.publish_start_drill_command")
 class TestInitiation(unittest.TestCase):
     def setUp(self):
+        logging.disable(logging.CRITICAL)
         os.environ["STAGE"] = "test"
         self.initiator = DrillInitiator(
             region_name="us-west-2",
@@ -43,10 +45,10 @@ class TestInitiation(unittest.TestCase):
                 first_unstarted_drill_slug="03-hand-washing-how",
             ),
         ):
-            self.initiator.trigger_next_drill_for_user(user_id, phone_number, idempotency_key)
+            self.initiator.trigger_next_drill_for_user(phone_number, idempotency_key)
             publish_mock.assert_called_once_with(phone_number, "03-hand-washing-how")
             publish_mock.reset_mock()
-            self.initiator.trigger_next_drill_for_user(user_id, phone_number, idempotency_key)
+            self.initiator.trigger_next_drill_for_user(phone_number, idempotency_key)
             publish_mock.assert_not_called()
 
     def test_trigger_drill_if_not_stale(self, publish_mock):
@@ -62,10 +64,10 @@ class TestInitiation(unittest.TestCase):
                 first_unstarted_drill_slug="03-hand-washing-how",
             ),
         ):
-            self.initiator.trigger_drill_if_not_stale(user_id, phone_number, "01-basics", "foo")
+            self.initiator.trigger_drill_if_not_stale(phone_number, "01-basics", "foo")
             publish_mock.assert_not_called()
             self.initiator.trigger_drill_if_not_stale(
-                user_id, phone_number, "03-hand-washing-how", str(uuid.uuid4())
+                phone_number, "03-hand-washing-how", str(uuid.uuid4())
             )
             publish_mock.assert_called_once_with(phone_number, "03-hand-washing-how")
 

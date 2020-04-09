@@ -1,3 +1,4 @@
+import logging
 import unittest
 import uuid
 from copy import copy
@@ -21,6 +22,7 @@ from stopcovid.status.drill_progress import DrillProgressRepository, ALL_DRILL_S
 
 class TestUsers(unittest.TestCase):
     def setUp(self):
+        logging.disable(logging.CRITICAL)
         self.repo = DrillProgressRepository(get_test_sqlalchemy_engine)
         self.repo.drop_and_recreate_tables_testing_only()
         self.phone_number = "123456789"
@@ -264,9 +266,7 @@ class TestUsers(unittest.TestCase):
         )
         self.repo.update_user(self._make_batch([event]))
 
-        drill_progress = self.repo.get_progress_for_user(
-            user_id=user_id, phone_number=self.phone_number
-        )
+        drill_progress = self.repo.get_progress_for_user(phone_number=self.phone_number)
         self.assertEqual(
             DrillProgress(
                 user_id=user_id,
@@ -285,9 +285,7 @@ class TestUsers(unittest.TestCase):
             - datetime.timedelta(minutes=31),
         )
         self.repo.update_user(self._make_batch([event2]))
-        drill_progress = self.repo.get_progress_for_user(
-            user_id=user_id, phone_number=self.phone_number
-        )
+        drill_progress = self.repo.get_progress_for_user(phone_number=self.phone_number)
         self.assertEqual(
             DrillProgress(
                 user_id=user_id,
