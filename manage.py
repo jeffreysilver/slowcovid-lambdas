@@ -133,8 +133,9 @@ def replay_message_stream(args):
     shards = kinesis.list_shards(StreamName=stream_name)["Shards"]
     engine_factory = db_engine_factory(args.stage)
     for shard in shards:
+        shard_id = shard["ShardId"]
         shard_iterator = kinesis.get_shard_iterator(
-            StreamName=stream_name, ShardId=shard["ShardId"], ShardIteratorType="TRIM_HORIZON"
+            StreamName=stream_name, ShardId=shard_id, ShardIteratorType="TRIM_HORIZON"
         )
         next_shard_iterator = shard_iterator["ShardIterator"]
         milliseconds_from_tip = 24 * 60 * 60 * 1000
@@ -149,7 +150,9 @@ def replay_message_stream(args):
                 )
                 for command in raw_commands
             ]
-            print(f"{milliseconds_from_tip} from tip of shard. Handling {len(commands)} commands")
+            print(
+                f"{milliseconds_from_tip} from tip of shard {shard_id}. Handling {len(commands)} commands"
+            )
             if commands:
                 log_messages(commands, engine_factory)
 
