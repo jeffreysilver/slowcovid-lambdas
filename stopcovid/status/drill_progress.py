@@ -354,7 +354,7 @@ class DrillProgressRepository:
     def _create_or_update_user(self, batch: DialogEventBatch, connection) -> uuid.UUID:
         event = batch.events[-1]
         phone_number = event.phone_number
-        profile = event.user_profile
+        profile = event.user_profile.json_serialize()
         result = connection.execute(
             select([phone_numbers]).where(phone_numbers.c.phone_number == phone_number)
         )
@@ -367,9 +367,7 @@ class DrillProgressRepository:
             )
             connection.execute(
                 users.insert().values(
-                    user_id=str(user_record.user_id),
-                    profile=user_record.profile.json_serialize(),
-                    seq=batch.seq,
+                    user_id=str(user_record.user_id), profile=user_record.profile, seq=batch.seq,
                 )
             )
             connection.execute(
@@ -404,7 +402,7 @@ class DrillProgressRepository:
         connection.execute(
             users.update()
             .where(users.c.user_id == func.uuid(str(phone_number_record.user_id)))
-            .values(profile=profile.json_serialize(), seq=batch.seq,)
+            .values(profile=profile, seq=batch.seq,)
         )
         return phone_number_record.user_id
 
