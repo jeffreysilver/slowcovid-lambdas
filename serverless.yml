@@ -85,7 +85,7 @@ functions:
               - Arn
           startingPosition: LATEST
           maximumRetryAttempts: 5
-          destinationConfig:
+          destinations:
             onFailure:
               Fn::GetAtt:
                 - CommandFailureQueue
