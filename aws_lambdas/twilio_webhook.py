@@ -49,7 +49,11 @@ def handler(event, context):
         )
 
     record_as_processed(idempotency_key, stage)
-    return MessagingResponse()
+    return {
+        "statusCode": 200,
+        "headers": {"content-type": "application/xml"},
+        "body": MessagingResponse(),
+    }
 
 
 def extract_form(event):
