@@ -8,7 +8,7 @@ def _is_running_unit_tests():
 
 def configure_logging():
     if _is_running_unit_tests():
-        logging.disable()
+        logging.disable(logging.CRITICAL)
         return
 
     root = logging.getLogger()
