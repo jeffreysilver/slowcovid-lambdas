@@ -18,6 +18,8 @@ def is_not_letter_answer(text: str) -> bool:
 
 def is_correct_response(user_response: str, correct_response: str) -> bool:
     clean_user_response = tokenize(user_response)
+    if not clean_user_response:
+        return False
     clean_correct_response = tokenize(correct_response)
     allowed_error = (
         math.floor(len("".join([w for w in clean_correct_response if is_not_letter_answer(w)])) / 4)

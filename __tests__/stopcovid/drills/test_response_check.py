@@ -29,3 +29,7 @@ class TestResponseCheck(unittest.TestCase):
                 is_correct_response(user_supplied, correct),
                 f"User-supplied: {user_supplied}, Correct: {correct}," f" Expected: {expected}",
             )
+
+    def test_empty(self):
+        self.assertFalse(is_correct_response("", "b) 2-3 pumps"))
+        self.assertFalse(is_correct_response(" ", "b) 2-3 pumps"))
