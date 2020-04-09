@@ -2,6 +2,7 @@ import argparse
 import sys
 import uuid
 from typing import Iterator
+import json
 
 import boto3
 from sqlalchemy import create_engine
@@ -10,6 +11,8 @@ from stopcovid.dialog.models.events import batch_from_dict, DialogEventBatch
 from stopcovid.status.drill_progress import DrillProgressRepository
 from stopcovid.utils import dynamodb as dynamodb_utils
 from stopcovid.utils.logging import configure_logging
+from stopcovid.message_log.types import LogMessageCommandSchema
+from stopcovid.message_log.message_log import log_messages
 
 configure_logging()
 
@@ -118,10 +121,37 @@ def show_drill_progress(args):
     print(f"{args.phone_number}:")
     print(f"\tid={user.user_id}")
     print(f"\tseq={user.seq}")
-    print(f"\taccount_info={user.account_info}")
+    print(f"\tprofile={user.profile}")
     print(f"\tlast_interacted_time={user.last_interacted_time.isoformat()}")
     print(f"\tfirst_unstarted_drill_slug={progress.first_unstarted_drill_slug}")
     print(f"\tfirst_incomplete_drill_slug={progress.first_incomplete_drill_slug}")
+
+
+def replay_message_stream(args):
+    kinesis = boto3.client("kinesis")
+    stream_name = f"message-log-{args.stage}"
+    shards = kinesis.list_shards(StreamName=stream_name)["Shards"]
+    engine_factory = db_engine_factory(args.stage)
+    for shard in shards:
+        shard_iterator = kinesis.get_shard_iterator(
+            StreamName=stream_name, ShardId=shard["ShardId"], ShardIteratorType="TRIM_HORIZON"
+        )
+        next_shard_iterator = shard_iterator["ShardIterator"]
+        milliseconds_from_tip = 24 * 60 * 60 * 1000
+        while milliseconds_from_tip > 0:
+            response = kinesis.get_records(ShardIterator=next_shard_iterator)
+            next_shard_iterator = response["NextShardIterator"]
+            milliseconds_from_tip = response["MillisBehindLatest"]
+            raw_commands = [json.loads(record["Data"]) for record in response["Records"]]
+            commands = [
+                LogMessageCommandSchema().load(
+                    {"command_type": command["type"], "payload": command["payload"]}
+                )
+                for command in raw_commands
+            ]
+            print(f"{milliseconds_from_tip} from tip of shard. Handling {len(commands)} commands")
+            if commands:
+                log_messages(commands, engine_factory)
 
 
 def main():
@@ -148,6 +178,11 @@ def main():
     )
     show_progress_parser.add_argument("phone_number")
     show_progress_parser.set_defaults(func=show_drill_progress)
+
+    replay_message_stream_parser = subparsers.add_parser(
+        "replay-message-stream", description="Replay all messages in the message-log stream"
+    )
+    replay_message_stream_parser.set_defaults(func=replay_message_stream)
 
     args = parser.parse_args(sys.argv if len(sys.argv) == 1 else None)
     args.func(args)
