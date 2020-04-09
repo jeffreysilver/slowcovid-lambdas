@@ -25,6 +25,7 @@ class TestMessageLog(unittest.TestCase):
                     "MessageSid": "twi-1",
                     "MessageStatus": "delivered",
                     "From": "+1444333222",
+                    "To": "+10009998888",
                 },
             ),
             LogMessageCommand(
@@ -53,9 +54,10 @@ class TestMessageLog(unittest.TestCase):
         self.assertEqual(upserts[0]["status"], commands[0].payload["MessageStatus"])
         self.assertEqual(upserts[0]["body"], commands[0].payload["Body"])
 
-        self.assertEqual(len(upserts[1].keys()), 3)
+        self.assertEqual(len(upserts[1].keys()), 4)
         self.assertEqual(upserts[1]["twilio_message_id"], commands[0].payload["MessageSid"])
         self.assertEqual(upserts[1]["from_number"], commands[1].payload["From"])
+        self.assertEqual(upserts[1]["to_number"], commands[1].payload["To"])
         self.assertEqual(upserts[1]["status"], commands[1].payload["MessageStatus"])
 
         self.assertEqual(len(upserts[2].keys()), 5)

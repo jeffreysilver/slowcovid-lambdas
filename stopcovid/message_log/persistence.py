@@ -17,7 +17,7 @@ messages = Table(
     Column("twilio_message_id", String, nullable=False, index=True, unique=True),
     Column("from_number", String, nullable=True, index=True),
     Column("to_number", String, nullable=False, index=True),
-    Column("body", String, nullable=False, index=True),
+    Column("body", String, nullable=True, index=True),
     Column("status", String, nullable=False, index=True),
 )
 
@@ -43,11 +43,26 @@ class MessageRepository:
                     if row is None:
                         connection.execute(insert(messages).values(**_prep_insert(value)))
                     else:
+                        current_status = row["status"]
+                        if self._is_more_recent(current_status, value["status"]):
+                            value["status"] = current_status
+
                         connection.execute(
                             messages.update()
                             .where(messages.c.twilio_message_id == message_id)
                             .values(**value)
                         )
+
+    def _is_more_recent(self, status1: str, status2: str) -> bool:
+        status_ranks = {
+            "accepted": 0,
+            "queued": 1,
+            "sent": 2,
+            "delivered": 3,
+            "undelivered": 3,
+            "failed": 3,
+        }
+        return status_ranks[status1.lower()] > status_ranks[status2.lower()]
 
     def _get_messages(self):
         results = self.engine.execute(select([messages]))

@@ -11,6 +11,7 @@ def _command_to_dict(command: LogMessageCommand):
             "twilio_message_id": command.payload["MessageSid"],
             "status": command.payload["MessageStatus"],
             "from_number": command.payload["From"],
+            "to_number": command.payload["To"],
         }
     return {
         "twilio_message_id": command.payload["MessageSid"],
