@@ -1,7 +1,6 @@
 import uuid
 import datetime
-from decimal import Decimal
-from dataclasses import dataclass, field, asdict
+from dataclasses import dataclass, field
 from typing import Optional, Dict, Any
 
 from marshmallow import Schema, fields, post_load
@@ -10,12 +9,25 @@ from stopcovid.dialog.models import SCHEMA_VERSION
 from stopcovid.drills import drills
 
 
+class AccountInfoField(fields.Mapping):
+    def _serialize(self, value, attr, obj, **kwargs):
+        if "employer_id" in value:
+            value["employer_id"] = int(value["employer_id"])
+
+        if "unit_id" in value:
+            value["unit_id"] = int(value["unit_id"])
+        return value
+
+    def _deserialize(self, value, attr, data, **kwargs):
+        return value
+
+
 class UserProfileSchema(Schema):
     validated = fields.Boolean(required=True)
     opted_out = fields.Boolean(missing=False)
     language = fields.Str(allow_none=True)
     name = fields.Str(allow_none=True)
-    account_info = fields.Mapping(keys=fields.Str(), allow_none=True)
+    account_info = AccountInfoField(keys=fields.Str(), allow_none=True)
     is_demo = fields.Boolean()
     self_rating_1 = fields.Str(allow_none=True)
     self_rating_2 = fields.Str(allow_none=True)
@@ -49,21 +61,8 @@ class UserProfile:
     def __str__(self):
         return f"lang={self.language}, validated={self.validated}, " f"name={self.name}"
 
-    def json_serialize(self):
-        base = asdict(self)
-
-        def recursive_jsonify(obj):
-            for key in obj:
-                val = obj[key]
-                if isinstance(val, dict):
-                    obj[key] = recursive_jsonify(val)
-                if isinstance(val, Decimal):
-                    obj[key] = int(val)
-                if isinstance(val, uuid.UUID):
-                    obj[key] = str(val)
-            return obj
-
-        return recursive_jsonify(base)
+    def to_dict(self):
+        return UserProfileSchema().dump(self)
 
 
 class PromptStateSchema(Schema):

@@ -1,5 +1,4 @@
 import unittest
-import uuid
 from decimal import Decimal
 
 
@@ -13,14 +12,20 @@ class TestUserProfile(unittest.TestCase):
             is_demo=True,
             name="Devin Booker",
             language="en",
-            account_info={"employer_id": Decimal(91), "a_uuid": uuid.uuid4()},
+            account_info={"employer_id": Decimal(91), "unit_id": Decimal(19)},
         )
         expected = {
             "validated": True,
             "is_demo": True,
             "name": "Devin Booker",
             "language": "en",
-            "account_info": {"employer_id": 91, "a_uuid": str(profile.account_info["a_uuid"])},
+            "account_info": {"employer_id": 91, "unit_id": 19},
             "opted_out": False,
         }
-        self.assertDictContainsSubset(expected, profile.json_serialize())
+
+        print(profile.to_dict())
+        self.assertDictContainsSubset(expected, profile.to_dict())
+        # self.assertTrue(set(expected.items()).issubset( set(profile.to_dict().items()) ))
+        # And changes are immutabe
+        assert expected.items() <= profile.to_dict().items()
+        self.assertEqual(profile.account_info["employer_id"], Decimal(91))

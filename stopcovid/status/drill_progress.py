@@ -389,7 +389,7 @@ class DrillProgressRepository:
     ) -> uuid.UUID:
         event = batch.events[-1]
         phone_number = event.phone_number
-        profile = event.user_profile.json_serialize()
+        profile = event.user_profile.to_dict()
         result = connection.execute(
             select([phone_numbers]).where(phone_numbers.c.phone_number == phone_number)
         )
