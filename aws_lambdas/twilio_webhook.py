@@ -9,13 +9,16 @@ import boto3
 from twilio.request_validator import RequestValidator
 
 from stopcovid.dialog.command_stream.publish import CommandPublisher
-from stopcovid.utils.logging import configure_logging
 from stopcovid.utils import dynamodb as dynamodb_utils
+
+from stopcovid.utils.logging import configure_logging
+from stopcovid.utils.verify_deploy_stage import verify_deploy_stage
 
 configure_logging()
 
 
 def handler(event, context):
+    verify_deploy_stage()
     kinesis = boto3.client("kinesis")
     stage = os.environ["STAGE"]
 
