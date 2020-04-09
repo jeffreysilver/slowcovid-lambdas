@@ -44,32 +44,6 @@ class TestMessageRepository(unittest.TestCase):
                 "twilio_message_id": "twi-1",
                 "from_number": "9998883333",
                 "to_number": "1113334444",
-                "status": "delivered",
-            },
-            {
-                "twilio_message_id": "twi-1",
-                "from_number": "9998883333",
-                "to_number": "1113334444",
-                "body": "Good morning",
-                "status": "sent",
-            },
-        ]
-
-        self.repo.upsert_messages(messages)
-        persisted_messages = self.repo._get_messages()
-        self.assertEqual(len(persisted_messages), 1)
-        self.assertEqual(persisted_messages[0]["twilio_message_id"], "twi-1")
-        self.assertEqual(persisted_messages[0]["from_number"], "9998883333")
-        self.assertEqual(persisted_messages[0]["to_number"], "1113334444")
-        self.assertEqual(persisted_messages[0]["body"], "Good morning")
-        self.assertEqual(persisted_messages[0]["status"], "delivered")
-
-    def test_update_out_of_order(self):
-        messages = [
-            {
-                "twilio_message_id": "twi-1",
-                "from_number": "9998883333",
-                "to_number": "1113334444",
                 "body": "Good morning",
                 "status": "sent",
             },
@@ -90,6 +64,32 @@ class TestMessageRepository(unittest.TestCase):
         self.assertEqual(persisted_messages[0]["to_number"], "1113334444")
         self.assertEqual(persisted_messages[0]["body"], "Good morning")
         # status is updated from second upsert
+        self.assertEqual(persisted_messages[0]["status"], "delivered")
+
+    def test_update_message_out_of_order(self):
+        messages = [
+            {
+                "twilio_message_id": "twi-1",
+                "from_number": "9998883333",
+                "to_number": "1113334444",
+                "status": "delivered",
+            },
+            {
+                "twilio_message_id": "twi-1",
+                "from_number": "9998883333",
+                "to_number": "1113334444",
+                "body": "Good morning",
+                "status": "sent",
+            },
+        ]
+
+        self.repo.upsert_messages(messages)
+        persisted_messages = self.repo._get_messages()
+        self.assertEqual(len(persisted_messages), 1)
+        self.assertEqual(persisted_messages[0]["twilio_message_id"], "twi-1")
+        self.assertEqual(persisted_messages[0]["from_number"], "9998883333")
+        self.assertEqual(persisted_messages[0]["to_number"], "1113334444")
+        self.assertEqual(persisted_messages[0]["body"], "Good morning")
         self.assertEqual(persisted_messages[0]["status"], "delivered")
 
     def test_upsert_with_incomplete_data_on_insert(self):
