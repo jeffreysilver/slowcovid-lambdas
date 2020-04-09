@@ -9,7 +9,7 @@ from stopcovid.dialog.models.state import UserProfile
 from stopcovid.dialog.registration import CodeValidationPayload
 from stopcovid.trigger_reminders.persistence import ReminderTriggerRepository
 from stopcovid.trigger_reminders.trigger_reminders import ReminderTriggerer
-from stopcovid.status.drill_progress import DrillProgressRepository
+from stopcovid.drill_progress.drill_progress import DrillProgressRepository
 from __tests__.utils.factories import make_drill_instance
 
 

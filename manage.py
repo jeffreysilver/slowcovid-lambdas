@@ -8,7 +8,7 @@ import boto3
 from sqlalchemy import create_engine
 
 from stopcovid.dialog.models.events import batch_from_dict, DialogEventBatch
-from stopcovid.status.drill_progress import DrillProgressRepository
+from stopcovid.drill_progress.drill_progress import DrillProgressRepository
 from stopcovid.utils import dynamodb as dynamodb_utils
 from stopcovid.utils.logging import configure_logging
 from stopcovid.message_log.types import LogMessageCommandSchema

@@ -4,7 +4,7 @@ import uuid
 from unittest.mock import patch, MagicMock
 
 from stopcovid.dialog.command_stream.publish import CommandPublisher
-from stopcovid.status.drill_progress import DrillInstance
+from stopcovid.drill_progress.drill_progress import DrillInstance
 
 
 class TestCommandPublisher(unittest.TestCase):

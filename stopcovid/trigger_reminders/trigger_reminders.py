@@ -1,6 +1,6 @@
 import os
 
-from stopcovid.status.drill_progress import DrillProgressRepository
+from stopcovid.drill_progress.drill_progress import DrillProgressRepository
 
 from . import persistence
 from ..dialog.command_stream.publish import CommandPublisher

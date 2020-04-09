@@ -1,6 +1,6 @@
 import datetime
 import uuid
-from stopcovid.status.drill_progress import DrillInstance
+from stopcovid.drill_progress.drill_progress import DrillInstance
 
 
 def make_drill_instance(**overrides) -> DrillInstance:

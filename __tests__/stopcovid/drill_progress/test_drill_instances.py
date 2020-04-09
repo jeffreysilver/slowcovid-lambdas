@@ -16,7 +16,7 @@ from stopcovid.dialog.models.events import (
 from stopcovid.dialog.registration import CodeValidationPayload
 from stopcovid.dialog.models.state import UserProfile
 from stopcovid.drills.drills import Drill, Prompt
-from stopcovid.status.drill_progress import DrillProgressRepository, DrillInstance
+from stopcovid.drill_progress.drill_progress import DrillProgressRepository, DrillInstance
 from stopcovid import db
 from __tests__.utils.factories import make_drill_instance
 
