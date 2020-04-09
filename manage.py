@@ -104,10 +104,10 @@ def get_drill_progress_repo(stage: str) -> DrillProgressRepository:
 
 def rebuild_drill_progress(args):
     drill_progress_repo = get_drill_progress_repo(args.stage)
-    drill_progress_repo.delete_user_info(args.phone_number)
+    user_id = drill_progress_repo.delete_user_info(args.phone_number)
     for batch in _get_dialog_events(args.phone_number, args.stage):
         print(f"{batch.batch_id}: {batch.seq}")
-        drill_progress_repo.update_user(batch)
+        drill_progress_repo.update_user(batch, ensure_user_id=user_id)
     print("Done")
 
 

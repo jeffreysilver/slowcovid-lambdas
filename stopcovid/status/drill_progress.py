@@ -216,7 +216,9 @@ class DrillProgressRepository:
             completed_time=row["completed_time"],
         )
 
-    def update_user(self, batch: DialogEventBatch) -> uuid.UUID:  # noqa: C901
+    def update_user(
+        self, batch: DialogEventBatch, ensure_user_id=Optional[uuid.UUID]
+    ) -> uuid.UUID:  # noqa: C901
         logging.info(f"Updating {batch.phone_number} at seq {batch.seq}")
         with self.engine.connect() as connection:
             with connection.begin():
@@ -230,7 +232,7 @@ class DrillProgressRepository:
 
                 # also updates sequence number for the user, which won't be committed unless the
                 # transaction succeeds
-                user_id = self._create_or_update_user(batch, connection)
+                user_id = self._create_or_update_user(batch, ensure_user_id, connection)
 
                 for event in batch.events:
                     self._mark_interacted_time(user_id, event, connection)
@@ -336,13 +338,14 @@ class DrillProgressRepository:
                 progress.first_unstarted_drill_slug = row["drill_slug"]
         return progress
 
-    def delete_user_info(self, phone_number: str):
+    def delete_user_info(self, phone_number: str) -> Optional[uuid.UUID]:
         # useful for backfills and rebuilding users. Shouldn't be called regularly.
         with self.engine.connect() as connection:
             with connection.begin():
                 user = self.get_user_for_phone_number(phone_number, connection)
                 if user is None:
                     logging.info(f"No user exists for {phone_number}")
+                    return None
                 connection.execute(
                     phone_numbers.delete().where(
                         phone_numbers.c.user_id == func.uuid(str(user.user_id))
@@ -361,6 +364,7 @@ class DrillProgressRepository:
                 connection.execute(
                     users.delete().where(users.c.user_id == func.uuid(str(user.user_id)))
                 )
+                return user.user_id
 
     def get_user_for_phone_number(self, phone_number: str, connection=None) -> Optional[User]:
         if connection is None:
@@ -380,7 +384,9 @@ class DrillProgressRepository:
             seq=row["seq"],
         )
 
-    def _create_or_update_user(self, batch: DialogEventBatch, connection) -> uuid.UUID:
+    def _create_or_update_user(
+        self, batch: DialogEventBatch, ensure_user_id: Optional[uuid.UUID], connection
+    ) -> uuid.UUID:
         event = batch.events[-1]
         phone_number = event.phone_number
         profile = event.user_profile
@@ -392,6 +398,8 @@ class DrillProgressRepository:
         if row is None:
             logging.info(f"No record of {phone_number}. Creating a new entry.")
             user_record = User(account_info=profile.account_info, seq=batch.seq)
+            if ensure_user_id:
+                user_record.user_id = ensure_user_id
             phone_number_record = PhoneNumber(
                 phone_number=phone_number, user_id=user_record.user_id
             )
