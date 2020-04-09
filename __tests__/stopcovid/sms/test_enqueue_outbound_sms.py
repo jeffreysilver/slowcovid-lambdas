@@ -6,7 +6,7 @@ from typing import List
 from unittest.mock import patch, MagicMock
 
 from stopcovid.drills.localize import localize
-from stopcovid.send_sms.enqueue_outbound_sms import (
+from stopcovid.sms.enqueue_outbound_sms import (
     get_outbound_sms_commands,
     USER_VALIDATION_FAILED_COPY,
     CORRECT_ANSWER_COPY,
@@ -174,7 +174,7 @@ class TestHandleCommand(unittest.TestCase):
         self.assertEqual(outbound_messages[1].body, expected_messages[1])
 
 
-@patch("stopcovid.send_sms.enqueue_outbound_sms.boto3")
+@patch("stopcovid.sms.enqueue_outbound_sms.boto3")
 class TestPublishOutboundSMS(unittest.TestCase):
     def setUp(self) -> None:
         logging.disable(logging.CRITICAL)
