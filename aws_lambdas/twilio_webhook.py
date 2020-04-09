@@ -7,6 +7,7 @@ from urllib.parse import unquote_plus
 
 import boto3
 from twilio.request_validator import RequestValidator
+from twilio.twiml.messaging_response import MessagingResponse
 
 from stopcovid.dialog.command_stream.publish import CommandPublisher
 from stopcovid.utils import dynamodb as dynamodb_utils
@@ -48,7 +49,7 @@ def handler(event, context):
         )
 
     record_as_processed(idempotency_key, stage)
-    return {"statusCode": 200}
+    return MessagingResponse()
 
 
 def extract_form(event):
