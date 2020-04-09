@@ -87,9 +87,11 @@ functions:
           maximumRetryAttempts: 5
           destinations:
             onFailure:
-              Fn::GetAtt:
-                - CommandFailureQueue
-                - Arn
+              arn:
+                Fn::GetAtt:
+                  - CommandFailureQueue
+                  - Arn
+              type: sqs
     environment:
       DIALOG_TABLE_NAME_SUFFIX: ${self:provider.stage}
       REGISTRATION_VALIDATION_URL: https://eslworks-api-production.herokuapp.com/slowcovid/lookup
