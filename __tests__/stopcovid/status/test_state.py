@@ -23,9 +23,4 @@ class TestUserProfile(unittest.TestCase):
             "opted_out": False,
         }
 
-        print(profile.to_dict())
         self.assertDictContainsSubset(expected, profile.to_dict())
-        # self.assertTrue(set(expected.items()).issubset( set(profile.to_dict().items()) ))
-        # And changes are immutabe
-        assert expected.items() <= profile.to_dict().items()
-        self.assertEqual(profile.account_info["employer_id"], Decimal(91))
