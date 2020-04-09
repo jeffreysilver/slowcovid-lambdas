@@ -49,7 +49,7 @@ class TestUsers(unittest.TestCase):
                 )
             ],
         )
-        user_id = self.repo._create_or_update_user(batch, self.repo.engine)
+        user_id = self.repo._create_or_update_user(batch, None, self.repo.engine)
         user = self.repo.get_user(user_id)
         self.assertEqual(user_id, user.user_id)
         self.assertEqual({"employer_id": 123, "unit_id": 456}, user.account_info)
@@ -66,7 +66,7 @@ class TestUsers(unittest.TestCase):
             ]
         )
 
-        self.repo._create_or_update_user(batch2, self.repo.engine)
+        self.repo._create_or_update_user(batch2, None, self.repo.engine)
         user = self.repo.get_user(user_id)
         self.assertEqual({"foo": "bar", "one": "two"}, user.account_info)
         self.assertEqual(batch2.seq, user.seq)
@@ -82,6 +82,7 @@ class TestUsers(unittest.TestCase):
                     )
                 ]
             ),
+            None,
             self.repo.engine,
         )
 

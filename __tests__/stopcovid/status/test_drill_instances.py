@@ -40,6 +40,7 @@ class TestDrillInstances(unittest.TestCase):
                 seq="0",
                 batch_id=uuid.uuid4(),
             ),
+            None,
             self.repo.engine,
         )
         self.drill_instance = self._make_drill_instance()

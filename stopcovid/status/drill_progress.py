@@ -216,9 +216,9 @@ class DrillProgressRepository:
             completed_time=row["completed_time"],
         )
 
-    def update_user(
+    def update_user(  # noqa: C901
         self, batch: DialogEventBatch, ensure_user_id=Optional[uuid.UUID]
-    ) -> uuid.UUID:  # noqa: C901
+    ) -> uuid.UUID:
         logging.info(f"Updating {batch.phone_number} at seq {batch.seq}")
         with self.engine.connect() as connection:
             with connection.begin():
