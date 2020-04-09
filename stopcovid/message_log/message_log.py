@@ -22,6 +22,6 @@ def _command_to_dict(command: LogMessageCommand):
     }
 
 
-def log_messages(commands: List[LogMessageCommand], db_engine_factory=None):
-    message_repo = persistence.MessageRepository(engine_factory=db_engine_factory)
+def log_messages(commands: List[LogMessageCommand], **kwargs):
+    message_repo = persistence.MessageRepository(**kwargs)
     message_repo.upsert_messages([_command_to_dict(c) for c in commands])

@@ -156,7 +156,7 @@ def replay_message_stream(args):
                 f"{milliseconds_from_tip} from tip of shard {shard_id}. Handling {len(commands)} commands"
             )
             if commands:
-                log_messages(commands, engine_factory)
+                log_messages(commands, engine_factory=engine_factory)
 
 
 def main():
