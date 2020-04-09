@@ -7,8 +7,8 @@ from stopcovid import db
 from stopcovid.dialog.models.events import DialogEventBatch, UserValidated
 from stopcovid.dialog.models.state import UserProfile
 from stopcovid.dialog.registration import CodeValidationPayload
-from stopcovid.trigger_reminders.persistence import ReminderTriggerRepository
-from stopcovid.trigger_reminders.trigger_reminders import ReminderTriggerer
+from stopcovid.drill_progress.trigger_reminders.persistence import ReminderTriggerRepository
+from stopcovid.drill_progress.trigger_reminders.trigger_reminders import ReminderTriggerer
 from stopcovid.drill_progress.drill_progress import DrillProgressRepository
 from __tests__.utils.factories import make_drill_instance
 
@@ -34,13 +34,13 @@ class TestReminderTriggers(unittest.TestCase):
         self.reminder_trigger_repo = ReminderTriggerRepository(db.get_test_sqlalchemy_engine)
         self.reminder_trigger_repo.drop_and_recreate_tables_testing_only()
         reminder_db_patch = patch(
-            "stopcovid.trigger_reminders.trigger_reminders.ReminderTriggerer._get_reminder_trigger_repo",
+            "stopcovid.drill_progress.trigger_reminders.trigger_reminders.ReminderTriggerer._get_reminder_trigger_repo",
             return_value=self.reminder_trigger_repo,
         )
         reminder_db_patch.start()
 
         drill_db_patch = patch(
-            "stopcovid.trigger_reminders.trigger_reminders.ReminderTriggerer._get_drill_progress_repo",
+            "stopcovid.drill_progress.trigger_reminders.trigger_reminders.ReminderTriggerer._get_drill_progress_repo",
             return_value=self.drill_progress_repo,
         )
         drill_db_patch.start()

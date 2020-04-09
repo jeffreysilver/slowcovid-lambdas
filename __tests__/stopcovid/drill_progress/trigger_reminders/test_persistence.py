@@ -3,7 +3,7 @@ import uuid
 
 
 from stopcovid import db
-from stopcovid.trigger_reminders.persistence import ReminderTriggerRepository
+from stopcovid.drill_progress.trigger_reminders.persistence import ReminderTriggerRepository
 from __tests__.utils.factories import make_drill_instance
 
 
