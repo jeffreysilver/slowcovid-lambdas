@@ -1,7 +1,6 @@
 import datetime
 import logging
 import os
-import uuid
 
 import boto3
 from stopcovid.utils import dynamodb as dynamodb_utils

@@ -15,7 +15,7 @@ def handle_dialog_event_batches(batches: List[DialogEventBatch]):
 
     user_repo = DrillProgressRepository()
     for batch in batches:
-        user_id = user_repo.update_user(batch)
+        user_repo.update_user(batch)
         if initiates_subsequent_drill(batch):
             initiator.trigger_next_drill_for_user(batch.phone_number, str(batch.batch_id))
 
