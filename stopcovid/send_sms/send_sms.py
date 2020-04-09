@@ -5,7 +5,7 @@ import json
 
 from typing import List
 
-from stopcovid.clients import twilio
+from . import twilio
 from stopcovid.send_sms.types import SMSBatch
 
 from . import publish
