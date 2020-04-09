@@ -52,7 +52,7 @@ def handler(event, context):
     return {
         "statusCode": 200,
         "headers": {"content-type": "application/xml"},
-        "body": MessagingResponse(),
+        "body": str(MessagingResponse()),
     }
 
 
