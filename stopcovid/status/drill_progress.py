@@ -334,6 +334,32 @@ class DrillProgressRepository:
                 progress.first_unstarted_drill_slug = row["drill_slug"]
         return progress
 
+    def delete_user_info(self, phone_number: str):
+        # useful for backfills and rebuilding users. Shouldn't be called regularly.
+        with self.engine.connect() as connection:
+            with connection.begin():
+                user = self._get_user_for_phone_number(phone_number, connection)
+                if user is None:
+                    logging.info(f"No user exists for {phone_number}")
+                connection.execute(
+                    phone_numbers.delete().where(
+                        phone_numbers.c.user_id == func.uuid(str(user.user_id))
+                    )
+                )
+                connection.execute(
+                    drill_statuses.delete().where(
+                        drill_statuses.c.user_id == func.uuid(str(user.user_id))
+                    )
+                )
+                connection.execute(
+                    drill_instances.delete().where(
+                        drill_instances.c.user_id == func.uuid(str(user.user_id))
+                    )
+                )
+                connection.execute(
+                    users.delete().where(users.c.user_id == func.uuid(str(user.user_id)))
+                )
+
     @staticmethod
     def _get_user_for_phone_number(phone_number: str, connection) -> Optional[User]:
         result = connection.execute(

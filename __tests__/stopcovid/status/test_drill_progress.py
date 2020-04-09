@@ -406,3 +406,19 @@ class TestUsers(unittest.TestCase):
             ),
             drill_progress2,
         )
+
+    def test_delete_user(self):
+        event = DrillStarted(
+            phone_number=self.phone_number,
+            user_profile=UserProfile(True),
+            drill=Drill(slug=ALL_DRILL_SLUGS[0], name="name", prompts=[]),
+            first_prompt=self.prompt,
+            created_time=datetime.datetime.now(datetime.timezone.utc)
+            - datetime.timedelta(minutes=32),
+        )
+        self.repo.update_user(self._make_batch([event]))
+        self.assertIsNotNone(
+            self.repo._get_user_for_phone_number(self.phone_number, self.repo.engine)
+        )
+        self.repo.delete_user_info(self.phone_number)
+        self.assertIsNone(self.repo._get_user_for_phone_number(self.phone_number, self.repo.engine))
