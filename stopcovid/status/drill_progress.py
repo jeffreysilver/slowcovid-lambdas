@@ -59,7 +59,7 @@ users = Table(
     metadata,
     Column("user_id", UUID, primary_key=True),
     Column("seq", String, nullable=False),
-    Column("profile", JSONB, nullable=True),
+    Column("profile", JSONB, nullable=False),
     Column("last_interacted_time", DateTime(timezone=True), index=True),
 )
 
