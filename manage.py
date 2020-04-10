@@ -11,8 +11,8 @@ from stopcovid.dialog.models.events import batch_from_dict, DialogEventBatch
 from stopcovid.drill_progress.drill_progress import DrillProgressRepository
 from stopcovid.utils import dynamodb as dynamodb_utils
 from stopcovid.utils.logging import configure_logging
-from stopcovid.message_log.types import LogMessageCommandSchema
-from stopcovid.message_log.message_log import log_messages
+from stopcovid.sms.message_log.types import LogMessageCommandSchema
+from stopcovid.sms.message_log.message_log import log_messages
 
 configure_logging()
 

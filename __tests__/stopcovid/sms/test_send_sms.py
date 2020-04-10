@@ -1,13 +1,13 @@
 import unittest
 from unittest.mock import patch
 
-from stopcovid.send_sms.types import SMSBatch, SMS
-from stopcovid.send_sms.send_sms import send_sms_batches
+from stopcovid.sms.types import SMSBatch, SMS
+from stopcovid.sms.send_sms import send_sms_batches
 
 
-@patch("stopcovid.send_sms.send_sms.publish")
-@patch("stopcovid.send_sms.send_sms.twilio")
-@patch("stopcovid.send_sms.send_sms.sleep")
+@patch("stopcovid.sms.send_sms.publish")
+@patch("stopcovid.sms.send_sms.twilio")
+@patch("stopcovid.sms.send_sms.sleep")
 class TestSendSMS(unittest.TestCase):
     def _get_twilio_call_args(self, twilio_mock):
         return [call[1] for call in twilio_mock.send_message.mock_calls]
