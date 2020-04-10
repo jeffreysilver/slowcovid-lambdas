@@ -1,9 +1,9 @@
 import os
 
-from stopcovid.status.drill_progress import DrillProgressRepository
+from stopcovid.drill_progress.drill_progress import DrillProgressRepository
 
 from . import persistence
-from ..dialog.command_stream.publish import CommandPublisher
+from stopcovid.dialog.command_stream.publish import CommandPublisher
 
 REMINDER_TRIGGER_FLOOR_MINUTES = 60 * 4
 REMINDER_TRIGGER_CEIL_MINUTES = 60 * 24

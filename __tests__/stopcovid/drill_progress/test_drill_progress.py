@@ -17,7 +17,11 @@ from stopcovid.dialog.registration import CodeValidationPayload
 from stopcovid.dialog.models.state import UserProfile
 from stopcovid.drills.drills import Prompt, Drill
 from stopcovid.db import get_test_sqlalchemy_engine
-from stopcovid.status.drill_progress import DrillProgressRepository, ALL_DRILL_SLUGS, DrillProgress
+from stopcovid.drill_progress.drill_progress import (
+    DrillProgressRepository,
+    ALL_DRILL_SLUGS,
+    DrillProgress,
+)
 
 
 class TestUsers(unittest.TestCase):

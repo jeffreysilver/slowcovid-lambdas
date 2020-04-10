@@ -1,5 +1,5 @@
-from stopcovid.status.sqs import publish_drills_to_trigger
-from stopcovid.status.drill_progress import DrillProgressRepository
+from stopcovid.drill_progress.sqs import publish_drills_to_trigger
+from stopcovid.drill_progress.drill_progress import DrillProgressRepository
 from stopcovid.utils.logging import configure_logging
 from stopcovid.utils.verify_deploy_stage import verify_deploy_stage
 

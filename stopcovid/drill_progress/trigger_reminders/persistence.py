@@ -9,7 +9,7 @@ from sqlalchemy.schema import UniqueConstraint
 from sqlalchemy.exc import DatabaseError, IntegrityError
 
 from stopcovid import db
-from stopcovid.status.drill_progress import DrillInstance
+from stopcovid.drill_progress.drill_progress import DrillInstance
 
 metadata = MetaData()
 reminder_triggers = Table(

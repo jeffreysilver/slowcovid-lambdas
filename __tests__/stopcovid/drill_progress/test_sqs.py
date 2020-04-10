@@ -3,11 +3,11 @@ import unittest
 import uuid
 from unittest.mock import patch, MagicMock
 
-from stopcovid.status.drill_progress import DrillProgress
-from stopcovid.status.sqs import publish_drills_to_trigger
+from stopcovid.drill_progress.drill_progress import DrillProgress
+from stopcovid.drill_progress.sqs import publish_drills_to_trigger
 
 
-@patch("stopcovid.status.sqs.boto3")
+@patch("stopcovid.drill_progress.sqs.boto3")
 class TestEnqueueOutboundDrillsToTrigger(unittest.TestCase):
     def setUp(self) -> None:
         logging.disable(logging.CRITICAL)

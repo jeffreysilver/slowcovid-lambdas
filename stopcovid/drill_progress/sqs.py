@@ -6,7 +6,7 @@ import os
 import json
 
 from typing import Iterable
-from stopcovid.status.drill_progress import DrillProgress
+from stopcovid.drill_progress.drill_progress import DrillProgress
 
 
 def publish_drills_to_trigger(

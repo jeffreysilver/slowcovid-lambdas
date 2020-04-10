@@ -4,8 +4,8 @@ import unittest
 import uuid
 from unittest.mock import patch
 
-from stopcovid.status.initiation import DrillInitiator, FIRST_DRILL_SLUG
-from stopcovid.status.drill_progress import DrillProgress
+from stopcovid.drill_progress.initiation import DrillInitiator, FIRST_DRILL_SLUG
+from stopcovid.drill_progress.drill_progress import DrillProgress
 
 
 @patch("stopcovid.dialog.command_stream.publish.CommandPublisher.publish_start_drill_command")
@@ -37,7 +37,7 @@ class TestInitiation(unittest.TestCase):
         user_id = uuid.uuid4()
         idempotency_key = str(uuid.uuid4())
         with patch(
-            "stopcovid.status.initiation.DrillProgressRepository.get_progress_for_user",
+            "stopcovid.drill_progress.initiation.DrillProgressRepository.get_progress_for_user",
             return_value=DrillProgress(
                 phone_number=phone_number,
                 user_id=user_id,
@@ -56,7 +56,7 @@ class TestInitiation(unittest.TestCase):
         user_id = uuid.uuid4()
 
         with patch(
-            "stopcovid.status.initiation.DrillProgressRepository.get_progress_for_user",
+            "stopcovid.drill_progress.initiation.DrillProgressRepository.get_progress_for_user",
             return_value=DrillProgress(
                 phone_number=phone_number,
                 user_id=user_id,

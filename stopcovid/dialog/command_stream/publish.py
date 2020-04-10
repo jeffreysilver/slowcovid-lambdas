@@ -5,7 +5,7 @@ from typing import Dict, Any, Optional, List, Tuple
 
 import boto3
 
-from stopcovid.status.drill_progress import DrillInstance
+from stopcovid.drill_progress.drill_progress import DrillInstance
 
 
 class CommandPublisher:

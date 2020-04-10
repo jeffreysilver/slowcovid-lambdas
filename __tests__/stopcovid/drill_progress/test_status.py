@@ -10,7 +10,7 @@ from stopcovid.dialog.models.events import (
 from stopcovid.dialog.registration import CodeValidationPayload
 from stopcovid.dialog.models.state import UserProfile
 from stopcovid.drills.drills import get_drill
-from stopcovid.status.status import initiates_first_drill, initiates_subsequent_drill
+from stopcovid.drill_progress.status import initiates_first_drill, initiates_subsequent_drill
 
 
 class TestStatus(unittest.TestCase):
