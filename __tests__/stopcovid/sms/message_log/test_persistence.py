@@ -1,6 +1,6 @@
 import unittest
 from stopcovid import db
-from stopcovid.message_log.persistence import MessageRepository
+from stopcovid.sms.message_log.persistence import MessageRepository
 from sqlalchemy.exc import IntegrityError
 
 

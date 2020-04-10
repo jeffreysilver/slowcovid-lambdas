@@ -1,11 +1,11 @@
 import unittest
 from unittest.mock import patch
 
-from stopcovid.message_log.types import LogMessageCommand, LogMessageCommandType
-from stopcovid.message_log.message_log import log_messages
+from stopcovid.sms.message_log.types import LogMessageCommand, LogMessageCommandType
+from stopcovid.sms.message_log.message_log import log_messages
 
 
-@patch("stopcovid.message_log.message_log.persistence")
+@patch("stopcovid.sms.message_log.message_log.persistence")
 class TestMessageLog(unittest.TestCase):
     def test_calls_persistence_with_transformed_commands(self, persistence_mock):
         commands = [
