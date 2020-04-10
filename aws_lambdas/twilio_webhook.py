@@ -40,8 +40,9 @@ def handler(event, context):
             StreamName=f"message-log-{stage}",
         )
     else:
-        logging.info(f"Inbound message from {form['From']}: Recording INBOUND_SMS in message log")
+        logging.info(f"Inbound message from {form['From']}")
         CommandPublisher().publish_process_sms_command(form["From"], form["Body"])
+        logging.info(f"Logging an INBOUND_SMS message in the message log")
         kinesis.put_record(
             Data=json.dumps({"type": "INBOUND_SMS", "payload": form}),
             PartitionKey=form["From"],
@@ -83,6 +84,7 @@ def already_processed(idempotency_key: str, stage: str) -> bool:
 
 
 def record_as_processed(idempotency_key: str, stage: str):
+    logging.info(f"Marking idempotency key {idempotency_key} as processed")
     dynamodb = boto3.client("dynamodb")
     dynamodb.put_item(
         TableName=f"twilio-webhooks-{stage}",
