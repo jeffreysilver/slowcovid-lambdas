@@ -129,6 +129,19 @@ def show_drill_progress(args):
     print(f"\tfirst_incomplete_drill_slug={progress.first_incomplete_drill_slug}")
 
 
+def get_all_users(args):
+    dynamodb = boto3.client("dynamodb")
+    table_name = f"dialog-state-{args.stage}"
+    args = {}
+    while True:
+        result = dynamodb.scan(TableName=table_name, **args)
+        for item in result["Items"]:
+            print(item["phone_number"]["S"])
+        if not result.get("LastEvaluatedKey"):
+            break
+        args["ExclusiveStartKey"] = result["LastEvaluatedKey"]
+
+
 def replay_message_stream(args):
     kinesis = boto3.client("kinesis")
     stream_name = f"message-log-{args.stage}"
@@ -183,6 +196,11 @@ def main():
     )
     show_progress_parser.add_argument("phone_number")
     show_progress_parser.set_defaults(func=show_drill_progress)
+
+    get_all_users_parser = subparsers.add_parser(
+        "get-all-users", description="print out every user's phone number"
+    )
+    get_all_users_parser.set_defaults(func=get_all_users)
 
     replay_message_stream_parser = subparsers.add_parser(
         "replay-message-stream", description="Replay all messages in the message-log stream"
