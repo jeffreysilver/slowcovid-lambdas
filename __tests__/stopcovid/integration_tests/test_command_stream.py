@@ -5,7 +5,7 @@ from unittest.mock import patch
 import json
 import uuid
 
-from aws_lambdas.handle_command import handler as handle_command
+from stopcovid.dialog.aws_lambdas.handle_command import handler as handle_command
 from stopcovid.dialog.engine import StartDrill, TriggerReminder, ProcessSMSMessage
 
 __location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))

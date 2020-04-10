@@ -55,7 +55,7 @@ functions:
           cors: true
 
   twilioWebhook:
-    handler: aws_lambdas/twilio_webhook.handler
+    handler: stopcovid/sms/aws_lambdas/twilio_webhook.handler
     timeout: 20
     events:
       - http:
@@ -63,7 +63,7 @@ functions:
           method: post
 
   sendMessage:
-    handler: aws_lambdas/send_sms_batch.handler
+    handler: stopcovid/sms/aws_lambdas/send_sms_batch.handler
     timeout: 60
     events:
       - sqs:
@@ -75,7 +75,7 @@ functions:
           batchSize: 1
 
   handleCommand:
-    handler: aws_lambdas/handle_command.handler
+    handler: stopcovid/dialog/aws_lambdas/handle_command.handler
     events:
       - stream:
           type: kinesis
@@ -99,11 +99,11 @@ functions:
 
 
   logMessage:
-    handler: aws_lambdas/log_message.handle
+    handler: stopcovid/sms/aws_lambdas/log_message.handle
     timeout: 60  # Give aurora cluster time to cold start
 
   distributeDialogEvents:
-    handler: aws_lambdas/enqueue_sms_batch.handler
+    handler: stopcovid/sms/aws_lambdas/enqueue_sms_batch.handler
     events:
       - stream:
           type: dynamodb
@@ -114,7 +114,7 @@ functions:
           startingPosition: LATEST
 
   updateDrillStatus:
-    handler: aws_lambdas/update_drill_status.handler
+    handler: stopcovid/drill_progress/aws_lambdas/update_drill_status.handler
     timeout: 60
     events:
       - stream:
@@ -126,13 +126,13 @@ functions:
           startingPosition: LATEST
 
   scheduleNextDrillsToTrigger:
-    handler: aws_lambdas/schedule_next_drills_to_trigger.handler
+    handler: stopcovid/drill_progress/aws_lambdas/schedule_next_drills_to_trigger.handler
     timeout: 60
     events:
       - schedule: cron(5 17 * * ? *)
 
   triggerScheduledDrill:
-    handler: aws_lambdas/trigger_scheduled_drill.handler
+    handler: stopcovid/drill_progress/aws_lambdas/trigger_scheduled_drill.handler
     timeout: 60
     events:
       - sqs:
@@ -142,7 +142,7 @@ functions:
               - Arn
 
   triggerReminders:
-    handler: aws_lambdas/trigger_reminders.handler
+    handler: stopcovid/drill_progress/aws_lambdas/trigger_reminders.handler
     timeout: 60
     events:
       - schedule: cron(0/5 14-23 * * ? *)
