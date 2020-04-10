@@ -117,8 +117,7 @@
             "text": "{{covid_1_fact_5}}"
           },
           {
-            "text": "{{more}}",
-            "media_url": "https://eslworks-api-production.herokuapp.com/rails/active_storage/blobs/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBbVpBIiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--bc9d0d119eb13b22c3a9b33282b71382475383d1/fireworks5.jpg"
+            "text": "{{more}}"
           }
         ]
       }
@@ -215,8 +214,7 @@
         "slug": "07 - Celebration",
         "messages": [
           {
-            "text": "{{more}}",
-            "media_url": "https://eslworks-api-production.herokuapp.com/rails/active_storage/blobs/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBbWRBIiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--ceadd539c4576c7036b9f64278ed507e4848449a/fireworks2.jpg"
+            "text": "{{more}}"
           }
         ]
       }
@@ -413,8 +411,7 @@
         "slug": "07 - Celebration",
         "messages": [
           {
-            "text": "{{more}}",
-            "media_url": "https://eslworks-api-production.herokuapp.com/rails/active_storage/blobs/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBdlJHIiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--5b5ac0cd40bc3732b5c2daf628377b452f26b1cc/fireworks5.jpg"
+            "text": "{{more}}"
           }
         ]
       }
@@ -616,10 +613,6 @@
         "messages": [
           {
             "text": "{{more}}"
-          },
-          {
-            "text": null,
-            "media_url": "https://eslworks-api-production.herokuapp.com/rails/active_storage/blobs/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBaTQ0IiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--b9d8316d6801206dde014ce3347e015ec5d394ad/fireworks5.jpg"
           }
         ]
       },
@@ -720,8 +713,7 @@
         "slug": "07 - Celebration",
         "messages": [
           {
-            "text": "{{drill_complete_congrats}}",
-            "media_url": "https://eslworks-api-production.herokuapp.com/rails/active_storage/blobs/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBc2REIiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--3b431e12db6c6f6688d9394eae4ee38e6671dd47/fireworks3.jpg"
+            "text": "{{more}}"
           }
         ]
       }
@@ -817,8 +809,7 @@
             "text": "{{face_covering_fact_5}}"
           },
           {
-            "text": "{{drill_complete_congrats}}",
-            "media_url": "https://eslworks-api-production.herokuapp.com/rails/active_storage/blobs/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBaGRIIiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--59b26cda7c9fccdaf16a8372ba47eb35bbcb9323/fireworks3.jpg"
+            "text": "{{drill_complete_congrats}}"
           },
           {
             "text": "{{face_covering_bonus}}"

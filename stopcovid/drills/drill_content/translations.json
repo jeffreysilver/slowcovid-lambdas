@@ -4252,22 +4252,12 @@
     },
     {
       "label": "more",
-      "translation": "Félicitations {{name}}! L’exercice est terminé. Nous dirons à {{company}} que vous avez terminé cet exercice. \n\nPour recevoir un autre exercice dès maintenant, tapez le mot MORE",
-      "language": "fr"
-    },
-    {
-      "label": "more",
-      "translation": "恭喜{{name}}！ 该培训演习已完成。 我们将通知{{company}}您已完成。 \n\n要进行下一次练习，请输入单词 MORE",
+      "translation": "恭喜{{name}}！ 该培训演习已完成。 我们将通知{{company}}您已完成。🎉 🙌 🤓\n\n要进行下一次练习，请输入单词 MORE",
       "language": "zh"
     },
     {
       "label": "more",
-      "translation": "Parabéns {{name}}! Este treinamento está completo. Informaremos {{company}} que você terminou. \n\nPara obter o próximo treinamento, escreva a palavra MORE",
-      "language": "pt"
-    },
-    {
-      "label": "face_covering_bonus",
-      "translation": "BONIFICACIÓN: aprenda a cubrirse la cara. Mire este video: https://youtu.be/tPx1yqvJgf4",
+      "translation": "¡Felicidades {{name}}! Este entrenamiento ha terminado. Le haremos saber a {{company}} que lo completó. 🎉 🙌 🤓\n\nPara obtener el proximo entrenamiento, escriba la palabra MÁS ",
       "language": "es"
     },
     {
@@ -4282,13 +4272,13 @@
     },
     {
       "label": "more",
-      "translation": "Congrats {{name}}! This training drill is complete. We’ll let {{company}} know you finished. \n\nTo get your next drill, type the word MORE",
-      "language": "en"
+      "translation": "Félicitations {{name}}! L’exercice est terminé. Nous dirons à {{company}} que vous avez terminé cet exercice. 🎉 🙌 🤓\n\nPour recevoir un autre exercice dès maintenant, tapez le mot MORE",
+      "language": "fr"
     },
     {
       "label": "more",
-      "translation": "¡Felicidades {{name}}! Este entrenamiento ha terminado. Le haremos saber a {{company}} que lo completó. \n\nPara obtener el proximo entrenamiento, escriba la palabra MÁS ",
-      "language": "es"
+      "translation": "Parabéns {{name}}! Este treinamento está completo. Informaremos {{company}} que você terminou. 🎉 🙌 🤓\n\nPara obter o próximo treinamento, escreva a palavra MORE",
+      "language": "pt"
     },
     {
       "label": "face_covering_practice_1",
@@ -4351,18 +4341,13 @@
       "language": "fr"
     },
     {
-      "label": "covid_8_title",
-      "translation": "Usar una cubierta facial",
-      "language": "es"
-    },
-    {
       "label": "face_covering_practice_1",
       "translation": "Você sempre deve usar cobertura de rosto em locais públicos.\n\na) Verdadeiro\nb) Falso",
       "language": "pt"
     },
     {
-      "label": "face_covering_practice_1",
-      "translation": "Siempre debe usar cobertura facial en lugares públicos.\n\na) Verdadero\nb) Falso ",
+      "label": "face_covering_practice_2",
+      "translation": "Usar una máscara de tela mientras está afuera es [---] usar una máscara mientras está dentro de una tienda.\n\na) no tan importante como\nb) tan importante como\nc) más importante que",
       "language": "es"
     },
     {
@@ -4377,18 +4362,8 @@
     },
     {
       "label": "face_covering_fact_1",
-      "translation": "HECHO: Esta es una nueva directriz. El uso de una cubierta facial, incluso si no está enfermo, ayudará a retrasar la propagación del coronavirus.",
-      "language": "es"
-    },
-    {
-      "label": "face_covering_fact_1",
       "translation": "FATO: Esta é uma nova diretriz. Usar uma cobertura de rosto, mesmo se você não estiver doente, ajudará a retardar a propagação do Coronavírus.",
       "language": "pt"
-    },
-    {
-      "label": "face_covering_practice_2",
-      "translation": "Usar una cubierta para la cara mientras está afuera en público es [---] usar una mientras está dentro de una tienda.\n\na) no tan importante como\nb) tan importante como\nc) más importante que",
-      "language": "es"
     },
     {
       "label": "face_covering_practice_2",
@@ -4407,18 +4382,8 @@
     },
     {
       "label": "face_covering_fact_2",
-      "translation": "HECHO: ¡Use una cubierta para la cara por dentro y por fuera! Los lugares públicos incluyen parques, supermercados, restaurantes, farmacias, tiendas de la esquina, aceras, autobuses y trenes, automóviles compartidos.",
-      "language": "es"
-    },
-    {
-      "label": "face_covering_fact_2",
       "translation": "FATO: Use um rosto cobrindo por dentro e por fora! Os locais públicos incluem parques, supermercados, restaurantes, farmácias, esquinas, calçadas, ônibus e trens, carros compartilhados.",
       "language": "pt"
-    },
-    {
-      "label": "face_covering_practice_3",
-      "translation": "Puede cubrirse la cara con un [---].\n\na) pañuelo\nb) bufanda\nc) toalla de mano\nd) camiseta\ne) todo lo anterior",
-      "language": "es"
     },
     {
       "label": "face_covering_practice_3",
@@ -4451,8 +4416,13 @@
       "language": "pt"
     },
     {
-      "label": "face_covering_practice_4",
-      "translation": "Es importante usar una cubierta facial. Incluso si alguien no muestra síntomas, aún puede [---] COVID-19 y dárselo.\n\na) llevar\nb) sanar\nd) eliminar",
+      "label": "covid_8_title",
+      "translation": "Usar una máscara de tela",
+      "language": "es"
+    },
+    {
+      "label": "face_covering_practice_5",
+      "translation": "Una máscara de tela debe [---]\n\na) estar ajustado bien a tu cara\nb) estar asegurado con lazos\nc) tener múltiples capas de tela pero permite respirar\nd) ser lavado con frecuencia\ne) Todas las anteriores ",
       "language": "es"
     },
     {
@@ -4472,23 +4442,43 @@
     },
     {
       "label": "face_covering_practice_5",
-      "translation": "Los revestimientos de la cara de tela deben [---]\n\na) ajustarse bien a tu cara\nb) estar asegurado con lazos\nc) tiene múltiples capas de tela pero permite respirar\nd) ser lavado con frecuencia\ne) Todas las anteriores",
-      "language": "es"
-    },
-    {
-      "label": "face_covering_practice_5",
       "translation": "Os revestimentos de rosto de pano precisam [---]\n\na) encaixe bem no seu rosto\nb) ser preso com laços\nc) tem várias camadas de tecido, mas permite respirar\nd) ser lavado frequentemente\ne) tudo acima",
       "language": "pt"
-    },
-    {
-      "label": "face_covering_fact_5",
-      "translation": "HECHO: Cuando quite una cubierta facial, no toque su cara. Lávese las manos inmediatamente después de quitarlo.",
-      "language": "es"
     },
     {
       "label": "face_covering_bonus",
       "translation": "BONUS: Pour apprendre comment faire votre propre masque, regardez cette vidéo: ttps://youtu.be/tPx1yqvJgf4",
       "language": "fr"
+    },
+    {
+      "label": "face_covering_practice_1",
+      "translation": "Siempre debe usar una máscara de tela en lugares públicos.\n\na) Verdadero\nb) Falso ",
+      "language": "es"
+    },
+    {
+      "label": "face_covering_practice_3",
+      "translation": "Puede hacer su propia máscara de tela con un [---].\n\na) pañuelo\nb) bufanda\nc) toalla de mano\nd) camiseta\ne) todo lo anterior",
+      "language": "es"
+    },
+    {
+      "label": "face_covering_practice_4",
+      "translation": "Es importante usar una máscara de tela. Incluso si alguien no muestra síntomas, aún puede [---] COVID-19 y dárselo.\n\na) llevar\nb) sanar\nd) eliminar",
+      "language": "es"
+    },
+    {
+      "label": "face_covering_fact_1",
+      "translation": "HECHO: Esta es una nueva directriz. El uso de una máscara de tela incluso si no está enfermo, ayudará a retrasar la propagación del coronavirus.",
+      "language": "es"
+    },
+    {
+      "label": "face_covering_fact_2",
+      "translation": "HECHO: ¡Use una máscara de tela por dentro y por fuera! Los lugares públicos incluyen parques, supermercados, restaurantes, farmacias, tiendas de la esquina, aceras, autobuses y trenes, automóviles compartidos.",
+      "language": "es"
+    },
+    {
+      "label": "face_covering_fact_5",
+      "translation": "HECHO: Cuando quite una máscara, no toque su cara. Lávese las manos inmediatamente después de quitarlo.",
+      "language": "es"
     },
     {
       "label": "face_covering_fact_5",
@@ -4514,6 +4504,16 @@
       "label": "covid_8_title",
       "translation": "Usando uma cobertura de rosto",
       "language": "pt"
+    },
+    {
+      "label": "face_covering_bonus",
+      "translation": "BONIFICACIÓN: Para aprender como hacer su propia máscara de tela, mire este video: https://youtu.be/tPx1yqvJgf4",
+      "language": "es"
+    },
+    {
+      "label": "more",
+      "translation": "Congrats {{name}}! This training drill is complete. We’ll let {{company}} know you finished. 🎉 🙌 🤓\n\nTo get your next drill, type the word MORE",
+      "language": "en"
     }
   ]
 }
