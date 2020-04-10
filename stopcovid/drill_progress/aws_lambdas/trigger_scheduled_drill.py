@@ -2,7 +2,7 @@ import logging
 from stopcovid.utils import dynamodb as dynamodb_utils
 
 from stopcovid.drill_progress.initiation import DrillInitiator
-from stopcovid.drill_progress.drill_progress import DrillProgressSchema, DrillProgress
+from stopcovid.drill_progress.drill_progress import DrillProgressSchema
 
 from stopcovid.utils.logging import configure_logging
 from stopcovid.utils.verify_deploy_stage import verify_deploy_stage
