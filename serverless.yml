@@ -57,6 +57,7 @@ functions:
 
   twilioWebhook:
     handler: aws_lambdas/twilio_webhook.handler
+    timeout: 20
     events:
       - http:
           path: webhooks/twilio
