@@ -16,6 +16,7 @@ class TestHandleCommand(unittest.TestCase):
     def setUp(self) -> None:
         os.environ["STAGE"] = "TEST"
         os.environ["DEPLOY_STAGE"] = "TEST"
+        os.environ["DB_CLUSTER_ARN"] = "foo-TEST"
         logging.disable(logging.CRITICAL)
 
     def test_inbound_sms(self, process_command_mock):
