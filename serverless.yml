@@ -309,8 +309,6 @@ resources:
             AttributeType: S
           - AttributeName: idempotency_key
             AttributeType: S
-        StreamSpecification:
-          StreamViewType: OLD_IMAGE
         TimeToLiveSpecification:
           AttributeName: expiration_ts
           Enabled: true
@@ -347,6 +345,8 @@ resources:
             AttributeType: S
           - AttributeName: idempotency_key
             AttributeType: S
+        StreamSpecification:
+          StreamViewType: OLD_IMAGE
         TimeToLiveSpecification:
           AttributeName: trigger_ts
           Enabled: true
