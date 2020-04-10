@@ -145,11 +145,13 @@ functions:
     handler: stopcovid/drill_progress/aws_lambdas/trigger_scheduled_drill.handler
     timeout: 60
     events:
-      - sqs:
+      - stream:
+          type: dynamodb
           arn:
             Fn::GetAtt:
-              - DrillInitiationQueue
-              - Arn
+              - DrillTriggerSchedule
+              - StreamArn
+          startingPosition: LATEST
 
   triggerReminders:
     handler: stopcovid/drill_progress/aws_lambdas/trigger_reminders.handler
@@ -307,6 +309,8 @@ resources:
             AttributeType: S
           - AttributeName: idempotency_key
             AttributeType: S
+        StreamSpecification:
+          StreamViewType: OLD_IMAGE
         TimeToLiveSpecification:
           AttributeName: expiration_ts
           Enabled: true
@@ -328,23 +332,25 @@ resources:
           Enabled: true
         BillingMode: PAY_PER_REQUEST
 
-    # OUTBOUND SMS
-    DrillInitiationQueue:
-      Type: AWS::SQS::Queue
+    # DRILL SCHEDULING
+    DrillTriggerSchedule:
+      Type: AWS::DynamoDB::Table
       Properties:
-        QueueName: drill-initiation-${self:provider.stage}
-        VisibilityTimeout: 60
-        RedrivePolicy:
-          deadLetterTargetArn:
-            Fn::GetAtt:
-            - DrillInitiationDeadLetterQueue
-            - Arn
-          maxReceiveCount: 3
-
-    DrillInitiationDeadLetterQueue:
-      Type: AWS::SQS::Queue
-      Properties:
-        QueueName: drill-initiation-dlq-${self:provider.stage}
+        TableName: drill-trigger-schedule-${self:provider.stage}
+        KeySchema:
+          - AttributeName: phone_number
+            KeyType: HASH
+          - AttributeName: idempotency_key
+            KeyType: RANGE
+        AttributeDefinitions:
+          - AttributeName: phone_number
+            AttributeType: S
+          - AttributeName: idempotency_key
+            AttributeType: S
+        TimeToLiveSpecification:
+          AttributeName: trigger_ts
+          Enabled: true
+        BillingMode: PAY_PER_REQUEST
 
     # Command failures
     CommandFailureQueue:

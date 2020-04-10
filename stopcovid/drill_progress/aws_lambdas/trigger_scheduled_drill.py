@@ -1,6 +1,5 @@
-import json
 import logging
-from typing import Dict
+from stopcovid.utils import dynamodb as dynamodb_utils
 
 from stopcovid.drill_progress.initiation import DrillInitiator
 from stopcovid.drill_progress.drill_progress import DrillProgressSchema, DrillProgress
@@ -13,11 +12,13 @@ configure_logging()
 
 def handler(event, context):
     verify_deploy_stage()
-    items = [json.loads(record["body"]) for record in event["Records"]]
-    drill_progresses_to_schedule: Dict[str, DrillProgress] = {
-        item["idempotency_key"]: DrillProgressSchema().load(item["drill_progress"])
-        for item in items
-    }
+    drill_progresses_to_schedule = {}
+    for record in event["Records"]:
+        if record["eventName"] == "REMOVE":
+            item = dynamodb_utils.deserialize(record["dynamodb"]["OldImage"])
+            drill_progresses_to_schedule[item["idempotency_key"]] = DrillProgressSchema().load(
+                item["drill_progress"]
+            )
     initiator = DrillInitiator()
 
     for idempotency_key, drill_progress in drill_progresses_to_schedule.items():
