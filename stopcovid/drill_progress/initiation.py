@@ -25,6 +25,11 @@ class DrillInitiator:
     def trigger_next_drill_for_user(self, phone_number: str, idempotency_key: str):
         drill_progress = self.drill_progress_repository.get_progress_for_user(phone_number)
         drill_slug = drill_progress.next_drill_slug_to_trigger()
+        if drill_slug is None:
+            logging.info(
+                f"User {phone_number} has completed all drills. " f"Not triggering another one."
+            )
+            return
         self.trigger_drill(phone_number, drill_slug, idempotency_key)
 
     def trigger_drill_if_not_stale(self, phone_number: str, drill_slug: str, idempotency_key: str):
@@ -43,6 +48,8 @@ class DrillInitiator:
         )
 
     def trigger_drill(self, phone_number: str, drill_slug: str, idempotency_key: str):
+        if drill_slug is None:
+            raise ValueError("drill_slug can't be None")
         if not self._was_recently_initiated(phone_number, drill_slug, idempotency_key):
             self.command_publisher.publish_start_drill_command(phone_number, drill_slug)
             self._record_initiation(phone_number, drill_slug, idempotency_key)

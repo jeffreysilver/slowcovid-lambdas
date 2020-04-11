@@ -172,6 +172,20 @@ def replay_message_stream(args):
                 log_messages(commands, engine_factory=engine_factory)
 
 
+def show_command(args):
+    kinesis = boto3.client("kinesis")
+    stream_name = f"command-stream-{args.stage}"
+    shard_iterator = kinesis.get_shard_iterator(
+        StreamName=stream_name,
+        ShardId=args.shard_id,
+        ShardIteratorType="AT_SEQUENCE_NUMBER",
+        StartingSequenceNumber=args.seq,
+    )
+    response = kinesis.get_records(ShardIterator=shard_iterator["ShardIterator"], Limit=1)
+    for record in response["Records"]:
+        print(json.loads(record["Data"]))
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--stage", choices=["dev", "prod"], required=True)
@@ -206,6 +220,14 @@ def main():
         "replay-message-stream", description="Replay all messages in the message-log stream"
     )
     replay_message_stream_parser.set_defaults(func=replay_message_stream)
+
+    show_command_parser = subparsers.add_parser(
+        "show-command",
+        description="Show the command at a particular sequence in the command stream",
+    )
+    show_command_parser.add_argument("--shard_id")
+    show_command_parser.add_argument("--seq")
+    show_command_parser.set_defaults(func=show_command)
 
     args = parser.parse_args(sys.argv if len(sys.argv) == 1 else None)
     args.func(args)
