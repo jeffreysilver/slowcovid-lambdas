@@ -73,6 +73,8 @@ class StartDrill(Command):
         self, dialog_state: DialogState
     ) -> List[stopcovid.dialog.models.events.DialogEvent]:
         drill = get_drill(self.drill_slug)
+        if dialog_state.user_profile.opted_out:
+            return []
         return [
             DrillStarted(
                 phone_number=self.phone_number,
@@ -92,6 +94,9 @@ class TriggerReminder(Command):
     def execute(
         self, dialog_state: DialogState
     ) -> List[stopcovid.dialog.models.events.DialogEvent]:
+        if dialog_state.user_profile.opted_out:
+            return []
+
         drill = dialog_state.current_drill
         if drill is None or dialog_state.drill_instance_id != self.drill_instance_id:
             return []
