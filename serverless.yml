@@ -86,6 +86,7 @@ functions:
               - Arn
           startingPosition: LATEST
           maximumRetryAttempts: 5
+          bisectBatchOnFunctionError: true
           destinations:
             onFailure:
               arn:
