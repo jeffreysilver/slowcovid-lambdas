@@ -19,7 +19,6 @@ custom:
 
 provider:
   name: aws
-  profile: eslworks
   runtime: python3.7
   stage: ${opt:stage, 'dev'}
   region: us-east-1
@@ -40,10 +39,16 @@ provider:
 
   environment:
     STAGE: ${self:provider.stage}
+    DEPLOY_STAGE: ${env:DEPLOY_STAGE}
+    TWILIO_MESSAGING_SERVICE_SID: ${env:TWILIO_MESSAGING_SERVICE_SID}
+    TWILIO_ACCOUNT_SID: ${env:TWILIO_ACCOUNT_SID}
+    TWILIO_AUTH_TOKEN: ${env:TWILIO_AUTH_TOKEN}
+    DB_CLUSTER_ARN: ${env:DB_CLUSTER_ARN}
+    DB_SECRET_ARN: ${env:DB_SECRET_ARN}
+
         
 plugins:
   - serverless-python-requirements
-  - serverless-dotenv-plugin
   - serverless-log-forwarding
 
 functions:
@@ -54,6 +59,9 @@ functions:
           path: registration
           method: post
           cors: true
+    environment:
+      AUTH_USERNAME: ${env:AUTH_USERNAME}
+      AUTH_PASSWORD: ${env:AUTH_PASSWORD}
 
   twilioWebhook:
     handler: stopcovid/sms/aws_lambdas/twilio_webhook.handler
