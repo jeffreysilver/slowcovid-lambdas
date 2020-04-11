@@ -1,8 +1,12 @@
+import os
 from collections import OrderedDict
 import json
+
+import requests
+from requests.auth import HTTPBasicAuth
 from serverless_sdk import tag_event  # type: ignore
 
-from stopcovid.clients import eslworks
+BASE_URL = "https://eslworks-api-production.herokuapp.com/slowcovid"
 
 
 def get_labels(data):
@@ -40,6 +44,17 @@ def build_registration_payload(data):
     }
 
 
+def register(payload):
+    resp = requests.post(
+        f"{BASE_URL}/register",
+        auth=HTTPBasicAuth(os.environ.get("AUTH_USERNAME"), os.environ.get("AUTH_PASSWORD")),
+        json=payload,
+    )
+    tag_event("eslworks_register_status", resp.status_code)
+    resp.raise_for_status()
+    return resp
+
+
 def handle_registration(event, context):
     tag_event("registration", "raw_event", event)
 
@@ -48,6 +63,6 @@ def handle_registration(event, context):
 
     tag_event("registration", "computed_payload", payload)
 
-    eslworks.register(payload)
+    register(payload)
 
     return {"statusCode": 200}
