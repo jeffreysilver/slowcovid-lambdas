@@ -100,5 +100,5 @@ class TestInitiation(unittest.TestCase):
     def test_trigger_drill_none(self, publish_mock):
         phone_number = str(uuid.uuid4())
         idempotency_key = str(uuid.uuid4())
-        with self.assertRaises(ValueError):
-            self.initiator.trigger_drill(phone_number, None, idempotency_key)  # type: ignore
+        self.initiator.trigger_drill(phone_number, None, idempotency_key)
+        publish_mock.assert_not_called()

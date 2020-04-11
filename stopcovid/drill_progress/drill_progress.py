@@ -121,10 +121,10 @@ class DrillProgress:
     first_unstarted_drill_slug: Optional[str] = None
     first_incomplete_drill_slug: Optional[str] = None
 
-    def next_drill_slug_to_trigger(self) -> str:
+    def next_drill_slug_to_trigger(self) -> Optional[str]:
         if self.first_unstarted_drill_slug:
             return self.first_unstarted_drill_slug
-        return self.first_incomplete_drill_slug  # type: ignore
+        return self.first_incomplete_drill_slug
 
     def to_dict(self):
         return DrillProgressSchema().dump(self)

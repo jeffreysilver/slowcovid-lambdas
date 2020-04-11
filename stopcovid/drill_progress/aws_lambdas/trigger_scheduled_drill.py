@@ -1,4 +1,5 @@
 import json
+import logging
 from typing import Dict
 
 from stopcovid.drill_progress.initiation import DrillInitiator
@@ -20,10 +21,13 @@ def handler(event, context):
     initiator = DrillInitiator()
 
     for idempotency_key, drill_progress in drill_progresses_to_schedule.items():
-        initiator.trigger_drill_if_not_stale(
-            drill_progress.phone_number,
-            drill_progress.next_drill_slug_to_trigger(),
-            idempotency_key,
-        )
+        slug = drill_progress.next_drill_slug_to_trigger()
+        if slug is None:
+            logging.warning(
+                f"Got a request to trigger drill_slug=None "
+                f"for {drill_progress.phone_number}. Ignoring."
+            )
+            continue
+        initiator.trigger_drill_if_not_stale(drill_progress.phone_number, slug, idempotency_key)
 
     return {"statusCode": 200}
