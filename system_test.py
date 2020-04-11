@@ -58,7 +58,7 @@ class SystemTest:
     def proceed_through_drill(self):
         idle_count = 0
         while not self.drill_complete:
-            if idle_count > 15:
+            if idle_count > 5:
                 raise RuntimeError("System is not responding in time.")
 
             logging.info(".")
