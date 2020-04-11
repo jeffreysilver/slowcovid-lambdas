@@ -29,7 +29,7 @@ class DrillScheduler:
         for drill_progress in drill_progresses:
             delay_seconds = random.randint(1, distribute_over_minutes * 60)
             trigger_time = now + datetime.timedelta(seconds=delay_seconds)
-            idempotency_key = f"scheduled-{drill_progress.next_drill_slug_to_trigger()}"
+            idempotency_key = self._idempotency_key(drill_progress)
             self.dynamodb.put_item(
                 TableName=self._table_name(),
                 Item=dynamodb_utils.serialize(
@@ -47,9 +47,7 @@ class DrillScheduler:
             TableName=self._table_name(),
             Key={
                 "phone_number": {"S": drill_progress.phone_number},
-                "idempotency_key": {
-                    "S": f"scheduled-{drill_progress.next_drill_slug_to_trigger()}"
-                },
+                "idempotency_key": {"S": self._idempotency_key(drill_progress)},
             },
             ConsistentRead=True,
         )
@@ -67,6 +65,10 @@ class DrillScheduler:
 
     def _now(self) -> datetime.datetime:
         return datetime.datetime.now(tz=datetime.timezone.utc)
+
+    @staticmethod
+    def _idempotency_key(drill_progress: DrillProgress) -> str:
+        return f"scheduled-{drill_progress.next_drill_slug_to_trigger()}"
 
     def ensure_tables_exist(self):
         try:
