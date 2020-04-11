@@ -1,6 +1,7 @@
 import datetime
 import logging
 import os
+from typing import Optional
 
 import boto3
 from stopcovid.utils import dynamodb as dynamodb_utils
@@ -42,7 +43,13 @@ class DrillInitiator:
             idempotency_key,
         )
 
-    def trigger_drill(self, phone_number: str, drill_slug: str, idempotency_key: str):
+    def trigger_drill(self, phone_number: str, drill_slug: Optional[str], idempotency_key: str):
+        if drill_slug is None:
+            logging.info(
+                f"Ignoring request to trigger drill_slug=None for {phone_number}. "
+                f"The user might be out of drills."
+            )
+            return
         if not self._was_recently_initiated(phone_number, drill_slug, idempotency_key):
             self.command_publisher.publish_start_drill_command(phone_number, drill_slug)
             self._record_initiation(phone_number, drill_slug, idempotency_key)

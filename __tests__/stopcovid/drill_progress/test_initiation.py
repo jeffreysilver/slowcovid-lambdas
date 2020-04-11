@@ -51,6 +51,22 @@ class TestInitiation(unittest.TestCase):
             self.initiator.trigger_next_drill_for_user(phone_number, idempotency_key)
             publish_mock.assert_not_called()
 
+    def test_initiation_out_of_drills(self, publish_mock):
+        phone_number = str(uuid.uuid4())
+        user_id = uuid.uuid4()
+        idempotency_key = str(uuid.uuid4())
+        with patch(
+            "stopcovid.drill_progress.initiation.DrillProgressRepository.get_progress_for_user",
+            return_value=DrillProgress(
+                phone_number=phone_number,
+                user_id=user_id,
+                first_incomplete_drill_slug=None,
+                first_unstarted_drill_slug=None,
+            ),
+        ):
+            self.initiator.trigger_next_drill_for_user(phone_number, idempotency_key)
+            publish_mock.assert_not_called()
+
     def test_trigger_drill_if_not_stale(self, publish_mock):
         phone_number = str(uuid.uuid4())
         user_id = uuid.uuid4()
@@ -79,4 +95,10 @@ class TestInitiation(unittest.TestCase):
         publish_mock.assert_called_once_with(phone_number, slug)
         publish_mock.reset_mock()
         self.initiator.trigger_drill(phone_number, slug, idempotency_key)
+        publish_mock.assert_not_called()
+
+    def test_trigger_drill_none(self, publish_mock):
+        phone_number = str(uuid.uuid4())
+        idempotency_key = str(uuid.uuid4())
+        self.initiator.trigger_drill(phone_number, None, idempotency_key)
         publish_mock.assert_not_called()
