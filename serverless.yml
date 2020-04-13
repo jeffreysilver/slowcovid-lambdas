@@ -122,6 +122,8 @@ functions:
             Fn::GetAtt:
               - MessageLogStream
               - Arn
+          startingPosition: LATEST
+          maximumRetryAttempts: 5
 
   distributeDialogEvents:
     handler: stopcovid/sms/aws_lambdas/enqueue_sms_batch.handler
