@@ -1,16 +1,14 @@
 import unittest
 from unittest.mock import patch
-import datetime
 
 from stopcovid.sms.message_log.types import LogMessageCommand, LogMessageCommandType
 from stopcovid.sms.message_log.message_log import log_messages
 
+from __tests__.utils.time import get_timestamp_min_in_past
+
 
 @patch("stopcovid.sms.message_log.message_log.persistence")
 class TestMessageLog(unittest.TestCase):
-    def _get_timestamp_min_in_past(self, min_ago):
-        return datetime.datetime.utcnow() - datetime.timedelta(minutes=min_ago)
-
     def test_calls_persistence_with_transformed_commands(self, persistence_mock):
         commands = [
             LogMessageCommand(
@@ -22,7 +20,7 @@ class TestMessageLog(unittest.TestCase):
                     "Body": "hello?",
                     "To": "+10009998888",
                 },
-                approximate_arrival=self._get_timestamp_min_in_past(5),
+                approximate_arrival=get_timestamp_min_in_past(5),
             ),
             LogMessageCommand(
                 command_type=LogMessageCommandType.STATUS_UPDATE,
@@ -32,7 +30,7 @@ class TestMessageLog(unittest.TestCase):
                     "From": "+1444333222",
                     "To": "+10009998888",
                 },
-                approximate_arrival=self._get_timestamp_min_in_past(3),
+                approximate_arrival=get_timestamp_min_in_past(3),
             ),
             LogMessageCommand(
                 command_type=LogMessageCommandType.OUTBOUND_SMS,
@@ -43,7 +41,7 @@ class TestMessageLog(unittest.TestCase):
                     "Body": "are you there?",
                     "To": "+10009998888",
                 },
-                approximate_arrival=self._get_timestamp_min_in_past(1),
+                approximate_arrival=get_timestamp_min_in_past(1),
             ),
         ]
         log_messages(commands)
