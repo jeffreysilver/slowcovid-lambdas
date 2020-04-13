@@ -74,6 +74,10 @@ class StartDrill(Command):
     ) -> List[stopcovid.dialog.models.events.DialogEvent]:
         drill = get_drill(self.drill_slug)
         if dialog_state.user_profile.opted_out or not dialog_state.user_profile.validated:
+            logging.warning(
+                f"Attempted to initiate a drill for {dialog_state.phone_number}, "
+                f"who hasn't validated or has opted out."
+            )
             return []
         return [
             DrillStarted(
@@ -95,6 +99,10 @@ class TriggerReminder(Command):
         self, dialog_state: DialogState
     ) -> List[stopcovid.dialog.models.events.DialogEvent]:
         if dialog_state.user_profile.opted_out or not dialog_state.user_profile.validated:
+            logging.warning(
+                f"Attempted to trigger a reminder for {dialog_state.phone_number}, "
+                f"who hasn't validated or has opted out."
+            )
             return []
 
         drill = dialog_state.current_drill
