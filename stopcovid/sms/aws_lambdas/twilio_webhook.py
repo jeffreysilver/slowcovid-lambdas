@@ -44,7 +44,7 @@ def handler(event, context):
         )
     else:
         logging.info(f"Inbound message from {form['From']}")
-        CommandPublisher().publish_process_sms_command(form["From"], form["Body"])
+        CommandPublisher().publish_process_sms_command(form["From"], form["Body"], form)
         logging.info(f"Logging an INBOUND_SMS message in the message log")
         kinesis.put_record(
             Data=json.dumps({"type": "INBOUND_SMS", "payload": form}),
