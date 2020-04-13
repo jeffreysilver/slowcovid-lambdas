@@ -38,7 +38,7 @@ class DefaultRegistrationValidator(RegistrationValidator):
         key = kwargs.get("key", os.getenv("REGISTRATION_VALIDATION_KEY"))
         response = requests.post(
             url=url,
-            json={"code": code},
+            json={"code": code, "stage": os.getenv("STAGE")},
             headers={"authorization": f"Basic {key}", "content-type": "application/json"},
         )
         return CodeValidationPayloadSchema().load(response.json())
