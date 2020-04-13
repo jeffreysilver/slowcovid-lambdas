@@ -63,7 +63,8 @@ class DrillScheduler:
     def _table_name(self) -> str:
         return f"drill-trigger-schedule-{self.stage}"
 
-    def _now(self) -> datetime.datetime:
+    @staticmethod
+    def _now() -> datetime.datetime:
         return datetime.datetime.now(tz=datetime.timezone.utc)
 
     @staticmethod
