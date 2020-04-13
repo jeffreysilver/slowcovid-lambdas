@@ -314,16 +314,20 @@ resources:
           Enabled: true
         BillingMode: PAY_PER_REQUEST
 
-    # TWILIO WEBHOOK IDEMPOTENCY
-    TwilioWebhooks:
+    # GENERAL IDEMPOTENCY
+    IdempotencyChecks:
       Type: AWS::DynamoDB::Table
       Properties:
-        TableName: twilio-webhooks-${self:provider.stage}
+        TableName: idempotency-checks-${self:provider.stage}
         KeySchema:
           - AttributeName: idempotency_key
             KeyType: HASH
+          - AttributeName: realm
+            KeyType: RANGE
         AttributeDefinitions:
           - AttributeName: idempotency_key
+            AttributeType: S
+          - AttributeName: realm
             AttributeType: S
         TimeToLiveSpecification:
           AttributeName: expiration_ts

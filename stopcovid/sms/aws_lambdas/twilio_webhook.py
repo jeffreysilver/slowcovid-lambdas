@@ -1,4 +1,3 @@
-import datetime
 import json
 import logging
 import os
@@ -10,18 +9,22 @@ from twilio.request_validator import RequestValidator
 from twilio.twiml.messaging_response import MessagingResponse
 
 from stopcovid.dialog.command_stream.publish import CommandPublisher
-from stopcovid.utils import dynamodb as dynamodb_utils
+from stopcovid.utils.idempotency import IdempotencyChecker
 
 from stopcovid.utils.logging import configure_logging
 from stopcovid.utils.verify_deploy_stage import verify_deploy_stage
 
 configure_logging()
 
+IDEMPOTENCY_REALM = "twilio-webhook"
+IDEMPOTENCY_EXPIRATION_MINUTES = 60
+
 
 def handler(event, context):
     verify_deploy_stage()
     kinesis = boto3.client("kinesis")
     stage = os.environ["STAGE"]
+    idempotency_checker = IdempotencyChecker()
 
     form = extract_form(event)
     if not is_signature_valid(event, form, stage):
@@ -29,7 +32,7 @@ def handler(event, context):
         return {"statusCode": 403}
 
     idempotency_key = event["headers"]["I-Twilio-Idempotency-Token"]
-    if already_processed(idempotency_key, stage):
+    if idempotency_checker.already_processed(idempotency_key, IDEMPOTENCY_REALM):
         logging.info(f"Already processed webhook with idempotency key {idempotency_key}. Skipping.")
         return {"statusCode": 200}
     if "MessageStatus" in form:
@@ -49,7 +52,9 @@ def handler(event, context):
             StreamName=f"message-log-{stage}",
         )
 
-    record_as_processed(idempotency_key, stage)
+    idempotency_checker.record_as_processed(
+        idempotency_key, IDEMPOTENCY_REALM, IDEMPOTENCY_EXPIRATION_MINUTES
+    )
     return {
         "statusCode": 200,
         "headers": {"content-type": "application/xml"},
@@ -73,29 +78,3 @@ def is_signature_valid(event: Dict[str, Any], form: Dict[str, Any], stage: str) 
     url = f"https://{event['headers']['Host']}/{stage}{event['path']}"
     signature = event["headers"].get("X-Twilio-Signature")
     return validator.validate(url, form, signature)
-
-
-def already_processed(idempotency_key: str, stage: str) -> bool:
-    dynamodb = boto3.client("dynamodb")
-    response = dynamodb.get_item(
-        TableName=f"twilio-webhooks-{stage}", Key={"idempotency_key": {"S": idempotency_key}}
-    )
-    return "Item" in response
-
-
-def record_as_processed(idempotency_key: str, stage: str):
-    logging.info(f"Marking idempotency key {idempotency_key} as processed")
-    dynamodb = boto3.client("dynamodb")
-    dynamodb.put_item(
-        TableName=f"twilio-webhooks-{stage}",
-        Item=dynamodb_utils.serialize(
-            {
-                "idempotency_key": idempotency_key,
-                "expiration_ts": int(
-                    (
-                        datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(hours=1)
-                    ).timestamp()
-                ),
-            }
-        ),
-    )
