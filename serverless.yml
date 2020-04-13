@@ -152,6 +152,7 @@ functions:
               - DrillTriggerSchedule
               - StreamArn
           startingPosition: LATEST
+          maximumRetryAttempts: 5
 
   triggerReminders:
     handler: stopcovid/drill_progress/aws_lambdas/trigger_reminders.handler
