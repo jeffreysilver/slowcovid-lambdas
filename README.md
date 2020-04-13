@@ -1,5 +1,9 @@
 # stopcovid-lambdas
 
+## Architecture
+
+See [architecture overview](docs/README.md).
+
 
 ## Deployment
 We deploy from the command line using the serverless framework. Once you are a member of the serverless project you can deploy to  
