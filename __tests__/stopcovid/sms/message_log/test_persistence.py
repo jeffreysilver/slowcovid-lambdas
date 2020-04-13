@@ -1,4 +1,6 @@
 import unittest
+import datetime
+
 from stopcovid import db
 from stopcovid.sms.message_log.persistence import MessageRepository
 from sqlalchemy.exc import IntegrityError
@@ -9,6 +11,10 @@ class TestMessageRepository(unittest.TestCase):
         self.repo = MessageRepository(db.get_test_sqlalchemy_engine)
         self.repo.drop_and_recreate_tables_testing_only()
 
+    def _get_timestamp_min_in_past(self, min_ago):
+        dt = datetime.datetime.now() - datetime.timedelta(minutes=min_ago)
+        return dt.replace(tzinfo=datetime.timezone.utc)
+
     def test_save_messages(self):
         messages = [
             {
@@ -17,6 +23,7 @@ class TestMessageRepository(unittest.TestCase):
                 "to_number": "1113334444",
                 "body": "Good morning",
                 "status": "delivered",
+                "created_at": self._get_timestamp_min_in_past(5),
             },
             {
                 "twilio_message_id": "twi-2",
@@ -24,6 +31,7 @@ class TestMessageRepository(unittest.TestCase):
                 "to_number": "1113334444",
                 "body": "Time for a new drill",
                 "status": "sent",
+                "created_at": self._get_timestamp_min_in_past(15),
             },
         ]
         self.repo.upsert_messages(messages)
@@ -37,6 +45,7 @@ class TestMessageRepository(unittest.TestCase):
             self.assertEqual(obj["to_number"], persisted.to_number)
             self.assertEqual(obj["body"], persisted.body)
             self.assertEqual(obj["status"], persisted.status)
+            self.assertEqual(obj["created_at"], persisted.created_at)
 
     def test_update_message(self):
         messages = [
