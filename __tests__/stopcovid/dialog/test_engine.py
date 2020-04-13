@@ -183,6 +183,14 @@ class TestProcessCommand(unittest.TestCase):
         self.assertEqual(self.drill.first_prompt(), event.first_prompt)
         self.assertIsNotNone(event.drill_instance_id)
 
+    def test_start_drill_not_validated(self, get_drill_mock):
+        self.dialog_state.user_profile.validated = False
+        self.dialog_state.user_profile.opted_out = False
+        command = StartDrill(self.phone_number, self.drill.slug)
+
+        batch = self._process_command(command)
+        self.assertEqual(0, len(batch.events))
+
     def test_start_drill_opted_out(self, get_drill_mock):
         self.dialog_state.user_profile.validated = True
         self.dialog_state.user_profile.opted_out = True
@@ -347,6 +355,17 @@ class TestProcessCommand(unittest.TestCase):
         self._assert_event_types(batch, DialogEventType.REMINDER_TRIGGERED)
 
         self.assertTrue(self.dialog_state.current_prompt_state.reminder_triggered)
+
+    def test_trigger_reminder_not_validated(self, get_drill_mock):
+        self.dialog_state.user_profile.validated = False
+        self._set_current_prompt(2, should_advance=True)
+        command = TriggerReminder(
+            phone_number=self.phone_number,
+            drill_instance_id=self.dialog_state.drill_instance_id,  # type:ignore
+            prompt_slug=self.drill.prompts[2].slug,
+        )
+        batch = self._process_command(command)
+        self.assertEqual(0, len(batch.events))
 
     def test_trigger_reminder_opted_out(self, get_drill_mock):
         self.dialog_state.user_profile.validated = True
