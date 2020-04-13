@@ -84,7 +84,7 @@ functions:
           batchSize: 1
 
   log_inbound_sms:
-    handler: stopcovid/dialog/aws_lambdas/log_inbound_sms.handler
+    handler: stopcovid/sms/aws_lambdas/log_inbound_sms.handler
     events:
       - stream:
           type: kinesis
