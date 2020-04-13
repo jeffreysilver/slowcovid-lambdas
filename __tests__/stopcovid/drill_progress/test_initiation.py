@@ -1,8 +1,7 @@
 import logging
-import os
 import unittest
 import uuid
-from unittest.mock import patch
+from unittest.mock import patch, MagicMock
 
 from stopcovid.drill_progress.initiation import DrillInitiator, FIRST_DRILL_SLUG
 from stopcovid.drill_progress.drill_progress import DrillProgress
@@ -12,14 +11,15 @@ from stopcovid.drill_progress.drill_progress import DrillProgress
 class TestInitiation(unittest.TestCase):
     def setUp(self):
         logging.disable(logging.CRITICAL)
-        os.environ["STAGE"] = "test"
-        self.initiator = DrillInitiator(
-            region_name="us-west-2",
-            endpoint_url="http://localhost:9000",
-            aws_access_key_id="fake-key",
-            aws_secret_access_key="fake-secret",
+        mock_checker = MagicMock()
+        mock_checker.already_processed = MagicMock(return_value=False)
+        idempotency_checker_patch = patch(
+            "stopcovid.drill_progress.initiation.IdempotencyChecker", return_value=mock_checker
         )
-        self.initiator.ensure_tables_exist()
+        idempotency_checker_patch.start()
+        self.addCleanup(idempotency_checker_patch.stop)
+
+        self.initiator = DrillInitiator()
 
     def test_initiation_first_drill(self, publish_mock):
         # we aren't erasing our DB between test runs, so let's ensure the phone number is unique
@@ -28,9 +28,6 @@ class TestInitiation(unittest.TestCase):
 
         self.initiator.trigger_first_drill(phone_number, idempotency_key)
         publish_mock.assert_called_once_with(phone_number, FIRST_DRILL_SLUG)
-        publish_mock.reset_mock()
-        self.initiator.trigger_first_drill(phone_number, idempotency_key)
-        publish_mock.assert_not_called()
 
     def test_initiation_next_drill_for_user(self, publish_mock):
         phone_number = str(uuid.uuid4())
@@ -48,8 +45,6 @@ class TestInitiation(unittest.TestCase):
             self.initiator.trigger_next_drill_for_user(phone_number, idempotency_key)
             publish_mock.assert_called_once_with(phone_number, "03-hand-washing-how")
             publish_mock.reset_mock()
-            self.initiator.trigger_next_drill_for_user(phone_number, idempotency_key)
-            publish_mock.assert_not_called()
 
     def test_initiation_out_of_drills(self, publish_mock):
         phone_number = str(uuid.uuid4())
@@ -93,9 +88,6 @@ class TestInitiation(unittest.TestCase):
         idempotency_key = str(uuid.uuid4())
         self.initiator.trigger_drill(phone_number, slug, idempotency_key)
         publish_mock.assert_called_once_with(phone_number, slug)
-        publish_mock.reset_mock()
-        self.initiator.trigger_drill(phone_number, slug, idempotency_key)
-        publish_mock.assert_not_called()
 
     def test_trigger_drill_none(self, publish_mock):
         phone_number = str(uuid.uuid4())

@@ -1,24 +1,20 @@
-import datetime
 import logging
-import os
 from typing import Optional
-
-import boto3
-from stopcovid.utils import dynamodb as dynamodb_utils
 
 from .drill_progress import DrillProgressRepository
 from ..dialog.command_stream.publish import CommandPublisher
+from ..utils.idempotency import IdempotencyChecker
 
 FIRST_DRILL_SLUG = "01-basics"
+IDEMPOTENCY_REALM = "drill-initiation"
+IDEMPOTENCY_EXPIRATION_MINUTES = 600
 
 
 class DrillInitiator:
-    def __init__(self, **kwargs):
-        self.dynamodb = boto3.client("dynamodb", **kwargs)
-        self.stage = os.environ.get("STAGE")
-
+    def __init__(self):
         self.drill_progress_repository = DrillProgressRepository()
         self.command_publisher = CommandPublisher()
+        self.idempotency_checker = IdempotencyChecker()
 
     def trigger_first_drill(self, phone_number: str, idempotency_key: str):
         self.trigger_drill(phone_number, FIRST_DRILL_SLUG, idempotency_key)
@@ -50,60 +46,9 @@ class DrillInitiator:
                 f"The user might be out of drills."
             )
             return
-        if not self._was_recently_initiated(phone_number, drill_slug, idempotency_key):
+        consolidated_key = f"{phone_number}:{drill_slug}:{idempotency_key}"
+        if not self.idempotency_checker.already_processed(consolidated_key, IDEMPOTENCY_REALM):
             self.command_publisher.publish_start_drill_command(phone_number, drill_slug)
-            self._record_initiation(phone_number, drill_slug, idempotency_key)
-
-    def _was_recently_initiated(
-        self, phone_number: str, drill_slug: str, idempotency_key: str
-    ) -> bool:
-        response = self.dynamodb.get_item(
-            TableName=self._table_name(),
-            Key={
-                "phone_number": {"S": phone_number},
-                "idempotency_key": {"S": f"{drill_slug}-{idempotency_key}"},
-            },
-        )
-        return "Item" in response
-
-    def _record_initiation(self, phone_number: str, drill_slug: str, idempotency_key: str):
-        self.dynamodb.put_item(
-            TableName=self._table_name(),
-            Item=dynamodb_utils.serialize(
-                {
-                    "phone_number": phone_number,
-                    "idempotency_key": f"{drill_slug}-{idempotency_key}",
-                    "expiration_ts": int(
-                        (
-                            datetime.datetime.now(datetime.timezone.utc)
-                            + datetime.timedelta(hours=10)
-                        ).timestamp()
-                    ),
-                }
-            ),
-        )
-
-    def _table_name(self) -> str:
-        return f"drill-initiations-{self.stage}"
-
-    def ensure_tables_exist(self):
-        try:
-            self.dynamodb.create_table(
-                TableName=self._table_name(),
-                KeySchema=[
-                    {"AttributeName": "phone_number", "KeyType": "HASH"},
-                    {"AttributeName": "idempotency_key", "KeyType": "RANGE"},
-                ],
-                AttributeDefinitions=[
-                    {"AttributeName": "phone_number", "AttributeType": "S"},
-                    {"AttributeName": "idempotency_key", "AttributeType": "S"},
-                ],
-                BillingMode="PAY_PER_REQUEST",
+            self.idempotency_checker.record_as_processed(
+                consolidated_key, IDEMPOTENCY_REALM, IDEMPOTENCY_EXPIRATION_MINUTES
             )
-            self.dynamodb.update_time_to_live(
-                TableName=self._table_name(),
-                TimeToLiveSpecification={"AttributeName": "expiration_ts", "Enabled": True},
-            )
-        except Exception:
-            # table already exists, most likely
-            pass
