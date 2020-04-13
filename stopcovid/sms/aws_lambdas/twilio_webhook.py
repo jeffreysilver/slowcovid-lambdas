@@ -8,7 +8,6 @@ import boto3
 from twilio.request_validator import RequestValidator
 from twilio.twiml.messaging_response import MessagingResponse
 
-from stopcovid.dialog.command_stream.publish import CommandPublisher
 from stopcovid.utils.idempotency import IdempotencyChecker
 
 from stopcovid.utils.logging import configure_logging
@@ -43,9 +42,9 @@ def handler(event, context):
             StreamName=f"message-log-{stage}",
         )
     else:
-        logging.info(f"Inbound message from {form['From']}")
-        CommandPublisher().publish_process_sms_command(form["From"], form["Body"])
-        logging.info(f"Logging an INBOUND_SMS message in the message log")
+        logging.info(
+            f"Inbound message from {form['From']}. Recording INBOUND_SMS in the message log"
+        )
         kinesis.put_record(
             Data=json.dumps({"type": "INBOUND_SMS", "payload": form}),
             PartitionKey=form["From"],

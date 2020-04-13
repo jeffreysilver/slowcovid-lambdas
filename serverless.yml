@@ -112,6 +112,17 @@ functions:
     handler: stopcovid/sms/aws_lambdas/log_message.handle
     timeout: 60  # Give aurora cluster time to cold start
 
+  publishProcessSMSCommands:
+    handler: stopcovid/sms/aws_lambdas/publish_process_sms_commands.handle
+    timeout: 20
+    events:
+      - stream:
+          type: kinesis
+          arn:
+            Fn::GetAtt:
+              - MessageLogStream
+              - Arn
+
   distributeDialogEvents:
     handler: stopcovid/sms/aws_lambdas/enqueue_sms_batch.handler
     events:
