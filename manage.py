@@ -3,6 +3,7 @@ import sys
 import uuid
 from typing import Iterator
 import json
+from twilio.rest import Client as TwilioClient
 
 import boto3
 from sqlalchemy import create_engine
@@ -186,6 +187,30 @@ def show_command(args):
         print(json.loads(record["Data"]))
 
 
+def backfill_message_created_at(args):
+    RDS = boto3.client("rds-data")
+    environment = get_env(args.stage)
+    client = TwilioClient(environment["TWILIO_ACCOUNT_SID"], environment["TWILIO_AUTH_TOKEN"])
+
+    def execute(sql):
+        return RDS.execute_statement(
+            secretArn=environment["DB_SECRET_ARN"],
+            database="postgres",
+            resourceArn=environment["DB_CLUSTER_ARN"],
+            sql=sql,
+        )
+
+    res = execute("SELECT twilio_message_id FROM messages")
+    twilio_message_ids = [i[0]["stringValue"] for i in res["records"]]
+    for twilio_message_id in twilio_message_ids:
+        message = client.messages.get(twilio_message_id).fetch()
+        created_at = message.date_created.isoformat()
+        update_res = execute(
+            f"UPDATE messages SET created_at = '{created_at}' WHERE twilio_message_id = '{twilio_message_id}' "
+        )
+        assert update_res["numberOfRecordsUpdated"] == 1
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--stage", choices=["dev", "prod"], required=True)
@@ -228,6 +253,12 @@ def main():
     show_command_parser.add_argument("--shard_id")
     show_command_parser.add_argument("--seq")
     show_command_parser.set_defaults(func=show_command)
+
+    backfill_created_at_parser = subparsers.add_parser(
+        "backfill-created-at",
+        description="Show the command at a particular sequence in the command stream",
+    )
+    backfill_created_at_parser.set_defaults(func=backfill_message_created_at)
 
     args = parser.parse_args(sys.argv if len(sys.argv) == 1 else None)
     args.func(args)
