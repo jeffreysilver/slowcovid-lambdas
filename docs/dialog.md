@@ -1,4 +1,4 @@
-# Dialog context
+# Dialog Context
 
 The dialog context is the core of the system. It manages a user’s work on an individual drill. It helps ensure that we send the right messages in the right order and that we correctly grade users’ responses. The dialog context does not know much outside of the current drill. I.e., it doesn’t know what other drills the user has started or finished. The Drill Progress context is responsible for that.
 
