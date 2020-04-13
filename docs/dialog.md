@@ -46,6 +46,6 @@ How we maintain ordering and consistency:
 
 ## Components
 
-* 1 lambda function (`handleCommand`) that processes commands from the Kinesis stream
+* 1 [lambda](../stopcovid/dialog/aws_lambdas/handle_command.py) that processes commands from the Kinesis stream
 * The Kinesis stream itself
 * DynamoDB tables for dialog state and events, the latter of which has a DynamoDB stream.
