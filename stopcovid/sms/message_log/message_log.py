@@ -19,6 +19,7 @@ def _command_to_dict(command: LogMessageCommand):
         "to_number": command.payload["To"],
         "status": command.payload.get("MessageStatus") or command.payload.get("SmsStatus"),
         "body": command.payload["Body"],
+        "created_at": command.approximate_arrival,
     }
 
 

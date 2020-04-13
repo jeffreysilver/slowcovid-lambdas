@@ -1,7 +1,10 @@
 import unittest
+
 from stopcovid import db
 from stopcovid.sms.message_log.persistence import MessageRepository
 from sqlalchemy.exc import IntegrityError
+
+from __tests__.utils.time import get_timestamp_min_in_past
 
 
 class TestMessageRepository(unittest.TestCase):
@@ -17,6 +20,7 @@ class TestMessageRepository(unittest.TestCase):
                 "to_number": "1113334444",
                 "body": "Good morning",
                 "status": "delivered",
+                "created_at": get_timestamp_min_in_past(5),
             },
             {
                 "twilio_message_id": "twi-2",
@@ -24,6 +28,7 @@ class TestMessageRepository(unittest.TestCase):
                 "to_number": "1113334444",
                 "body": "Time for a new drill",
                 "status": "sent",
+                "created_at": get_timestamp_min_in_past(15),
             },
         ]
         self.repo.upsert_messages(messages)
@@ -37,6 +42,7 @@ class TestMessageRepository(unittest.TestCase):
             self.assertEqual(obj["to_number"], persisted.to_number)
             self.assertEqual(obj["body"], persisted.body)
             self.assertEqual(obj["status"], persisted.status)
+            self.assertEqual(obj["created_at"], persisted.created_at)
 
     def test_update_message(self):
         messages = [
@@ -80,6 +86,7 @@ class TestMessageRepository(unittest.TestCase):
                 "to_number": "1113334444",
                 "body": "Good morning",
                 "status": "sent",
+                "created_at": get_timestamp_min_in_past(10),
             },
         ]
 
@@ -91,6 +98,7 @@ class TestMessageRepository(unittest.TestCase):
         self.assertEqual(persisted_messages[0]["to_number"], "1113334444")
         self.assertEqual(persisted_messages[0]["body"], "Good morning")
         self.assertEqual(persisted_messages[0]["status"], "delivered")
+        self.assertEqual(persisted_messages[0]["created_at"], messages[1]["created_at"])
 
     def test_upsert_with_incomplete_data_on_insert(self):
         messages = [
