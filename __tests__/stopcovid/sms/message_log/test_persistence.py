@@ -86,6 +86,7 @@ class TestMessageRepository(unittest.TestCase):
                 "to_number": "1113334444",
                 "body": "Good morning",
                 "status": "sent",
+                "created_at": get_timestamp_min_in_past(10),
             },
         ]
 
@@ -97,6 +98,7 @@ class TestMessageRepository(unittest.TestCase):
         self.assertEqual(persisted_messages[0]["to_number"], "1113334444")
         self.assertEqual(persisted_messages[0]["body"], "Good morning")
         self.assertEqual(persisted_messages[0]["status"], "delivered")
+        self.assertEqual(persisted_messages[0]["created_at"], messages[1]["created_at"])
 
     def test_upsert_with_incomplete_data_on_insert(self):
         messages = [
