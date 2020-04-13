@@ -45,13 +45,20 @@ class CommandPublisher:
             ]
         )
 
-    def publish_process_sms_command(self, phone_number: str, content: str):
+    def publish_process_sms_command(self, phone_number: str, content: str, twilio_webhook: dict):
         logging.info(f"({phone_number}) publishing INBOUND_SMS command")
         self._publish_commands(
             [
                 (
                     phone_number,
-                    {"type": "INBOUND_SMS", "payload": {"From": phone_number, "Body": content}},
+                    {
+                        "type": "INBOUND_SMS",
+                        "payload": {
+                            "From": phone_number,
+                            "Body": content,
+                            "twilio_webhook": twilio_webhook,
+                        },
+                    },
                 )
             ]
         )

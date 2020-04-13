@@ -30,7 +30,7 @@ class TestCommandPublisher(unittest.TestCase):
         )
 
     def publish_process_sms(self):
-        self.command_publisher.publish_process_sms_command("123456789", "lol")
+        self.command_publisher.publish_process_sms_command("123456789", "lol", {"foo": "bar"})
         self.put_records_mock.assert_called_once()
         self.assertEqual(1, len(self.put_records_mock.call_args[1]["Records"]))
         self.assertEqual(
