@@ -83,6 +83,18 @@ functions:
           # punt on idempotently sending messages to Twilio
           batchSize: 1
 
+  log_inbound_sms:
+    handler: stopcovid/dialog/aws_lambdas/log_inbound_sms.handler
+    events:
+      - stream:
+          type: kinesis
+          arn:
+            Fn::GetAtt:
+              - CommandStream
+              - Arn
+          startingPosition: LATEST
+          maximumRetryAttempts: 10000
+
   handleCommand:
     handler: stopcovid/dialog/aws_lambdas/handle_command.handler
     events:
@@ -109,7 +121,7 @@ functions:
 
 
   logMessage:
-    handler: stopcovid/sms/aws_lambdas/log_message.handle
+    handler: stopcovid/sms/aws_lambdas/persist_logs.handle
     timeout: 60  # Give aurora cluster time to cold start
 
   distributeDialogEvents:
