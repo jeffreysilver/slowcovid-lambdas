@@ -6,7 +6,7 @@ The Drill Progress Context is responsible for tracking how users are progressing
 * To remind users to finish drills that are in progress.
 * To initiate new drills daily for users who have remaining drills.
 
-Data is stored in a relational database to make it easy to write queries against all of these use cases.
+The Drill Progress Context stores data in a relational database (Amazon Aurora) to make it easy to write queries against all of these use cases.
 
 ## Initiation and reminders
 
@@ -14,7 +14,10 @@ New drills can be initiated either on a schedule or on-demand. The Drill Progres
 
 For scheduled initiation and reminders, the Drill Progress Context runs cron jobs to trigger reminders and to initiate new drills. Those crons query its database to find which reminders/drills to trigger, and then enqueues commands for the Dialog Context.
 
-The Drill Progress Context also is responsible for initiating drills on demand, in response to a `USER_VALIDATED` event (when a user first validates) or `NEXT_DRILL_REQUESTED` event (when a user requests a new drill by texting "MORE") from the Dialog Context.
+The Drill Progress Context also is responsible for initiating drills on demand in response to an event from the Dialog Context:
+
+* A `USER_VALIDATED` event indicates that a user has just validated and needs to receive their first drill.
+* A `NEXT_DRILL_REQUESTED` event indicates that a user has requested a new drill (e.g., by texting "MORE").
 
 ## Data model
 
@@ -36,6 +39,6 @@ As we process each event, we update a user's entire tree of objects (`users`, `p
 * A relational database (Amazon Aurora, postgresql-compatible version)
 * A DynamoDB table used for drill scheduling
 * [Updater](../stopcovid/drill_progress/aws_lambdas/update_drill_status.py): A consumer of the Dialog Context's event stream that updates the database based on each event. The Updater also handles on-demand drill initiation, which occurs when a user first validates or when they request a new drill by typing MORE.
-* [Next drill scheduler](../stopcovid/drill_progress/aws_lambdas/schedule_next_drills_to_trigger.py): A cron that runs daily to find users who need new drills. Those user-drill combinations are recorded in DynamoDB for distribution over the next 3 hours — to avoid flooding twilio with a bunch of messages at once.
-* [Scheduled drill initiator](../stopcovid/drill_progress/aws_lambdas/trigger_scheduled_drill.py): Initiates drills scheduled by the previous lambda, by enqueueing a command for the Dialog Context. 
-* [Reminder sender](../stopcovid/drill_progress/aws_lambdas/trigger_reminders.py): A cron that sends reminders for users who haven't interacted in a while. Enqueues a command for the Dialog Context to actually send the reminders.
+* [Next Drill Scheduler](../stopcovid/drill_progress/aws_lambdas/schedule_next_drills_to_trigger.py): A cron that runs daily to find users who need new drills. Those user-drill combinations are recorded in DynamoDB for distribution over the next 3 hours — to avoid flooding twilio with a bunch of messages at once.
+* [Scheduled Drill Initiator](../stopcovid/drill_progress/aws_lambdas/trigger_scheduled_drill.py): Initiates drills scheduled by the Next Drill Scheduler lambda, by enqueueing a command for the Dialog Context. 
+* [Reminder sender](../stopcovid/drill_progress/aws_lambdas/trigger_reminders.py): A cron that sends reminders for users who haven't interacted in a while. Enqueues a command for the Dialog Context to send the reminders.

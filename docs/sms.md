@@ -1,6 +1,6 @@
 # SMS Context
 
-The SMS Context is responsible for sending and receiving messages with users. It includes our integration with Twilio.
+The SMS Context is exchanging messages with users via Twilio. It handles both sending and receiving of messages.
 
 ## Inbound SMS
 
@@ -14,10 +14,7 @@ Outbound messages are messages from the stopCOVID system to users. Currently all
 
 Our dialog event processor reads from the event stream and enqueues message sending commands to an SQS FIFO queue. Our "SMS sender" sends messages from that queue to Twilio.
 
-We had two reasons for introducing an SQS queue:
-
-* DynamoDB streams are effectively capped at two listening lambdas per shard.
-* The SQS queue allows us to parallelize message sending more if we need o.
+We introduced the SQS queue to give us the ability to parallelize message sending if we needed to. DynamoDB streams are effectively capped at two listening lambdas per shard. We ensure that messages are processed in order per phone number using the SQS [message group](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/using-messagegroupid-property.html) feature.
 
 ## Message logging
 
@@ -38,3 +35,4 @@ There are three types of messages, which we obtain in three different ways:
 * [SMS sender](../stopcovid/sms/aws_lambdas/send_sms_batch.py) that sends SMS commands to twilio.
 * [Inbound SMS logger](../stopcovid/sms/aws_lambdas/log_inbound_sms.py) that listens to the dialog command stream and logs inbound SMS messages
 * [Log persister](../stopcovid/sms/aws_lambdas/persist_logs.py) that records message log entries in a SQL database.
+* Message log database (Amazon Aurora)
