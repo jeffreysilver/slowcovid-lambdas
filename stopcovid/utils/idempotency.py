@@ -44,24 +44,28 @@ class IdempotencyChecker:
     def _now() -> datetime.datetime:
         return datetime.datetime.now(tz=datetime.timezone.utc)
 
-    def ensure_tables_exist(self):
+    def drop_and_recreate_table(self):
+        if self.stage != "test":
+            raise RuntimeError("Method unsafe to run in non test environment")
         try:
-            self.dynamodb.create_table(
-                TableName=self._table_name(),
-                KeySchema=[
-                    {"AttributeName": "idempotency_key", "KeyType": "HASH"},
-                    {"AttributeName": "realm", "KeyType": "RANGE"},
-                ],
-                AttributeDefinitions=[
-                    {"AttributeName": "idempotency_key", "AttributeType": "S"},
-                    {"AttributeName": "realm", "AttributeType": "S"},
-                ],
-                BillingMode="PAY_PER_REQUEST",
-            )
-            self.dynamodb.update_time_to_live(
-                TableName=self._table_name(),
-                TimeToLiveSpecification={"AttributeName": "expiration_ts", "Enabled": True},
-            )
+            self.dynamodb.delete_table(TableName=self._table_name())
         except Exception:
-            # table already exists, most likely
+            # Table already does not exist
             pass
+
+        self.dynamodb.create_table(
+            TableName=self._table_name(),
+            KeySchema=[
+                {"AttributeName": "idempotency_key", "KeyType": "HASH"},
+                {"AttributeName": "realm", "KeyType": "RANGE"},
+            ],
+            AttributeDefinitions=[
+                {"AttributeName": "idempotency_key", "AttributeType": "S"},
+                {"AttributeName": "realm", "AttributeType": "S"},
+            ],
+            BillingMode="PAY_PER_REQUEST",
+        )
+        self.dynamodb.update_time_to_live(
+            TableName=self._table_name(),
+            TimeToLiveSpecification={"AttributeName": "expiration_ts", "Enabled": True},
+        )
