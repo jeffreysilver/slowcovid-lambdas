@@ -8,10 +8,7 @@ from stopcovid import db
 from stopcovid.dialog.models.events import DialogEventBatch, UserValidated
 from stopcovid.dialog.models.state import UserProfile
 from stopcovid.dialog.registration import CodeValidationPayload
-from stopcovid.drill_progress.trigger_reminders.trigger_reminders import (
-    ReminderTriggerer,
-    IDEMPOTENCY_REALM,
-)
+from stopcovid.drill_progress.trigger_reminders import ReminderTriggerer, IDEMPOTENCY_REALM
 from stopcovid.drill_progress.drill_progress import DrillProgressRepository
 from stopcovid.utils.idempotency import IdempotencyChecker
 from __tests__.utils.factories import make_drill_instance
@@ -38,7 +35,7 @@ class TestReminderTriggers(unittest.TestCase):
         )
 
         drill_db_patch = patch(
-            "stopcovid.drill_progress.trigger_reminders.trigger_reminders.ReminderTriggerer._get_drill_progress_repo",
+            "stopcovid.drill_progress.trigger_reminders.ReminderTriggerer._get_drill_progress_repo",
             return_value=self.drill_progress_repo,
         )
         drill_db_patch.start()
@@ -54,7 +51,7 @@ class TestReminderTriggers(unittest.TestCase):
         self.idempotency_checker.drop_and_recreate_table()
 
         idempotency_patch = patch(
-            "stopcovid.drill_progress.trigger_reminders.trigger_reminders.IdempotencyChecker",
+            "stopcovid.drill_progress.trigger_reminders.IdempotencyChecker",
             return_value=self.idempotency_checker,
         )
         idempotency_patch.start()
