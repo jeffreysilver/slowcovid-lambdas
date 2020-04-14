@@ -9,8 +9,12 @@ from . import twilio
 from stopcovid.sms.types import SMSBatch
 
 from . import publish
+from ..utils.idempotency import IdempotencyChecker
 
 DELAY_SECONDS_BETWEEN_MESSAGES = 3
+
+IDEMPOTENCY_REALM = "send-sms"
+IDEMPOTENCY_EXPIRATION_MINUTES = 24 * 60  # one day
 
 
 def _publish_send(twilio_response):
@@ -29,6 +33,10 @@ def _publish_send(twilio_response):
 
 
 def _send_batch(batch: SMSBatch):
+    idempotency_checker = IdempotencyChecker()
+    if idempotency_checker.already_processed(batch.idempotency_key, IDEMPOTENCY_REALM):
+        logging.info(f"SMS Batch already processed. Skipping. {batch}")
+        return
     twilio_responses = []
     for i, message in enumerate(batch.messages):
         res = twilio.send_message(batch.phone_number, message.body, message.media_url)
@@ -39,6 +47,9 @@ def _send_batch(batch: SMSBatch):
         if i < len(batch.messages) - 1:
             sleep(DELAY_SECONDS_BETWEEN_MESSAGES)
 
+    idempotency_checker.record_as_processed(
+        batch.idempotency_key, IDEMPOTENCY_REALM, IDEMPOTENCY_EXPIRATION_MINUTES
+    )
     return twilio_responses
 
 

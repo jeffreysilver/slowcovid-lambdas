@@ -80,8 +80,6 @@ functions:
             Fn::GetAtt:
               - OutboundSMSFifoQueue
               - Arn
-          # punt on idempotently sending messages to Twilio
-          batchSize: 1
 
   log_inbound_sms:
     handler: stopcovid/sms/aws_lambdas/log_inbound_sms.handler
