@@ -4,11 +4,11 @@ The dialog context is the core of the system. It manages a user’s work on an i
 
 The Dialog Context accepts **commands** and produces **events**. A command is a request to do something and an event is a record that something has occurred. Commands are written into a kinesis stream and processed in order. Events are written to a DynamoDB table that feeds a DynamoDB stream.
 
-There are three commands:
-
-* Process SMS Message (triggered by the SMS context).
-* Trigger reminder to complete a drill (triggered from within the Drill Progress context).
-* Trigger drill start (triggered from within the Drill Progress context).
+ There are three types of commands:
+ 
+* `INBOUND_SMS`: Process an inbound SMS message. Enqueued by the SMS context.
+* `START_DRILL`: Start a specific user on a new specific drill. Enqueued by the Drill Progress context.
+* `TRIGGER_REMINDER`: Remind a user to continue working on a stalled drill. Enqueued by the Drill Progress context.
 
 The Dialog Context produces zero or more events in response to each command. The events are
 
@@ -25,7 +25,7 @@ The Dialog Context produces zero or more events in response to each command. The
 
 These events are the source of truth for the system, both within the Dialog Context and for other contexts. They are consumed in three places:
 
-* Within the dialog core, the events are used to derive a dialog state object.
+* Within the dialog core, the events are used to derive a dialog state object that we persist in DynamoDB.
 * Within the SMS context, we use dialog events (consumed via a DynamoDB stream) to send messages.
 * Within the Drill Progress context, we use dialog events (consumed via a DynamoDB stream) to update a user’s progress across drills.
 
@@ -39,8 +39,8 @@ How we maintain ordering and consistency:
     * **The command stream is partitioned by phone number**, and each partition has only one consuming lambda. That ensures that we don’t process two commands for one phone number at the same time.
     * **DynamoDB tables are partitioned by phone number.** We rely on dynamoDB streams to propagate events to other contexts. Each stream partition has only one consuming lambda. That guarantees that each phone number’s events are processed in order.
 * **Event batching**
-    * **All events produced by a single command are persisted together in one “event batch” item in DynamoDB.** Each command can produce multiple events. E.g., `PROMPT_COMPLETED` and `ADVANCED_TO_NEXT_PROMPT` is a common combination. We found that when we persisted events individually, without batching, that we couldn’t guarantee the order that one command’s events would appear in the stream.
-    * **Each event batch is tagged with a sequence number.** The sequence number is carried forward from the kinesis command stream. Each event batch is tagged with the sequence number of the command that produced the batch. Downstream consumers can use the sequence number to ensure that they don’t update based on old events.
+    * **All events produced by a single command are persisted together in one “event batch” item in DynamoDB.** Each command can produce multiple events. E.g., `PROMPT_COMPLETED` and `ADVANCED_TO_NEXT_PROMPT` are a common combination. We found that when we persisted events individually, without batching, that we couldn’t guarantee the order that the order the events would appear in the stream.
+    * **Each event batch is tagged with a sequence number.** We obtain the sequence number from the kinesis command stream. Each event batch is tagged with the sequence number of the command that produced the batch. Downstream consumers can track the sequence number to ensure that they don’t update based on old events.
 * **Each command results in one DynamoDB transaction that both updates the dialog state and writes a dialog event batch.** It’s a simple way to ensure that our state and our events are in sync.
 * **Drill content doesn’t change while the user is in the middle of a drill.** When a user starts a drill, we take a snapshot of the drill and store it in dialog state. That snapshot stays in the user’s dialog state until the drill is complete. So modifications to a drill’s content won’t lead to a jarring experience for users who are in the middle of that drill.
 
