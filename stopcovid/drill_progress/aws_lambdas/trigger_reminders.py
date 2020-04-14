@@ -1,4 +1,4 @@
-from stopcovid.drill_progress.trigger_reminders.trigger_reminders import ReminderTriggerer
+from stopcovid.drill_progress.trigger_reminders import ReminderTriggerer
 
 from stopcovid.utils.logging import configure_logging
 from stopcovid.utils.verify_deploy_stage import verify_deploy_stage
