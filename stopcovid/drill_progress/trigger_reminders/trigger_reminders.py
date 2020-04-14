@@ -6,6 +6,8 @@ from stopcovid.utils.idempotency import IdempotencyChecker
 
 REMINDER_TRIGGER_FLOOR_MINUTES = 60 * 4
 REMINDER_TRIGGER_CEIL_MINUTES = 60 * 24
+# The idempotency expiration must be larger than the reminder trigger ceiling
+IDEMPOTENCY_EXPIRATION_MINUTES = REMINDER_TRIGGER_CEIL_MINUTES * 2
 
 
 IDEMPOTENCY_REALM = "trigger-reminders"
@@ -37,4 +39,6 @@ class ReminderTriggerer:
             # The dialog agent wont send a reminder for the same drill/prompt combo twice
             # publishing to the stream twice should be avoided, but isn't a big deal.
             self.command_publisher.publish_trigger_reminder_commands([drill_instance])
-            self.idempotency_checker.record_as_processed(idempotency_key, IDEMPOTENCY_REALM, None)
+            self.idempotency_checker.record_as_processed(
+                idempotency_key, IDEMPOTENCY_REALM, IDEMPOTENCY_EXPIRATION_MINUTES
+            )

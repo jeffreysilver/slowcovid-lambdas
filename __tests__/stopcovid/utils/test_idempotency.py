@@ -19,8 +19,3 @@ class TestIdempotency(unittest.TestCase):
         self.assertFalse(self.idempotency_checker.already_processed("idempotency", "realm1"))
         self.idempotency_checker.record_as_processed("idempotency", "realm1", 5)
         self.assertTrue(self.idempotency_checker.already_processed("idempotency", "realm1"))
-
-    def test_idempotency_without_expiration(self):
-        self.assertFalse(self.idempotency_checker.already_processed("hello", "realm1"))
-        self.idempotency_checker.record_as_processed("hello", "realm1", None)
-        self.assertTrue(self.idempotency_checker.already_processed("hello", "realm1"))

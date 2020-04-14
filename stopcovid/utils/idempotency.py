@@ -1,6 +1,5 @@
 import datetime
 import os
-from typing import Optional
 
 import boto3
 
@@ -16,18 +15,17 @@ class IdempotencyChecker:
         self.dynamodb = boto3.client("dynamodb", **kwargs)
         self.stage = os.environ.get("STAGE")
 
-    def record_as_processed(
-        self, idempotency_key: str, realm: str, expiration_minutes: Optional[int]
-    ):
-        expiration_ts = (
-            int((self._now() + datetime.timedelta(minutes=expiration_minutes)).timestamp())
-            if expiration_minutes
-            else None
-        )
+    def record_as_processed(self, idempotency_key: str, realm: str, expiration_minutes: int):
         self.dynamodb.put_item(
             TableName=self._table_name(),
             Item=dynamodb_utils.serialize(
-                {"idempotency_key": idempotency_key, "realm": realm, "expiration_ts": expiration_ts}
+                {
+                    "idempotency_key": idempotency_key,
+                    "realm": realm,
+                    "expiration_ts": int(
+                        (self._now() + datetime.timedelta(minutes=expiration_minutes)).timestamp()
+                    ),
+                }
             ),
         )
 
