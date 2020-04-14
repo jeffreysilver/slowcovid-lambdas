@@ -1,5 +1,12 @@
 # stopcovid-lambdas
 
+## Architecture
+
+See [architecture overview](docs/README.md).
+
+## The simulator
+
+You can simulate the core of dialog processing on the command line — by feeding the dialog engine with command-line entries rather than entries from a kinesis stream. Try it out by running `python simulator.py`.
 
 ## Deployment
 We deploy from the command line using the serverless framework. Once you are a member of the serverless project you can deploy to  
