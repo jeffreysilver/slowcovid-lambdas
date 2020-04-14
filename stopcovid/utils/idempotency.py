@@ -1,6 +1,6 @@
 import datetime
 import os
-from typing import Union
+from typing import Optional
 
 import boto3
 
@@ -17,7 +17,7 @@ class IdempotencyChecker:
         self.stage = os.environ.get("STAGE")
 
     def record_as_processed(
-        self, idempotency_key: str, realm: str, expiration_minutes: Union[int, None]
+        self, idempotency_key: str, realm: str, expiration_minutes: Optional[int]
     ):
         expiration_ts = (
             int((self._now() + datetime.timedelta(minutes=expiration_minutes)).timestamp())
