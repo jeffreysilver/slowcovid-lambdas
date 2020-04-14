@@ -6,10 +6,9 @@ from stopcovid.utils.idempotency import IdempotencyChecker
 
 REMINDER_TRIGGER_FLOOR_MINUTES = 60 * 4
 REMINDER_TRIGGER_CEIL_MINUTES = 60 * 24
+
 # The idempotency expiration must be larger than the reminder trigger ceiling
 IDEMPOTENCY_EXPIRATION_MINUTES = REMINDER_TRIGGER_CEIL_MINUTES * 2
-
-
 IDEMPOTENCY_REALM = "trigger-reminders"
 
 
