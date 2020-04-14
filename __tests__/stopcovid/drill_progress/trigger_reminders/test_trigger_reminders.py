@@ -81,7 +81,6 @@ class TestReminderTriggers(unittest.TestCase):
         self.drill_progress_repo._save_drill_instance(two_day_old_drill_instance)
         ReminderTriggerer().trigger_reminders()
         publish_mock.assert_not_called()
-        # self.assertEqual(len(self.reminder_trigger_repo.get_reminder_triggers()), 0)
 
     def test_reminder_triggerer_triggers_reminder_and_persists_idempotency_key(self, publish_mock):
         drill_instance = self._get_incomplete_drill_with_last_prompt_started_min_ago(5 * 60)

@@ -49,7 +49,12 @@ class IdempotencyChecker:
     def drop_and_recreate_table(self):
         if self.stage != "test":
             raise RuntimeError("Method unsafe to run in non test environment")
-        self.dynamodb.delete_table(TableName=self._table_name())
+        try:
+            self.dynamodb.delete_table(TableName=self._table_name())
+        except Exception:
+            # Table already does not exist
+            pass
+
         self.dynamodb.create_table(
             TableName=self._table_name(),
             KeySchema=[
