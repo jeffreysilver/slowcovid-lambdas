@@ -9,10 +9,7 @@ See [architecture overview](docs/README.md).
 You can simulate the core of dialog processing on the command line — by feeding the dialog engine with command-line entries rather than entries from a kinesis stream. Try it out by running `python simulator.py`.
 
 ## Deployment
-We deploy from the command line using the serverless framework. Once you are a member of the serverless project you can deploy to  
-
-- dev: `serverless deploy -s dev --env development`
-- prod: `serverless deploy -s prod --env production`
+Deployments are done via AWS CodeBuild. Log in to the CodeBuild UI to deploy dev and prod.
 
 ## CI
 We use [black](https://black.readthedocs.io/en/stable/) for code formatting and flake8 for linting, with a custom rule setting maximum line length to 100.
