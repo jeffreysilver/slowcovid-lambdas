@@ -22,11 +22,13 @@ class SMSSchema(Schema):
 class SMSBatch:
     phone_number: str
     messages: List[SMS]
+    idempotency_key: Optional[str] = None
 
 
 class SMSBatchSchema(Schema):
     phone_number = fields.Str(required=True)
     messages = fields.List(fields.Nested(SMSSchema), required=True)
+    idempotency_key = fields.Str()
 
     @post_load
     def make_batch_sms(self, data, **kwargs):
