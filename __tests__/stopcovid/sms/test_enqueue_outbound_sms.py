@@ -216,18 +216,15 @@ class TestPublishOutboundSMS(unittest.TestCase):
         self.assertEqual(len(entries), 1)
         entry = entries[0]
         self.assertTrue(1 <= len(entry["MessageDeduplicationId"]) <= 128)
+        sqs_message = json.loads(entry["MessageBody"])
+        self.assertEqual(sqs_message["phone_number"], phone_number)
         self.assertEqual(
-            entry["MessageBody"],
-            json.dumps(
-                {
-                    "phone_number": phone_number,
-                    "messages": [
-                        {"body": "message 1", "media_url": None},
-                        {"body": "message 2", "media_url": None},
-                        {"body": "message 3", "media_url": None},
-                    ],
-                }
-            ),
+            sqs_message["messages"],
+            [
+                {"body": "message 1", "media_url": None},
+                {"body": "message 2", "media_url": None},
+                {"body": "message 3", "media_url": None},
+            ],
         )
         self.assertEqual(entry["MessageGroupId"], phone_number)
 
@@ -249,19 +246,16 @@ class TestPublishOutboundSMS(unittest.TestCase):
         self.assertEqual(len(entries), 1)
         entry = entries[0]
         self.assertTrue(1 <= len(entry["MessageDeduplicationId"]) <= 128)
+        sqs_message = json.loads(entry["MessageBody"])
+        self.assertEqual(sqs_message["phone_number"], phone_number)
         self.assertEqual(
-            entry["MessageBody"],
-            json.dumps(
-                {
-                    "phone_number": phone_number,
-                    "messages": [
-                        {"body": "message 1", "media_url": None},
-                        {"body": "message 2", "media_url": None},
-                        {"body": "message 3", "media_url": None},
-                    ],
-                }
-            ),
-        )
+            sqs_message["messages"],
+            [
+                {"body": "message 1", "media_url": None},
+                {"body": "message 2", "media_url": None},
+                {"body": "message 3", "media_url": None},
+            ],
+        ),
         self.assertEqual(entry["MessageGroupId"], phone_number)
 
     def test_sends_messages_to_multiple_phone_numbers_for_one_event_each(self, boto_mock):
@@ -285,32 +279,20 @@ class TestPublishOutboundSMS(unittest.TestCase):
         # first entry
         entry = entries[0]
         self.assertTrue(1 <= len(entry["MessageDeduplicationId"]) <= 128)
+        sqs_message = json.loads(entry["MessageBody"])
+        self.assertEqual(sqs_message["phone_number"], phone_number_1)
         self.assertEqual(
-            entry["MessageBody"],
-            json.dumps(
-                {
-                    "phone_number": phone_number_1,
-                    "messages": [
-                        {"body": "message 1", "media_url": None},
-                        {"body": "message 2", "media_url": None},
-                    ],
-                }
-            ),
+            sqs_message["messages"],
+            [{"body": "message 1", "media_url": None}, {"body": "message 2", "media_url": None}],
         )
         self.assertEqual(entry["MessageGroupId"], phone_number_1)
 
         # second entry
         entry = entries[1]
         self.assertTrue(1 <= len(entry["MessageDeduplicationId"]) <= 128)
-        self.assertEqual(
-            entry["MessageBody"],
-            json.dumps(
-                {
-                    "phone_number": phone_number_2,
-                    "messages": [{"body": "message 3", "media_url": None}],
-                }
-            ),
-        )
+        sqs_message = json.loads(entry["MessageBody"])
+        self.assertEqual(sqs_message["phone_number"], phone_number_2)
+        self.assertEqual(sqs_message["messages"], [{"body": "message 3", "media_url": None}])
         self.assertEqual(entry["MessageGroupId"], phone_number_2)
 
     def test_sends_messages_to_multiple_phone_numbers_for_multiple_events_each(self, boto_mock):
@@ -355,54 +337,36 @@ class TestPublishOutboundSMS(unittest.TestCase):
         # first entry
         entry = entries[0]
         self.assertTrue(1 <= len(entry["MessageDeduplicationId"]) <= 128)
-
+        sqs_message = json.loads(entry["MessageBody"])
+        self.assertEqual(sqs_message["phone_number"], phone_number_1)
         self.assertEqual(
-            entry["MessageBody"],
-            json.dumps(
-                {
-                    "phone_number": phone_number_1,
-                    "messages": [
-                        {"body": "message 1", "media_url": None},
-                        {"body": "message 2", "media_url": None},
-                    ],
-                }
-            ),
+            sqs_message["messages"],
+            [{"body": "message 1", "media_url": None}, {"body": "message 2", "media_url": None}],
         )
         self.assertEqual(entry["MessageGroupId"], phone_number_1)
 
         # second entry
         entry = entries[1]
         self.assertTrue(1 <= len(entry["MessageDeduplicationId"]) <= 128)
-
+        sqs_message = json.loads(entry["MessageBody"])
+        self.assertEqual(sqs_message["phone_number"], phone_number_2)
         self.assertEqual(
-            entry["MessageBody"],
-            json.dumps(
-                {
-                    "phone_number": phone_number_2,
-                    "messages": [
-                        {"body": "message 3", "media_url": None},
-                        {"body": "message 4", "media_url": None},
-                    ],
-                }
-            ),
+            sqs_message["messages"],
+            [{"body": "message 3", "media_url": None}, {"body": "message 4", "media_url": None}],
         )
         self.assertEqual(entry["MessageGroupId"], phone_number_2)
 
         # third entry
         entry = entries[2]
         self.assertTrue(1 <= len(entry["MessageDeduplicationId"]) <= 128)
-
+        sqs_message = json.loads(entry["MessageBody"])
+        self.assertEqual(sqs_message["phone_number"], phone_number_3)
         self.assertEqual(
-            entry["MessageBody"],
-            json.dumps(
-                {
-                    "phone_number": phone_number_3,
-                    "messages": [
-                        {"body": "message 5", "media_url": None},
-                        {"body": "message 6", "media_url": None},
-                        {"body": "message 7", "media_url": None},
-                    ],
-                }
-            ),
+            sqs_message["messages"],
+            [
+                {"body": "message 5", "media_url": None},
+                {"body": "message 6", "media_url": None},
+                {"body": "message 7", "media_url": None},
+            ],
         )
         self.assertEqual(entry["MessageGroupId"], phone_number_3)

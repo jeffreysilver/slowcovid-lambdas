@@ -140,23 +140,26 @@ def publish_outbound_sms_messages(outbound_sms_messages: List[OutboundSMS]):
     for message in outbound_sms_messages:
         phone_number_to_messages[message.phone_number].append(message)
 
-    entries = [
-        {
-            "Id": str(uuid.uuid4()),
-            "MessageBody": json.dumps(
-                {
-                    "phone_number": phone,
-                    "messages": [
-                        {"body": message.body, "media_url": message.media_url}
-                        for message in messages
-                    ],
-                }
-            ),
-            "MessageDeduplicationId": _get_message_deduplication_id(messages),
-            "MessageGroupId": phone,
-        }
-        for phone, messages in phone_number_to_messages.items()
-    ]
+    entries = []
+    for phone, messages in phone_number_to_messages.items():
+        deduplication_id = _get_message_deduplication_id(messages)
+        entries.append(
+            {
+                "Id": str(uuid.uuid4()),
+                "MessageBody": json.dumps(
+                    {
+                        "phone_number": phone,
+                        "messages": [
+                            {"body": message.body, "media_url": message.media_url}
+                            for message in messages
+                        ],
+                        "idempotency_key": f"{phone}-{deduplication_id}",
+                    }
+                ),
+                "MessageDeduplicationId": deduplication_id,
+                "MessageGroupId": phone,
+            }
+        )
 
     return queue.send_messages(Entries=entries)
 
