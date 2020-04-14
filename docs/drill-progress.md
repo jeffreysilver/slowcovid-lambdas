@@ -32,13 +32,13 @@ All of the tables have foreign key references back to `users`, which means that 
 
 As we process each event, we update a user's entire tree of objects (`users`, `phone_numbers`, `drill_statuses`, and `drill_instances`) in one transaction.
 
-**NOTE**: Though our data model allows each user to have multiple phone numbers, the system won't handle it well if more than one phone number is actively being used. We assume that the updater (described below) processes one event at a time for each user. If a user is actively receiving events for two phone numbers at once, they may come in on different stream shards and violate this assumption.
+**NOTE**: Though our data model allows each user to have multiple phone numbers, the system won't handle it well if more than one phone number is actively being used. We assume that the updater (described below) processes one event at a time for each user. If a user is actively receiving events for two phone numbers at once, they may come in on different Dialog Event Stream shards and violate this assumption.
 
 ## Components
 
 * A relational database (Amazon Aurora, postgresql-compatible version)
 * A DynamoDB table used for drill scheduling
-* [Updater](../stopcovid/drill_progress/aws_lambdas/update_drill_status.py): A consumer of the Dialog Context's event stream that updates the database based on each event. The Updater also handles on-demand drill initiation, which occurs when a user first validates or when they request a new drill by typing MORE.
+* [Updater](../stopcovid/drill_progress/aws_lambdas/update_drill_status.py): A consumer of the Dialog Event Stream that updates the database based on each event. The Updater also handles on-demand drill initiation, which occurs when a user first validates or when they request a new drill by typing MORE.
 * [Next Drill Scheduler](../stopcovid/drill_progress/aws_lambdas/schedule_next_drills_to_trigger.py): A cron that runs daily to find users who need new drills. Those user-drill combinations are recorded in DynamoDB for distribution over the next 3 hours — to avoid flooding twilio with a bunch of messages at once.
 * [Scheduled Drill Initiator](../stopcovid/drill_progress/aws_lambdas/trigger_scheduled_drill.py): Initiates drills scheduled by the Next Drill Scheduler lambda, by enqueueing a command for the Dialog Context. 
 * [Reminder sender](../stopcovid/drill_progress/aws_lambdas/trigger_reminders.py): A cron that sends reminders for users who haven't interacted in a while. Enqueues a command for the Dialog Context to send the reminders.

@@ -13,8 +13,8 @@ There are four parts of the system. They are [bounded contexts](https://martinfo
 
 These four bounded contexts are eventually consistent with each other. That is, there might be a delay for something that happens in the Dialog Context to propagate to the Drill Progress Context. But it will eventually propagate. The contexts communicate over narrowly defined interfaces:
 
-* **Dialog commands Kinesis stream**. The Dialog Context acts in response to commands and it receives those commands over a Kinesis stream.
-* **Dialog events DynamoDB stream**. The Dialog Context responds to commands by emitting events to a DynamoDB stream. Those events are consumed by the SMS context, which translates them into outbound SMS messages. They are also consumed by the Drill Progress context, which initiates drills and updates information on who has completed which drills.
+* **Dialog Command Stream**, a Kinesis stream. The Dialog Context acts in response to commands and it receives those commands over a Kinesis stream called the Dialog Command Stream.
+* **Dialog Event Stream**, a DynamoDB stream. The Dialog Context responds to commands by emitting events to the Dialog Event Stream. Those events are consumed by the SMS context, which translates them into outbound SMS messages. They are also consumed by the Drill Progress context, which initiates drills and updates information on who has completed which drills.
 * **Drills API**. Retrieves a specific drill. Invoked synchronously from the dialog context.
 
 
@@ -22,9 +22,9 @@ These four bounded contexts are eventually consistent with each other. That is, 
 
 The core scaling principle is that we can process work for multiple phone numbers in parallel. But each component handles work for an individual phone number serially and in order.
  
- We've configured our streams to allow parallel processing of multiple phone numbers and serial processing within each phone number. The phone number is the partition key for the Dialog Context's command stream and event stream. We ensure serial processing within the SMS context by using the phone number as the message group ID for the SMS sending FIFO queue.
+ We've configured our streams to allow parallel processing of multiple phone numbers and serial processing within each phone number. The phone number is the partition key for the Dialog Command Stream and the Dialog Event Stream. We ensure serial processing within the SMS context by using the phone number as the message group ID for the SMS sending FIFO queue.
 
-**If there is a bottleneck in the dialog engine**, we can increase throughput by adding shards to the Kinesis stream for dialog commands. That increase the amount of processing that we can do in parallel.
+**If there is a bottleneck in the dialog engine**, we can increase throughput by adding shards to the Dialog Command Stream. That increase the amount of processing that we can do in parallel.
 
 **If there is a bottleneck in SMS sending**, we can increase the number of queue processors for the SMS sending queue. See [the SMS Context](sms.md) for more information.
 
