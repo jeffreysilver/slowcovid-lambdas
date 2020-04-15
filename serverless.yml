@@ -32,10 +32,6 @@ provider:
         - rds-data:*
         - secretsmanager:GetSecretValue
       Resource: "*"
-  vpc:
-    subnetIds:
-      - subnet-07fb30e724091f148
-      - subnet-0534a0b05872cac2b
 
   environment:
     STAGE: ${self:provider.stage}
