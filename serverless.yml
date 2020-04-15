@@ -6,7 +6,7 @@ custom:
   enterprise:
     collectLambdaLogs: false
   logForwarding:
-      destinationARN: arn:aws:lambda:us-east-1:696991354966:function:datadog-forwarder-Forwarder-1VDUH0V5RXYDW
+      destinationARN: ${ssm:/stopcovid/${self:provider.stage}/logForwardingDestinationArn}
   pythonRequirements:
     slim: true
     slimPatterns:
