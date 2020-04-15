@@ -41,17 +41,7 @@ from ..dialog.models.events import (
     DialogEvent,
     DialogEventBatch,
 )
-
-ALL_DRILL_SLUGS = [
-    "01-basics",
-    "02-prevention",
-    "03-hand-washing-how",
-    "04-hand-sanitizer",
-    "05-disinfect-phone",
-    "06-hand-washing-when",
-    "07-sanitizing-surfaces",
-    "08-face-covering",
-]
+from ..drills.drills import get_all_drill_slugs
 
 metadata = MetaData()
 users = Table(
@@ -415,7 +405,7 @@ class DrillProgressRepository:
                     phone_number=phone_number_record.phone_number,
                 )
             )
-            for i, slug in enumerate(ALL_DRILL_SLUGS):
+            for i, slug in enumerate(get_all_drill_slugs()):
                 connection.execute(
                     drill_statuses.insert().values(
                         id=str(uuid.uuid4()),

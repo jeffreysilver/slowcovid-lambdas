@@ -3,9 +3,9 @@ from typing import Optional
 
 from .drill_progress import DrillProgressRepository
 from ..dialog.command_stream.publish import CommandPublisher
+from ..drills.drills import get_first_drill_slug
 from ..utils.idempotency import IdempotencyChecker
 
-FIRST_DRILL_SLUG = "01-basics"
 IDEMPOTENCY_REALM = "drill-initiation"
 IDEMPOTENCY_EXPIRATION_MINUTES = 600
 
@@ -17,7 +17,7 @@ class DrillInitiator:
         self.idempotency_checker = IdempotencyChecker()
 
     def trigger_first_drill(self, phone_number: str, idempotency_key: str):
-        self.trigger_drill(phone_number, FIRST_DRILL_SLUG, idempotency_key)
+        self.trigger_drill(phone_number, get_first_drill_slug(), idempotency_key)
 
     def trigger_next_drill_for_user(self, phone_number: str, idempotency_key: str):
         drill_progress = self.drill_progress_repository.get_progress_for_user(phone_number)

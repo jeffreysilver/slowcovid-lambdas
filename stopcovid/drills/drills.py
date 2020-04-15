@@ -1,4 +1,4 @@
-import os
+from copy import copy
 from dataclasses import dataclass
 from typing import Optional, List
 
@@ -6,8 +6,6 @@ from marshmallow import Schema, fields, post_load
 
 from .localize import localize
 from .response_check import is_correct_response
-
-__location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
 
 
 def drill_from_dict(obj):
@@ -99,3 +97,13 @@ def get_drill(drill_key: str) -> Drill:
     from .content_loader import get_content_loader
 
     return get_content_loader().get_drills()[drill_key]
+
+
+def get_first_drill_slug() -> str:
+    return get_all_drill_slugs()[0]
+
+
+def get_all_drill_slugs() -> List[str]:
+    from .content_loader import get_content_loader
+
+    return copy(get_content_loader().get_all_drill_slugs())

@@ -15,13 +15,9 @@ from stopcovid.dialog.models.events import (
 )
 from stopcovid.dialog.registration import CodeValidationPayload
 from stopcovid.dialog.models.state import UserProfile
-from stopcovid.drills.drills import Prompt, Drill
+from stopcovid.drills.drills import Prompt, Drill, get_all_drill_slugs
 from stopcovid.db import get_test_sqlalchemy_engine
-from stopcovid.drill_progress.drill_progress import (
-    DrillProgressRepository,
-    ALL_DRILL_SLUGS,
-    DrillProgress,
-)
+from stopcovid.drill_progress.drill_progress import DrillProgressRepository, DrillProgress
 
 
 class TestUsers(unittest.TestCase):
@@ -101,7 +97,7 @@ class TestUsers(unittest.TestCase):
 
     def test_user_revalidated(self):
         user_id = self._make_user_and_get_id()
-        for slug in ALL_DRILL_SLUGS:
+        for slug in get_all_drill_slugs():
             drill = copy(self.drill)
             drill.slug = slug
             event = DrillStarted(
@@ -131,7 +127,7 @@ class TestUsers(unittest.TestCase):
                 ]
             )
         )
-        for slug in ALL_DRILL_SLUGS:
+        for slug in get_all_drill_slugs():
             drill_status = self.repo.get_drill_status(user_id, slug)
             self.assertIsNone(drill_status.drill_instance_id)
             self.assertIsNone(drill_status.started_time)
@@ -142,11 +138,11 @@ class TestUsers(unittest.TestCase):
         event = DrillStarted(
             phone_number=self.phone_number,
             user_profile=UserProfile(True),
-            drill=Drill(slug=ALL_DRILL_SLUGS[0], name="drill", prompts=[]),
+            drill=Drill(slug=get_all_drill_slugs()[0], name="drill", prompts=[]),
             first_prompt=self.prompt,
         )
         self.repo.update_user(self._make_batch([event]))
-        drill_status = self.repo.get_drill_status(user_id, ALL_DRILL_SLUGS[0])
+        drill_status = self.repo.get_drill_status(user_id, get_all_drill_slugs()[0])
         self.assertEqual(event.created_time, drill_status.started_time)
         self.assertIsNone(drill_status.completed_time)
 
@@ -156,7 +152,7 @@ class TestUsers(unittest.TestCase):
             drill_instance_id=event.drill_instance_id,
         )
         self.repo.update_user(self._make_batch([event2]))
-        drill_status = self.repo.get_drill_status(user_id, ALL_DRILL_SLUGS[0])
+        drill_status = self.repo.get_drill_status(user_id, get_all_drill_slugs()[0])
         self.assertEqual(event.created_time, drill_status.started_time)
         self.assertEqual(event2.created_time, drill_status.completed_time)
 
@@ -165,7 +161,7 @@ class TestUsers(unittest.TestCase):
         event = DrillStarted(
             phone_number=self.phone_number,
             user_profile=UserProfile(True),
-            drill=Drill(slug=ALL_DRILL_SLUGS[0], name="drill", prompts=[]),
+            drill=Drill(slug=get_all_drill_slugs()[0], name="drill", prompts=[]),
             first_prompt=self.prompt,
         )
         self.repo.update_user(self._make_batch([event]))
@@ -175,7 +171,7 @@ class TestUsers(unittest.TestCase):
             drill_instance_id=event.drill_instance_id,
         )
         self.repo.update_user(self._make_batch([event2]))
-        drill_status = self.repo.get_drill_status(user_id, ALL_DRILL_SLUGS[0])
+        drill_status = self.repo.get_drill_status(user_id, get_all_drill_slugs()[0])
         self.assertIsNone(drill_status.started_time)
         self.assertIsNone(drill_status.completed_time)
 
@@ -185,7 +181,7 @@ class TestUsers(unittest.TestCase):
             phone_number=self.phone_number, user_profile=UserProfile(True), drill_instance_id=None
         )
         self.repo.update_user(self._make_batch([event]))
-        drill_status = self.repo.get_drill_status(user_id, ALL_DRILL_SLUGS[0])
+        drill_status = self.repo.get_drill_status(user_id, get_all_drill_slugs()[0])
         self.assertIsNone(drill_status.started_time)
         self.assertIsNone(drill_status.completed_time)
 
@@ -246,7 +242,7 @@ class TestUsers(unittest.TestCase):
         drill_progresses = list(self.repo.get_progress_for_users_who_need_drills(30))
         self.assertEqual(0, len(drill_progresses))
 
-        for slug in ALL_DRILL_SLUGS:
+        for slug in get_all_drill_slugs():
             event = DrillStarted(
                 phone_number=self.phone_number,
                 user_profile=UserProfile(True),
@@ -268,7 +264,7 @@ class TestUsers(unittest.TestCase):
         event = DrillStarted(
             phone_number=self.phone_number,
             user_profile=UserProfile(True),
-            drill=Drill(slug=ALL_DRILL_SLUGS[0], name="name", prompts=[]),
+            drill=Drill(slug=get_all_drill_slugs()[0], name="name", prompts=[]),
             first_prompt=self.prompt,
             created_time=datetime.datetime.now(datetime.timezone.utc)
             - datetime.timedelta(minutes=32),
@@ -280,8 +276,8 @@ class TestUsers(unittest.TestCase):
             DrillProgress(
                 user_id=user_id,
                 phone_number=self.phone_number,
-                first_incomplete_drill_slug=ALL_DRILL_SLUGS[0],
-                first_unstarted_drill_slug=ALL_DRILL_SLUGS[1],
+                first_incomplete_drill_slug=get_all_drill_slugs()[0],
+                first_unstarted_drill_slug=get_all_drill_slugs()[1],
             ),
             drill_progress,
         )
@@ -299,8 +295,8 @@ class TestUsers(unittest.TestCase):
             DrillProgress(
                 user_id=user_id,
                 phone_number=self.phone_number,
-                first_incomplete_drill_slug=ALL_DRILL_SLUGS[1],
-                first_unstarted_drill_slug=ALL_DRILL_SLUGS[1],
+                first_incomplete_drill_slug=get_all_drill_slugs()[1],
+                first_unstarted_drill_slug=get_all_drill_slugs()[1],
             ),
             drill_progress,
         )
@@ -310,7 +306,7 @@ class TestUsers(unittest.TestCase):
         event = DrillStarted(
             phone_number=self.phone_number,
             user_profile=UserProfile(True),
-            drill=Drill(slug=ALL_DRILL_SLUGS[0], name="name", prompts=[]),
+            drill=Drill(slug=get_all_drill_slugs()[0], name="name", prompts=[]),
             first_prompt=self.prompt,
             created_time=datetime.datetime.now(datetime.timezone.utc)
             - datetime.timedelta(minutes=32),
@@ -323,8 +319,8 @@ class TestUsers(unittest.TestCase):
             DrillProgress(
                 user_id=user_id,
                 phone_number=self.phone_number,
-                first_incomplete_drill_slug=ALL_DRILL_SLUGS[0],
-                first_unstarted_drill_slug=ALL_DRILL_SLUGS[1],
+                first_incomplete_drill_slug=get_all_drill_slugs()[0],
+                first_unstarted_drill_slug=get_all_drill_slugs()[1],
             ),
             drill_progresses[0],
         )
@@ -343,8 +339,8 @@ class TestUsers(unittest.TestCase):
             DrillProgress(
                 user_id=user_id,
                 phone_number=self.phone_number,
-                first_incomplete_drill_slug=ALL_DRILL_SLUGS[1],
-                first_unstarted_drill_slug=ALL_DRILL_SLUGS[1],
+                first_incomplete_drill_slug=get_all_drill_slugs()[1],
+                first_unstarted_drill_slug=get_all_drill_slugs()[1],
             ),
             drill_progresses[0],
         )
@@ -354,7 +350,7 @@ class TestUsers(unittest.TestCase):
         event = DrillStarted(
             phone_number=self.phone_number,
             user_profile=UserProfile(True),
-            drill=Drill(slug=ALL_DRILL_SLUGS[0], name="name", prompts=[]),
+            drill=Drill(slug=get_all_drill_slugs()[0], name="name", prompts=[]),
             first_prompt=self.prompt,
             created_time=datetime.datetime.now(datetime.timezone.utc)
             - datetime.timedelta(minutes=20),
@@ -370,7 +366,7 @@ class TestUsers(unittest.TestCase):
         event = DrillStarted(
             phone_number=self.phone_number,
             user_profile=UserProfile(True),
-            drill=Drill(slug=ALL_DRILL_SLUGS[0], name="name", prompts=[]),
+            drill=Drill(slug=get_all_drill_slugs()[0], name="name", prompts=[]),
             first_prompt=self.prompt,
             created_time=datetime.datetime.now(datetime.timezone.utc)
             - datetime.timedelta(minutes=32),
@@ -380,7 +376,7 @@ class TestUsers(unittest.TestCase):
         event2 = DrillStarted(
             phone_number="987654321",
             user_profile=UserProfile(True),
-            drill=Drill(slug=ALL_DRILL_SLUGS[1], name="name", prompts=[]),
+            drill=Drill(slug=get_all_drill_slugs()[1], name="name", prompts=[]),
             first_prompt=self.prompt,
             created_time=datetime.datetime.now(datetime.timezone.utc)
             - datetime.timedelta(minutes=32),
@@ -399,8 +395,8 @@ class TestUsers(unittest.TestCase):
             DrillProgress(
                 phone_number=self.phone_number,
                 user_id=user_id1,
-                first_unstarted_drill_slug=ALL_DRILL_SLUGS[1],
-                first_incomplete_drill_slug=ALL_DRILL_SLUGS[0],
+                first_unstarted_drill_slug=get_all_drill_slugs()[1],
+                first_incomplete_drill_slug=get_all_drill_slugs()[0],
             ),
             drill_progress1,
         )
@@ -408,8 +404,8 @@ class TestUsers(unittest.TestCase):
             DrillProgress(
                 phone_number="987654321",
                 user_id=user_id2,
-                first_unstarted_drill_slug=ALL_DRILL_SLUGS[0],
-                first_incomplete_drill_slug=ALL_DRILL_SLUGS[0],
+                first_unstarted_drill_slug=get_all_drill_slugs()[0],
+                first_incomplete_drill_slug=get_all_drill_slugs()[0],
             ),
             drill_progress2,
         )
@@ -418,7 +414,7 @@ class TestUsers(unittest.TestCase):
         event = DrillStarted(
             phone_number=self.phone_number,
             user_profile=UserProfile(True),
-            drill=Drill(slug=ALL_DRILL_SLUGS[0], name="name", prompts=[]),
+            drill=Drill(slug=get_all_drill_slugs()[0], name="name", prompts=[]),
             first_prompt=self.prompt,
             created_time=datetime.datetime.now(datetime.timezone.utc)
             - datetime.timedelta(minutes=32),

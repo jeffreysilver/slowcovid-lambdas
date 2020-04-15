@@ -3,7 +3,7 @@ import unittest
 import uuid
 from unittest.mock import patch, MagicMock
 
-from stopcovid.drill_progress.initiation import DrillInitiator, FIRST_DRILL_SLUG
+from stopcovid.drill_progress.initiation import DrillInitiator
 from stopcovid.drill_progress.drill_progress import DrillProgress
 
 
@@ -20,6 +20,13 @@ class TestInitiation(unittest.TestCase):
         self.addCleanup(idempotency_checker_patch.stop)
 
         self.initiator = DrillInitiator()
+        self.first_drill_slug = "foo"
+        get_all_drill_slugs_patch = patch(
+            "stopcovid.drill_progress.initiation.get_first_drill_slug",
+            return_value=self.first_drill_slug,
+        )
+        get_all_drill_slugs_patch.start()
+        self.addCleanup(get_all_drill_slugs_patch.stop)
 
     def test_initiation_first_drill(self, publish_mock):
         # we aren't erasing our DB between test runs, so let's ensure the phone number is unique
@@ -27,7 +34,7 @@ class TestInitiation(unittest.TestCase):
         idempotency_key = str(uuid.uuid4())
 
         self.initiator.trigger_first_drill(phone_number, idempotency_key)
-        publish_mock.assert_called_once_with(phone_number, FIRST_DRILL_SLUG)
+        publish_mock.assert_called_once_with(phone_number, self.first_drill_slug)
 
     def test_initiation_next_drill_for_user(self, publish_mock):
         phone_number = str(uuid.uuid4())
