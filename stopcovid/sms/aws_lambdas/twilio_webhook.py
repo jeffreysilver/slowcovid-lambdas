@@ -43,7 +43,7 @@ def handler(event, context):
             StreamName=f"message-log-{stage}",
         )
     else:
-        logging.info(f"Inbound message from {form['From']}")
+        logging.info(f"Inbound message from {form['From']}: '{form['Body']}'")
         CommandPublisher().publish_process_sms_command(form["From"], form["Body"], form)
 
     idempotency_checker.record_as_processed(

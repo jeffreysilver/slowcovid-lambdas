@@ -44,16 +44,19 @@ def process_command(command: Command, seq: str, repo: DialogRepository = None):
     state_seq = int(dialog_state.seq)
     if command_seq <= state_seq:
         logging.info(
-            f"Processing already processed command {seq}. Current dialog state has "
-            f"sequence {dialog_state.seq}."
+            f"({command.phone_number}) Processing already processed command {seq}. Current "
+            f"dialog state has sequence {dialog_state.seq}."
         )
         return
 
-    logging.info(f"({command.phone_number}) Processing command {command}")
+    logging.info(
+        f"({command.phone_number}) Processing command {command}. " f"Current state: {dialog_state}."
+    )
 
     events = command.execute(dialog_state)
+    event_types = ", ".join(f"{event.event_type}" for event in events)
+    logging.info(f"({command.phone_number}) Applying events: {event_types}")
     for event in events:
-        logging.info(f"({event.phone_number}) Applying event of type {event.event_type}")
         # deep copying the event so that modifications to the dialog_state don't have
         # side effects on the events that we're persisting. The user_profile on the event
         # should reflect the user_profile *before* the event is applied to the dialog_state.
@@ -68,6 +71,9 @@ class StartDrill(Command):
     def __init__(self, phone_number: str, drill_slug: str):
         super().__init__(phone_number)
         self.drill_slug = drill_slug
+
+    def __str__(self):
+        return f"Start Drill: {self.drill_slug}"
 
     def execute(
         self, dialog_state: DialogState
@@ -94,6 +100,12 @@ class TriggerReminder(Command):
         super().__init__(phone_number)
         self.prompt_slug = prompt_slug
         self.drill_instance_id = drill_instance_id
+
+    def __str__(self):
+        return (
+            f"Trigger Reminder: Prompt {self.prompt_slug}, "
+            f"Drill instance ID {self.drill_instance_id}"
+        )
 
     def execute(
         self, dialog_state: DialogState
@@ -133,6 +145,9 @@ class ProcessSMSMessage(Command):
         if registration_validator is None:
             registration_validator = DEFAULT_REGISTRATION_VALIDATOR
         self.registration_validator = registration_validator
+
+    def __str__(self):
+        return f"Process SMS: '{self.content}'"
 
     def execute(
         self, dialog_state: DialogState
