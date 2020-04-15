@@ -35,12 +35,12 @@ provider:
 
   environment:
     STAGE: ${self:provider.stage}
-    DEPLOY_STAGE: ${env:DEPLOY_STAGE}
-    TWILIO_MESSAGING_SERVICE_SID: ${env:TWILIO_MESSAGING_SERVICE_SID}
-    TWILIO_ACCOUNT_SID: ${env:TWILIO_ACCOUNT_SID}
-    TWILIO_AUTH_TOKEN: ${env:TWILIO_AUTH_TOKEN}
-    DB_CLUSTER_ARN: ${env:DB_CLUSTER_ARN}
-    DB_SECRET_ARN: ${env:DB_SECRET_ARN}
+    DEPLOY_STAGE: ${ssm:/stopcovid/${self:provider.stage}/deployStage}
+    TWILIO_MESSAGING_SERVICE_SID: ${ssm:/stopcovid/${self:provider.stage}/twilioMessagingServiceSID~true}
+    TWILIO_ACCOUNT_SID: ${ssm:/stopcovid/${self:provider.stage}/twilioAccountSID~true}
+    TWILIO_AUTH_TOKEN: ${ssm:/stopcovid/${self:provider.stage}/twilioAuthToken~true}
+    DB_CLUSTER_ARN: ${ssm:/stopcovid/${self:provider.stage}/dbClusterArn}
+    DB_SECRET_ARN: ${ssm:/stopcovid/${self:provider.stage}/dbSecretArn}
 
         
 plugins:
@@ -56,8 +56,8 @@ functions:
           method: post
           cors: true
     environment:
-      AUTH_USERNAME: ${env:AUTH_USERNAME}
-      AUTH_PASSWORD: ${env:AUTH_PASSWORD}
+      AUTH_USERNAME: ${ssm:/stopcovid/${self:provider.stage}/authUsername}
+      AUTH_PASSWORD: ${ssm:/stopcovid/${self:provider.stage}/authPassword~true}
 
   twilioWebhook:
     handler: stopcovid/sms/aws_lambdas/twilio_webhook.handler
@@ -110,8 +110,8 @@ functions:
               type: sqs
     environment:
       DIALOG_TABLE_NAME_SUFFIX: ${self:provider.stage}
-      REGISTRATION_VALIDATION_URL: https://eslworks-api-production.herokuapp.com/slowcovid/lookup
-      REGISTRATION_VALIDATION_KEY: ${env:REGISTRATION_VALIDATION_KEY}
+      REGISTRATION_VALIDATION_URL: ${ssm:/stopcovid/${self:provider.stage}/registrationValidationUrl}
+      REGISTRATION_VALIDATION_KEY: ${ssm:/stopcovid/${self:provider.stage}/registrationValidationKey~true}
 
 
   logMessage:
@@ -225,7 +225,7 @@ resources:
         EnableHttpEndpoint: true
         EngineVersion: 10.7
         MasterUsername: postgres
-        MasterUserPassword: ${env:DB_PASSWORD}
+        MasterUserPassword: ${ssm:/stopcovid/${self:provider.stage}/dbPassword~true}
         StorageEncrypted: true
         ScalingConfiguration:
             AutoPause: false
