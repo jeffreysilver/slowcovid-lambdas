@@ -21,6 +21,7 @@ Each trainee receives one interactive daily drill over SMS. Each drill has about
 The StopCOVID backend is serverless and event-driven. The core of the system is a Lambda function that receives commands from a Kinesis stream and produces events to a DynamoDB table and stream. Consumers of the event stream respond to the user and track per-user drill progress.
 
 ![simplified architecture](simplified-architecture.png)
+
 *A simplified overview of the StopCOVID architecture.*
 
 
