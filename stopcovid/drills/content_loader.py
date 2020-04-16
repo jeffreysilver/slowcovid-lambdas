@@ -3,10 +3,8 @@ import logging
 import os
 from copy import copy
 from typing import Dict, List
-import threading
 from abc import ABC, abstractmethod
 from collections import defaultdict
-from time import sleep
 
 import boto3
 
@@ -78,59 +76,37 @@ class SourceRepoLoader(ContentLoader):
 class S3Loader(ContentLoader):
     def __init__(self, s3_bucket):
         self.s3_bucket = s3_bucket
+        self.s3 = boto3.resource("s3")
         super().__init__()
 
     def _populate_content(self):
         logging.info(f"Loading drill content from the {self.s3_bucket} S3 bucket")
-        s3 = boto3.resource("s3")
-
-        drill_object = s3.Object(self.s3_bucket, "drills.json")
-        translations_object = s3.Object(self.s3_bucket, "translations.json")
-        self._start_checking_for_updates(drill_object.version_id, translations_object.version_id)
+        drill_object = self.s3.Object(self.s3_bucket, "drills.json")
+        translations_object = self.s3.Object(self.s3_bucket, "translations.json")
+        self.drill_version = drill_object.version_id
+        self.translations_version = translations_object.version_id
 
         self._populate_drills(drill_object.get()["Body"].read().decode("utf-8"))
         self._populate_translations(translations_object.get()["Body"].read().decode("utf-8"))
 
-    def _start_checking_for_updates(self, drill_version_id: str, translations_version_id: str):
-        self.content_went_stale_event = threading.Event()
-        thread = threading.Thread(
-            name="s3-poller",
-            target=self._notify_on_update,
-            args=(drill_version_id, translations_version_id, self.content_went_stale_event),
-            daemon=True,
-        )
-        thread.start()
-
-    def _notify_on_update(
-        self,
-        drill_version_id: str,
-        translations_version_id: str,
-        content_went_stale_event: threading.Event,
-    ):
-        s3 = boto3.resource("s3")
-        while True:
-            sleep(30)
-            try:
-                drill_object = s3.Object(self.s3_bucket, "drills.json")
-                translations_object = s3.Object(self.s3_bucket, "translations.json")
-                if (
-                    drill_object.version_id != drill_version_id
-                    or translations_object.version_id != translations_version_id
-                ):
-                    # NOTE: It's possible for one update cycle to detect only a change in the
-                    # drills.json or the translations.json files, because S3 doesn't support
-                    # transactional multi-file uploads. We should upload a backwards-compatible
-                    # version of translations.json first, then we should upload drills.json.
-
-                    logging.info("Drill or translation objects have changed in S3.")
-                    content_went_stale_event.set()
-                    return
-            except Exception as e:
-                logging.error("Got an exception while checking s3 object version")
-                logging.exception(e)
-
     def _is_content_stale(self) -> bool:
-        return self.content_went_stale_event.is_set()
+        try:
+            drill_object = self.s3.Object(self.s3_bucket, "drills.json")
+            translations_object = self.s3.Object(self.s3_bucket, "translations.json")
+            if (
+                self.drill_version != drill_object.version_id
+                or self.translations_version != translations_object.version_id
+            ):
+                logging.info("Drill or translation objects have changed in S3.")
+                return True
+            return False
+        except Exception:
+            logging.warning(
+                "S3 loader error checking drill or translation version. Assuming that "
+                "content is not stale.",
+                exc_info=True,
+            )
+            return False
 
 
 CONTENT_LOADER = None
