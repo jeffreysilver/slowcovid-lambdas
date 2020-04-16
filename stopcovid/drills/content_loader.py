@@ -119,8 +119,8 @@ class S3Loader(ContentLoader):
                 ):
                     # NOTE: It's possible for one update cycle to detect only a change in the
                     # drills.json or the translations.json files, because S3 doesn't support
-                    # transactional multi-file uploads. We should upload a backwards-compatible version
-                    # of translations.json first, then we should upload drills.json.
+                    # transactional multi-file uploads. We should upload a backwards-compatible
+                    # version of translations.json first, then we should upload drills.json.
 
                     logging.info("Drill or translation objects have changed in S3.")
                     content_went_stale_event.set()
