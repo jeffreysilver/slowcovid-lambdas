@@ -1167,18 +1167,13 @@
     },
     {
       "label": "drill_self_assess_1",
-      "translation": "¡Ok! Vamos! Vamos a aprender un poco sobre ti primero.\n",
-      "language": "es"
+      "translation": "Ok! This drill will take 3 minutes to complete. Let’s learn a little bit about you first. ",
+      "language": "en"
     },
     {
       "label": "drill_how_to_practice_1",
       "translation": "You should only wash your hands with warm water.\n\na) true\nb) false",
       "language": "en"
-    },
-    {
-      "label": "drill_self_assess_1",
-      "translation": "Ok! Allons-y! Tout d’abord, nous aimerions en savoir un peu plus sur vous.",
-      "language": "fr"
     },
     {
       "label": "drill_how_to_fact_5",
@@ -1192,8 +1187,13 @@
     },
     {
       "label": "drill_self_assess_1",
-      "translation": "Ok! Here we go! Let’s learn a little bit about you first. ",
-      "language": "en"
+      "translation": "¡Ok! Este ejercicio tardará 3 minutos para completar. Vamos a aprender un poco sobre ti primero.",
+      "language": "es"
+    },
+    {
+      "label": "drill_self_assess_1",
+      "translation": "Ok! Allons-y! Cet exercice prendra 3 minutes. Tout d’abord, nous aimerions en savoir un peu plus sur vous.",
+      "language": "fr"
     },
     {
       "label": "drill_how_to_practice_1",
@@ -2222,11 +2222,6 @@
     },
     {
       "label": "stop_covid_thanks",
-      "translation": "Nous vous remercions de prendre le temps de faire cette formation StopCovid. En faisant ces courts exercices tous les jours, vous aidez à ralentir la progression du Coronavirus. \n\nNous éliminerons le COVID-19 tous ensemble. ",
-      "language": "fr"
-    },
-    {
-      "label": "stop_covid_thanks",
       "translation": "感谢你参加我们的安全培训。采取这些预防措施，你就能实实在在地帮助阻止病毒传播。让我们一起战胜这次新型冠状病毒(COVID-19) 疫情。\n",
       "language": "zh"
     },
@@ -2332,8 +2327,8 @@
     },
     {
       "label": "stop_covid_thanks",
-      "translation": "Gracias por tomar de su tiempo para entrenamiento StopCovid. Al completar estas actividades diariamente, usted estará ayudando a prevenir la transmisión de Coronavirus. \n\nJuntos podemos detener el COVID-19.",
-      "language": "es"
+      "translation": "Nous vous remercions de prendre le temps de faire cette formation StopCovid. En faisant ces courts exercices, vous aidez à ralentir la progression du Coronavirus. \n\nNous éliminerons le COVID-19 tous ensemble. ",
+      "language": "fr"
     },
     {
       "label": "drill_when_to_fact_3",
@@ -2344,6 +2339,11 @@
       "label": "drill_how_to_practice_1",
       "translation": "洗手只能用温水。\n\na）正确\nb）错误",
       "language": "zh"
+    },
+    {
+      "label": "stop_covid_thanks",
+      "translation": "Gracias por tomar de su tiempo para entrenamiento de StopCovid. Al completar estas actividades, usted estará ayudando a prevenir la transmisión de Coronavirus. \n\nJuntos podemos detener el COVID-19.",
+      "language": "es"
     },
     {
       "label": "drill_how_to_fact_3",
@@ -3071,11 +3071,6 @@
       "language": "zh"
     },
     {
-      "label": "stop_covid_thanks",
-      "translation": "Thank you for dedicating your time to StopCovid training. By completing one training everyday, you are helping prevent the spread of Coronavirus. \n\nTogether, we will stop COVID-19.",
-      "language": "en"
-    },
-    {
       "label": "covid_1_practice_2",
       "translation": "Escolha a melhor opção para preencher o espaço em branco. \n\nCOVID-19 é [---] a gripe. \n\na) contagioso quanto\nb) menos contagioso que\nc) mais contagioso que",
       "language": "pt"
@@ -3181,11 +3176,6 @@
       "language": "pt"
     },
     {
-      "label": "drill_self_assess_1",
-      "translation": "Ok! Aqui vamos nós! Vamos começar primeiro aprendendo um pouco sobre você.  ",
-      "language": "pt"
-    },
-    {
       "label": "drill_self_assess_3",
       "translation": "(Sua resposta será mantida em sigilo.)",
       "language": "pt"
@@ -3241,6 +3231,11 @@
       "language": "pt"
     },
     {
+      "label": "drill_self_assess_1",
+      "translation": "Ok! Aqui vamos nós! Este exercício levará 3 minutos. Vamos começar primeiro aprendendo um pouco sobre você.  ",
+      "language": "pt"
+    },
+    {
       "label": "covid_1_title",
       "translation": "Ce qu’il faut savoir sur le COVID-19",
       "language": "fr"
@@ -3279,6 +3274,11 @@
       "label": "covid_1_title",
       "translation": "Los básicos de COVID-19",
       "language": "es"
+    },
+    {
+      "label": "stop_covid_thanks",
+      "translation": "Thank you for dedicating your time to StopCovid training. By completing this training, you are helping prevent the spread of Coronavirus. \n\nTogether, we will stop COVID-19.",
+      "language": "en"
     },
     {
       "label": "drill_complete_congrats",
@@ -3656,11 +3656,6 @@
       "language": "pt"
     },
     {
-      "label": "stop_covid_thanks",
-      "translation": "Obrigado por dedicar seu tempo a este treinamento. Ao concluir essas atividades diariamente, você ajudará a impedir a propagação desse vírus.\n\nJuntos, podemos parar o COVID-19.",
-      "language": "pt"
-    },
-    {
       "label": "avoid_being_exposed_to_the_virus",
       "translation": "Avoid being exposed to the virus",
       "language": "en"
@@ -3984,6 +3979,11 @@
       "label": "yes",
       "translation": "正确",
       "language": "zh"
+    },
+    {
+      "label": "stop_covid_thanks",
+      "translation": "Obrigado por dedicar seu tempo a este treinamento. Ao concluir essas atividades, você ajudará a impedir a propagação desse vírus.\n\nJuntos, podemos parar o COVID-19.",
+      "language": "pt"
     },
     {
       "label": "off_and_unplugged",
