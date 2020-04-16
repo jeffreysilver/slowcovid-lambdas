@@ -9,6 +9,8 @@ from stopcovid.drills import drills
 
 __location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
 
+from stopcovid.drills.drills import get_all_drill_slugs
+
 from stopcovid.drills.localize import localize
 
 
@@ -21,10 +23,12 @@ class TestGetDrill(unittest.TestCase):
 class TestDrillFileIntegrity(unittest.TestCase):
     def test_drill_file_integrity(self):
         filename = os.path.join(__location__, "../../../stopcovid/drills/drill_content/drills.json")
+        all_slugs = set()
         with open(filename) as r:
             contents = r.read()
             drills_dict = json.loads(contents)
         for slug, drill_dict in drills_dict.items():
+            all_slugs.add(slug)
             self.assertEqual(slug, drill_dict["slug"])
             drill = drills.get_drill(slug)
             for prompt in drill.prompts:
@@ -37,6 +41,7 @@ class TestDrillFileIntegrity(unittest.TestCase):
                         localize(prompt.correct_response, "en")
                 except TemplateSyntaxError:
                     self.fail(f"error localizing drill {slug} and prompt {prompt.slug}")
+        self.assertEqual(all_slugs, set(get_all_drill_slugs()))
 
 
 class TestPrompt(unittest.TestCase):
