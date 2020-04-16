@@ -110,20 +110,24 @@ class S3Loader(ContentLoader):
         s3 = boto3.resource("s3")
         while True:
             sleep(30)
-            drill_object = s3.Object(self.s3_bucket, "drills.json")
-            translations_object = s3.Object(self.s3_bucket, "translations.json")
-            if (
-                drill_object.version_id != drill_version_id
-                or translations_object.version_id != translations_version_id
-            ):
-                # NOTE: It's possible for one update cycle to detect only a change in the
-                # drills.json or the translations.json files, because S3 doesn't support
-                # transactional multi-file uploads. We should upload a backwards-compatible version
-                # of translations.json first, then we should upload drills.json.
+            try:
+                drill_object = s3.Object(self.s3_bucket, "drills.json")
+                translations_object = s3.Object(self.s3_bucket, "translations.json")
+                if (
+                    drill_object.version_id != drill_version_id
+                    or translations_object.version_id != translations_version_id
+                ):
+                    # NOTE: It's possible for one update cycle to detect only a change in the
+                    # drills.json or the translations.json files, because S3 doesn't support
+                    # transactional multi-file uploads. We should upload a backwards-compatible version
+                    # of translations.json first, then we should upload drills.json.
 
-                logging.info("Drill or translation objects have changed in S3.")
-                content_went_stale_event.set()
-                return
+                    logging.info("Drill or translation objects have changed in S3.")
+                    content_went_stale_event.set()
+                    return
+            except Exception as e:
+                logging.error("Got an exception while checking s3 object version")
+                logging.exception(e)
 
     def _is_content_stale(self) -> bool:
         return self.content_went_stale_event.is_set()
