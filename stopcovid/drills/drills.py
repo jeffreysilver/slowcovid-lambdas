@@ -4,6 +4,7 @@ from collections import defaultdict
 from dataclasses import dataclass
 from typing import Optional, List, Dict
 
+import boto3
 from marshmallow import Schema, fields, post_load
 
 from .localize import localize
@@ -109,8 +110,17 @@ def get_drill(drill_key: str) -> Drill:
 def _populate_drill_cache():
     global DRILL_CACHE
     DRILL_CACHE = defaultdict(dict)  # type:ignore
-    with open(os.path.join(__location__, "drill_content/drills.json")) as f:
-        data = f.read()
-        raw_drills = json.loads(data)
-        for drill_key, raw_drill in raw_drills.items():
-            DRILL_CACHE[drill_key] = DrillSchema().load(raw_drill)
+    raw_drills = json.loads(_get_drill_content())
+    for drill_key, raw_drill in raw_drills.items():
+        DRILL_CACHE[drill_key] = DrillSchema().load(raw_drill)
+
+
+def _get_drill_content() -> str:
+    s3_bucket = os.getenv("DRILL_CONTENT_S3_BUCKET")
+    if not s3_bucket:
+        # in production, we serve from S3. The file-system JSON is useful for demo purposes.
+        with open(os.path.join(__location__, "drill_content/drills.json")) as f:
+            return f.read()
+    s3 = boto3.resource("s3")
+    drills = s3.Object(s3_bucket, "drills.json")
+    return drills.get()["Body"].read().decode("utf-8")

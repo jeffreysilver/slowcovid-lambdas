@@ -3,6 +3,7 @@ import os
 from collections import defaultdict
 from typing import Dict, Optional
 
+import boto3
 from jinja2 import Template
 
 CACHE = None
@@ -33,8 +34,17 @@ def localizations_for(lang: str) -> Dict[str, str]:
 def _populate_cache():
     global CACHE
     CACHE = defaultdict(dict)
-    with open(os.path.join(__location__, "drill_content/translations.json")) as f:
-        data = f.read()
-        raw_translations = json.loads(data)
-        for entry in raw_translations["instructions"]:
-            CACHE[entry["language"]][entry["label"]] = entry["translation"]
+    raw_translations = json.loads(_get_translations())
+    for entry in raw_translations["instructions"]:
+        CACHE[entry["language"]][entry["label"]] = entry["translation"]
+
+
+def _get_translations() -> str:
+    s3_bucket = os.getenv("DRILL_CONTENT_S3_BUCKET")
+    if not s3_bucket:
+        # in production, we serve from S3. The file-system JSON is useful for demo purposes.
+        with open(os.path.join(__location__, "drill_content/translations.json")) as f:
+            return f.read()
+    s3 = boto3.resource("s3")
+    translations = s3.Object(s3_bucket, "translations.json")
+    return translations.get()["Body"].read().decode("utf-8")
