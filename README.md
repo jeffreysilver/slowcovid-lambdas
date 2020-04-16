@@ -4,7 +4,7 @@ This repo contains the production code that powers [StopCOVID](https://www.stopc
 
 The code in this repo is deployed on Amazon's serverless platform, using Lambda, Kinesis, DynamoDB, among other things. This was our first substantial experience writing a serverless app, and we were pleasantly surprised by how quickly we could create a useful app with well-defined, decoupled components. If you're curious about building serverless event-driven applications, have a look around this repo and copy what you'd like.
 
-We also welcome feedback and advice. We built this in a hurry and there's room for improvement. Demand for StopCOVID was high and it was critical to get something launched as soon as we could. So you'll find rough edges.
+We also welcome feedback and advice. We built this in a hurry and there's room for improvement. Demand for StopCOVID has been high and it was critical to get something launched as soon as we could. So you'll find rough edges.
 
 ## About StopCOVID
 
