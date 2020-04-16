@@ -89,17 +89,20 @@ class S3Loader(ContentLoader):
         self._populate_translations(translations_object.get()["Body"].read().decode("utf-8"))
 
     def _start_checking_for_updates(self, drill_version_id: str, translations_version_id: str):
-        self.event = threading.Event()
+        self.content_went_stale_event = threading.Event()
         thread = threading.Thread(
             name="s3-poller",
             target=self._notify_on_update,
-            args=(drill_version_id, translations_version_id, self.event),
+            args=(drill_version_id, translations_version_id, self.content_went_stale_event),
             daemon=True,
         )
         thread.start()
 
     def _notify_on_update(
-        self, drill_version_id: str, translations_version_id: str, event: threading.Event
+        self,
+        drill_version_id: str,
+        translations_version_id: str,
+        content_went_stale_event: threading.Event,
     ):
         s3 = boto3.resource("s3")
         while True:
@@ -116,11 +119,11 @@ class S3Loader(ContentLoader):
                 # of translations.json first, then we should upload drills.json.
 
                 logging.info("Drill or translation objects have changed in S3.")
-                event.set()
+                content_went_stale_event.set()
                 return
 
     def _is_content_stale(self) -> bool:
-        return self.event.is_set()
+        return self.content_went_stale_event.is_set()
 
 
 CONTENT_LOADER = None
