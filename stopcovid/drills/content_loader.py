@@ -16,6 +16,17 @@ __location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file
 
 
 class ContentLoader(ABC):
+    def __init__(self):
+        self._populate_content()
+
+    @abstractmethod
+    def _populate_content(self):
+        pass
+
+    @abstractmethod
+    def _is_content_stale(self) -> bool:
+        pass
+
     def _populate_drills(self, drill_content: str):
         self.drills_dict = {}
         self.all_drill_slugs = []
@@ -34,30 +45,39 @@ class ContentLoader(ABC):
             self.translations_dict[entry["language"]][entry["label"]] = entry["translation"]
 
     def get_drills(self) -> Dict[str, Drill]:
+        if self._is_content_stale():
+            self._populate_content()
         return self.drills_dict
 
     def get_translations(self) -> Dict[str, Dict[str, str]]:
+        if self._is_content_stale():
+            self._populate_content()
         return self.translations_dict
 
     def get_all_drill_slugs(self) -> List[str]:
+        if self._is_content_stale():
+            self._populate_content()
         return copy(self.all_drill_slugs)
 
 
 class SourceRepoLoader(ContentLoader):
-    def __init__(self):
+    def _populate_content(self):
         logging.info("Loading drill content from the file system")
         with open(os.path.join(__location__, "drill_content/drills.json")) as f:
             self._populate_drills(f.read())
         with open(os.path.join(__location__, "drill_content/translations.json")) as f:
             self._populate_translations(f.read())
 
+    def _is_content_stale(self) -> bool:
+        return False
+
 
 class S3Loader(ContentLoader):
     def __init__(self, s3_bucket):
         self.s3_bucket = s3_bucket
-        self._populate_from_s3()
+        super().__init__()
 
-    def _populate_from_s3(self):
+    def _populate_content(self):
         logging.info(f"Loading drill content from the {self.s3_bucket} S3 bucket")
         s3 = boto3.resource("s3")
 
@@ -83,6 +103,7 @@ class S3Loader(ContentLoader):
     ):
         s3 = boto3.resource("s3")
         while True:
+            sleep(30)
             drill_object = s3.Object(self.s3_bucket, "drills.json")
             translations_object = s3.Object(self.s3_bucket, "translations.json")
             if (
@@ -97,7 +118,6 @@ class S3Loader(ContentLoader):
                 logging.info("Drill or translation objects have changed in S3.")
                 event.set()
                 return
-            sleep(30)
 
     def _is_content_stale(self) -> bool:
         return self.event.is_set()

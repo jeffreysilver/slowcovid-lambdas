@@ -1,11 +1,6 @@
-import os
 from typing import Dict, Optional
 
 from jinja2 import Template
-
-
-CACHE = None
-__location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
 
 
 SUPPORTED_LANGUAGES = {"en", "es", "fr", "pt", "zh"}
