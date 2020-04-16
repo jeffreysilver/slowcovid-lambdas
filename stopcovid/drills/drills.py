@@ -1,11 +1,7 @@
-import json
-import logging
 import os
-from collections import defaultdict
 from dataclasses import dataclass
-from typing import Optional, List, Dict
+from typing import Optional, List
 
-import boto3
 from marshmallow import Schema, fields, post_load
 
 from .localize import localize
@@ -99,30 +95,7 @@ class Drill:
         return DrillSchema().dump(self)
 
 
-DRILL_CACHE: Optional[Dict[str, Drill]] = None
-
-
 def get_drill(drill_key: str) -> Drill:
-    if DRILL_CACHE is None:
-        _populate_drill_cache()
-    return DRILL_CACHE[drill_key]
+    from .content_loader import get_content_loader
 
-
-def _populate_drill_cache():
-    global DRILL_CACHE
-    DRILL_CACHE = defaultdict(dict)  # type:ignore
-    raw_drills = json.loads(_get_drill_content())
-    for drill_key, raw_drill in raw_drills.items():
-        DRILL_CACHE[drill_key] = DrillSchema().load(raw_drill)
-
-
-def _get_drill_content() -> str:
-    s3_bucket = os.getenv("DRILL_CONTENT_S3_BUCKET")
-    if not s3_bucket:
-        # in production, we serve from S3. The file-system JSON is useful for demo purposes.
-        with open(os.path.join(__location__, "drill_content/drills.json")) as f:
-            return f.read()
-    s3 = boto3.resource("s3")
-    logging.info(f"Loading drills from bucket {s3_bucket}")
-    drills = s3.Object(s3_bucket, "drills.json")
-    return drills.get()["Body"].read().decode("utf-8")
+    return get_content_loader().get_drills()[drill_key]
