@@ -44,8 +44,6 @@ We use [black](https://black.readthedocs.io/en/stable/) for code formatting and 
 
 
 
-## Local development
-There are a series of [sample events](sample_events/) in the project. You can run them against dev:
-- `serverless invoke local -f sendMessage -p sample_events/send_message.json`
-
-Run `docker-compose up` in the `db_local` directory
+## Running tests
+- Run `docker-compose up` in the `db_local` directory
+- `python -m unittest`
