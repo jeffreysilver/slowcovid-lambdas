@@ -17,6 +17,9 @@ __location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file
 
 class ContentLoader(ABC):
     def __init__(self):
+        self.drills_dict = {}
+        self.all_drill_slugs = []
+        self.translations_dict = defaultdict(dict)
         self._populate_content()
 
     @abstractmethod
