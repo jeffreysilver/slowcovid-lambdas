@@ -1,4 +1,3 @@
-from copy import copy
 from dataclasses import dataclass
 from typing import Optional, List
 
@@ -106,4 +105,4 @@ def get_first_drill_slug() -> str:
 def get_all_drill_slugs() -> List[str]:
     from .content_loader import get_content_loader
 
-    return copy(get_content_loader().get_all_drill_slugs())
+    return get_content_loader().get_all_drill_slugs()
