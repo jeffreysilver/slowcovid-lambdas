@@ -1,6 +1,6 @@
 import json
 import os
-from abc import ABC, abstractmethod
+from abc import ABC
 from collections import defaultdict
 from copy import copy
 from typing import Dict, List
