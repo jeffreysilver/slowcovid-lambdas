@@ -31,6 +31,8 @@ provider:
         - dynamodb:*
         - rds-data:*
         - secretsmanager:GetSecretValue
+        - s3:GetObject
+        - s3:GetObjectVersion
       Resource: "*"
 
   environment:

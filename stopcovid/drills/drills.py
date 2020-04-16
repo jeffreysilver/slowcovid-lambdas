@@ -1,4 +1,5 @@
 import json
+import logging
 import os
 from collections import defaultdict
 from dataclasses import dataclass
@@ -122,5 +123,6 @@ def _get_drill_content() -> str:
         with open(os.path.join(__location__, "drill_content/drills.json")) as f:
             return f.read()
     s3 = boto3.resource("s3")
+    logging.info(f"Loading drills from bucket {s3_bucket}")
     drills = s3.Object(s3_bucket, "drills.json")
     return drills.get()["Body"].read().decode("utf-8")
