@@ -20,6 +20,8 @@ class ContentLoader(ABC):
         for drill_slug, raw_drill in raw_drills.items():
             self.drills_dict[drill_slug] = DrillSchema().load(raw_drill)
             self.all_drill_slugs.append(drill_slug)
+
+        # dictionaries are unordered, so we determine drill order by sorting the drill slugs
         self.all_drill_slugs.sort()
 
     def _populate_translations(self, translations_content: str):
