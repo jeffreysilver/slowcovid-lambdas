@@ -1,4 +1,4 @@
-# The StopCOVID backend
+# The StopCOVID Dialog Engine
 
 This repo contains the production code that powers [StopCOVID](https://www.stopcovid.co/). It's licensed as open-source software (see [license](LICENSE)) so feel free to copy as you see fit for your needs.
 
@@ -36,6 +36,10 @@ We aggressively adopted type checking. We used Python type hints wherever we cou
 ## The simulator
 
 You can simulate the core of dialog processing on the command line — by feeding the dialog engine with command-line entries rather than entries from a kinesis stream. Try it out by running `python simulator.py`.
+
+## `manage.py`
+
+The `manage.py` script contains commands that we've found helpful while operating the Dialog Engine in production. You'll need appropriate AWS credentials in your environment to use this script. Type `python manage.py --help` for info on what this script can do.
 
 ## CI
 We use [black](https://black.readthedocs.io/en/stable/) for code formatting and flake8 for linting, with a custom rule setting maximum line length to 100.
