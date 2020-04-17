@@ -19,17 +19,14 @@ from stopcovid.dialog.models.events import (
 from stopcovid.dialog.engine import process_command, StartDrill, ProcessSMSMessage
 from stopcovid.dialog.registration import RegistrationValidator, CodeValidationPayload
 from stopcovid.dialog.models.state import DialogStateSchema, DialogState, UserProfile
-from stopcovid.drills.drills import get_drill
+from stopcovid.drills.drills import get_drill, get_all_drill_slugs
 from stopcovid.drills.localize import localize
 
 SEQ = 1
 TRY_AGAIN = "{{incorrect_answer}}"
 PHONE_NUMBER = "123456789"
-DRILLS = {
-    "drill1": get_drill("Sample Drill 1"),
-    "drill2": get_drill("Sample Drill 2"),
-    "drill3": get_drill("Sample Drill 3"),
-}
+DRILLS = {slug: get_drill(slug) for slug in get_all_drill_slugs()}
+
 
 STARTED_DRILLS = {}
 
@@ -122,7 +119,7 @@ class InMemoryRepository(DialogRepository):
                 else:
                     print("(You're all out of drills.)")
             elif isinstance(event, UserValidationFailed):
-                print("(try DRILL1, DRILL2, DRILL3)")
+                print(f"(try {', '.join(DRILLS.keys())})")
             elif isinstance(event, DrillStarted):
                 STARTED_DRILLS[event.drill_instance_id] = dialog_state.current_drill.slug
                 fake_sms(
@@ -146,7 +143,7 @@ class InMemoryRepository(DialogRepository):
 
 class FakeRegistrationValidator(RegistrationValidator):
     def validate_code(self, code) -> CodeValidationPayload:
-        if code in ["drill1", "drill2", "drill3"]:
+        if code in DRILLS.keys():
             return CodeValidationPayload(valid=True, account_info={"code": code})
         return CodeValidationPayload(valid=False)
 
