@@ -44,6 +44,16 @@ How we maintain ordering and consistency:
 * **Each command results in one DynamoDB transaction that both updates the dialog state and writes a dialog event batch.** It’s a simple way to ensure that our state and our events are in sync.
 * **Drill content doesn’t change while the user is in the middle of a drill.** When a user starts a drill, we take a snapshot of the drill and store it in dialog state. That snapshot stays in the user’s dialog state until the drill is complete. So modifications to a drill’s content won’t lead to a jarring experience for users who are in the middle of that drill.
 
+## Unit tests
+
+The unit tests in [`test_engine.py`](../__tests__/stopcovid/dialog/test_engine.py) are a little hard to read, and there's definitely an opportunity to make them clearer. But the idea is that we're using them to validate that
+
+* given a starting dialog state
+* when a command is received
+* then the appropriate dialog events are produced
+
+Tests in [`test_events.py`](../__tests__/stopcovid/dialog/models/test_events.py) verify that each dialog event correctly updates dialog state.
+
 ## Components
 
 * 1 [lambda](../stopcovid/dialog/aws_lambdas/handle_command.py) that processes the Dialog Command Stream

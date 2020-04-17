@@ -4,11 +4,11 @@ The SMS Context is exchanging messages with users via Twilio. It handles both se
 
 ## Inbound SMS
 
-Inbound messages are messages from users to the stopCOVID system. All inbound messages arrive in the system via the Twilio webhook. For each message, we enqueue a command in the Dialog Context's command queue to process the message.
+Inbound messages are messages from users to the StopCOVID system. All inbound messages arrive in the system via the Twilio webhook. For each message, we enqueue a command in the Dialog Context's command queue to process the message.
 
 ## Outbound SMS
 
-Outbound messages are messages from the stopCOVID system to users. Currently all outbound messages are triggered by events from the Dialog Context.
+Outbound messages are messages from the StopCOVID system to users. Currently all outbound messages are triggered by events from the Dialog Context.
 
 ![outbound SMS](sms_context_outbound.png)
 
