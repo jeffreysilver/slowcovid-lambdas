@@ -45,12 +45,12 @@ class TestInitiation(unittest.TestCase):
             return_value=DrillProgress(
                 phone_number=phone_number,
                 user_id=user_id,
-                first_incomplete_drill_slug="02-prevention",
-                first_unstarted_drill_slug="03-hand-washing-how",
+                first_incomplete_drill_slug="02-sample-drill",
+                first_unstarted_drill_slug="03-sample-drill",
             ),
         ):
             self.initiator.trigger_next_drill_for_user(phone_number, idempotency_key)
-            publish_mock.assert_called_once_with(phone_number, "03-hand-washing-how")
+            publish_mock.assert_called_once_with(phone_number, "03-sample-drill")
             publish_mock.reset_mock()
 
     def test_initiation_out_of_drills(self, publish_mock):
@@ -78,20 +78,20 @@ class TestInitiation(unittest.TestCase):
             return_value=DrillProgress(
                 phone_number=phone_number,
                 user_id=user_id,
-                first_incomplete_drill_slug="02-prevention",
-                first_unstarted_drill_slug="03-hand-washing-how",
+                first_incomplete_drill_slug="02-sample-drill",
+                first_unstarted_drill_slug="03-sample-drill",
             ),
         ):
-            self.initiator.trigger_drill_if_not_stale(phone_number, "01-basics", "foo")
+            self.initiator.trigger_drill_if_not_stale(phone_number, "01-sample-drill", "foo")
             publish_mock.assert_not_called()
             self.initiator.trigger_drill_if_not_stale(
-                phone_number, "03-hand-washing-how", str(uuid.uuid4())
+                phone_number, "03-sample-drill", str(uuid.uuid4())
             )
-            publish_mock.assert_called_once_with(phone_number, "03-hand-washing-how")
+            publish_mock.assert_called_once_with(phone_number, "03-sample-drill")
 
     def test_trigger_drill(self, publish_mock):
         phone_number = str(uuid.uuid4())
-        slug = "02-prevention"
+        slug = "02-sample-drill"
         idempotency_key = str(uuid.uuid4())
         self.initiator.trigger_drill(phone_number, slug, idempotency_key)
         publish_mock.assert_called_once_with(phone_number, slug)

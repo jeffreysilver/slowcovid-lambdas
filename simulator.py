@@ -26,13 +26,9 @@ SEQ = 1
 TRY_AGAIN = "{{incorrect_answer}}"
 PHONE_NUMBER = "123456789"
 DRILLS = {
-    "drill1": get_drill("01-basics"),
-    "drill2": get_drill("02-prevention"),
-    "drill3": get_drill("03-hand-washing-how"),
-    "drill4": get_drill("04-hand-sanitizer"),
-    "drill5": get_drill("05-disinfect-phone"),
-    "drill6": get_drill("06-hand-washing-when"),
-    "drill7": get_drill("07-sanitizing-surfaces"),
+    "drill1": get_drill("Sample Drill 1"),
+    "drill2": get_drill("Sample Drill 2"),
+    "drill3": get_drill("Sample Drill 3"),
 }
 
 STARTED_DRILLS = {}
@@ -126,7 +122,7 @@ class InMemoryRepository(DialogRepository):
                 else:
                     print("(You're all out of drills.)")
             elif isinstance(event, UserValidationFailed):
-                print("(try DRILL1, DRILL2, DRILL3, DRILL4, DRILL5, DRILL6, DRILL7)")
+                print("(try DRILL1, DRILL2, DRILL3)")
             elif isinstance(event, DrillStarted):
                 STARTED_DRILLS[event.drill_instance_id] = dialog_state.current_drill.slug
                 fake_sms(
@@ -150,7 +146,7 @@ class InMemoryRepository(DialogRepository):
 
 class FakeRegistrationValidator(RegistrationValidator):
     def validate_code(self, code) -> CodeValidationPayload:
-        if code in ["drill1", "drill2", "drill3", "drill4", "drill5", "drill6", "drill7"]:
+        if code in ["drill1", "drill2", "drill3"]:
             return CodeValidationPayload(valid=True, account_info={"code": code})
         return CodeValidationPayload(valid=False)
 

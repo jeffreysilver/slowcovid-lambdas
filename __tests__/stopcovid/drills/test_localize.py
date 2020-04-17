@@ -5,8 +5,15 @@ from stopcovid.drills import localize
 
 class TestLocalize(unittest.TestCase):
     def test_localization(self):
-        self.assertEqual("Your next drill is:", localize.localize("{{drill_intro_2}}", "en"))
         self.assertEqual(
-            "Sa prochaine formation est:\n", localize.localize("{{drill_intro_2}}", "fr")
+            "You're almost done! Answer the question above.  ",
+            localize.localize("{{drill_reminder}}", "en"),
         )
-        self.assertEqual("Your next drill is:", localize.localize("{{drill_intro_2}}", "xx"))
+        self.assertEqual(
+            "¡Ya casi terminas! Responde la pregunta anterior.",
+            localize.localize("{{drill_reminder}}", "es"),
+        )
+        self.assertEqual(
+            "You're almost done! Answer the question above.  ",
+            localize.localize("{{drill_reminder}}", "xx"),
+        )
