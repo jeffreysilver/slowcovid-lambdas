@@ -48,22 +48,36 @@ def handle_redrive_sqs(args):
     while True:
         messages = dlq.receive_messages(WaitTimeSeconds=1)
         if not messages:
-            print(
-                f"Redrove {total_redriven} message{'s' if total_redriven != 1 else ''} from the dlq"
-            )
+            if args.dry_run:
+                print(f"{total_redriven} total messages (dry run)")
+            else:
+                print(
+                    f"Redrove {total_redriven} message{'s' if total_redriven != 1 else ''} "
+                    f"from the dlq"
+                )
             return
-        queue.send_messages(
-            Entries=[
-                {
+        if args.dry_run:
+            for message in messages:
+                print(message.body)
+        else:
+            entries = []
+            for message in messages:
+                entry = {
                     "MessageBody": message.body,
                     "MessageAttributes": message.message_attributes or {},
                     "Id": str(uuid.uuid4()),
                 }
-                for message in messages
-            ]
-        )
-        for message in messages:
-            message.delete()
+                if args.queue == "sms":
+                    parsed_body = json.loads(message.body)
+                    entry["MessageGroupId"] = parsed_body["phone_number"]
+                    idempotency_key = parsed_body["idempotency_key"]
+                    start_index = max(0, len(idempotency_key) - 128)
+                    entry["MessageDeduplicationId"] = idempotency_key[start_index:]
+                entries.append(entry)
+
+            queue.send_messages(Entries=entries)
+            for message in messages:
+                message.delete()
         total_redriven += len(messages)
 
 
@@ -196,6 +210,7 @@ def main():
         "redrive-sqs", description="Retry failures from an SQS queue"
     )
     sqs_parser.add_argument("queue", choices=["sms", "drill-initiation"])
+    sqs_parser.add_argument("--dry_run", action="store_true")
     sqs_parser.set_defaults(func=handle_redrive_sqs)
 
     rebuild_progress_parser = subparsers.add_parser(
