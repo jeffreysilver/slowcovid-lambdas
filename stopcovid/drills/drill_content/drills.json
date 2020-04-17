@@ -1,814 +1,230 @@
 {
-  "01-basics": {
-    "name": "01. COVID19: Basics",
-    "slug": "01-basics",
+  "01-sample-drill": {
+    "name": "Sample Drill 1",
+    "slug": "01-sample-drill",
     "prompts": [
       {
-        "slug": "00 - Intake",
+        "slug": "1 - ",
         "messages": [
           {
-            "text": "Welcome! Choose your language:\nen - English\nes - Español\nfr - Français\npt - Português\nzh - Chinese 中文"
-          }
-        ],
-        "response_user_profile_key": "language"
-      },
-      {
-        "slug": "01 - GO",
-        "messages": [
-          {
-            "text": "{{stop_covid_thanks}}"
+            "text": "{{open_source_drill_1}}"
           },
           {
-            "text": "{{drill_intro_2}} {{covid_1_title}}. {{text_go}}"
-          }
-        ]
-      },
-      {
-        "slug": "02 - Self assessment",
-        "messages": [
-          {
-            "text": "{{drill_self_assess_1}}"
-          },
-          {
-            "text": "{{drill_self_assess_2}} {{covid_1_title}}. \n\n{{likert_1_10_knowledge}}"
-          },
-          {
-            "text": "{{drill_self_assess_3}}"
-          }
-        ],
-        "response_user_profile_key": "self_rating_1"
-      },
-      {
-        "slug": "03 - Name",
-        "messages": [
-          {
-            "text": "{{intake_whats_your_full_name}}"
-          }
-        ],
-        "response_user_profile_key": "name"
-      },
-      {
-        "slug": "04 - Q1",
-        "messages": [
-          {
-            "text": "{{thank_you}}"
-          },
-          {
-            "text": "{{drill_practice_caps}} 1: {{covid_1_practice_1}}"
+            "text": "{{drill_how_to_practice_1}}"
           }
         ],
         "correct_response": "b) {{false}}"
       },
       {
-        "slug": "05 - Q2",
-        "messages": [
-          {
-            "text": "{{covid_1_fact_1}}"
-          },
-          {
-            "text": "{{drill_practice_caps}} 2: {{covid_1_practice_2}}"
-          }
-        ],
-        "correct_response": "c) {{more_contagious_than}}"
-      },
-      {
-        "slug": "06 - Q3",
-        "messages": [
-          {
-            "text": "{{covid_1_fact_2}}"
-          },
-          {
-            "text": "{{drill_practice_caps}} 3: {{covid_1_practice_3}}"
-          }
-        ],
-        "correct_response": "d) {{all_of_the_above}}"
-      },
-      {
-        "slug": "07 - Q4",
-        "messages": [
-          {
-            "text": "{{covid_1_fact_3}}"
-          },
-          {
-            "text": "{{drill_practice_caps}} 4: {{covid_1_practice_4}}"
-          }
-        ],
-        "correct_response": "b) {{fever_cough_shortness_of_breath}}"
-      },
-      {
-        "slug": "08 - Q5",
-        "messages": [
-          {
-            "text": "{{almost_done}}"
-          },
-          {
-            "text": "{{covid_1_fact_4}}"
-          },
-          {
-            "text": "{{drill_practice_caps}} 5: {{covid_1_practice_5}}"
-          }
-        ],
-        "correct_response": "d) {{all_of_the_above}}"
-      },
-      {
-        "slug": "09 - Celebration",
-        "messages": [
-          {
-            "text": "{{covid_1_fact_5}}"
-          },
-          {
-            "text": "{{more}}"
-          }
-        ]
-      }
-    ]
-  },
-  "02-prevention": {
-    "name": "02. COVID19: Prevention",
-    "slug": "02-prevention",
-    "prompts": [
-      {
-        "slug": "00 - Go",
-        "messages": [
-          {
-            "text": "{{drill_intro_2}} {{covid_2_title}}. \n\n{{text_go}}"
-          }
-        ]
-      },
-      {
-        "slug": "01 - Self assessment",
-        "messages": [
-          {
-            "text": "{{drill_self_assess_1}}"
-          },
-          {
-            "text": "{{drill_self_assess_2}}{{covid_2_title}}.\n\n{{likert_1_10_knowledge}}"
-          },
-          {
-            "text": "{{drill_self_assess_3}}"
-          }
-        ],
-        "response_user_profile_key": "self_rating_2"
-      },
-      {
-        "slug": "02 - Q1",
-        "messages": [
-          {
-            "text": "{{thank_you}}"
-          },
-          {
-            "text": "{{drill_practice_caps}} 1: {{covid_prev_practice_1}}"
-          }
-        ],
-        "correct_response": "b) {{avoid_being_exposed_to_the_virus}}"
-      },
-      {
-        "slug": "03 - Q2",
-        "messages": [
-          {
-            "text": "{{covid_prev_fact_1}}"
-          },
-          {
-            "text": "{{drill_practice_caps}} 2: \n\n{{covid_prev_practice_2}}"
-          }
-        ],
-        "correct_response": "d) {{all_of_the_above}}"
-      },
-      {
-        "slug": "04 - Q3",
-        "messages": [
-          {
-            "text": "{{covid_prev_fact_2}}"
-          },
-          {
-            "text": "{{drill_practice_caps}} 3: \n\n{{covid_prev_practice_3}}"
-          }
-        ],
-        "correct_response": "c) {{days_after_exposure}}"
-      },
-      {
-        "slug": "05 - Q4",
-        "messages": [
-          {
-            "text": "{{covid_prev_fact_3}}"
-          },
-          {
-            "text": "{{drill_practice_caps}} 4: \n\n{{covid_prev_practice_4}}"
-          }
-        ],
-        "correct_response": "d) {{all_of_the_above}}"
-      },
-      {
-        "slug": "06 - Q5",
-        "messages": [
-          {
-            "text": "{{covid_prev_fact_4}}"
-          },
-          {
-            "text": "{{drill_practice_caps}} 5:\n\n{{covid_prev_practice_5}}"
-          }
-        ],
-        "correct_response": "a) {{true}}"
-      },
-      {
-        "slug": "07 - Celebration",
-        "messages": [
-          {
-            "text": "{{more}}"
-          }
-        ]
-      }
-    ]
-  },
-  "03-hand-washing-how": {
-    "name": "03. How to wash your hands",
-    "slug": "03-hand-washing-how",
-    "prompts": [
-      {
-        "slug": "1 - Intro - GO",
-        "messages": [
-          {
-            "text": "{{drill_intro_2}} {{covid_3_title}}\n\n{{text_go}}"
-          }
-        ]
-      },
-      {
-        "slug": "3 - self assessment - #",
-        "messages": [
-          {
-            "text": "{{drill_self_assess_1}}"
-          },
-          {
-            "text": "{{drill_self_assess_2}} {{covid_3_title}}\n\n{{likert_1_10_knowledge}}"
-          },
-          {
-            "text": "{{drill_self_assess_3}}"
-          }
-        ],
-        "response_user_profile_key": "self_rating_3"
-      },
-      {
-        "slug": "4 - Practice 1 (MCQ2)",
-        "messages": [
-          {
-            "text": "{{thank_you}}"
-          },
-          {
-            "text": "{{drill_practice_caps}} 1: {{answer_the_question}}\n\n{{drill_how_to_practice_1}}"
-          }
-        ],
-        "correct_response": "b) {{false}}"
-      },
-      {
-        "slug": "5 - Practice 2 (MCQ3)",
+        "slug": "2 -",
         "messages": [
           {
             "text": "{{drill_how_to_fact_2}}"
           },
           {
-            "text": "{{drill_practice_caps}} 2: {{answer_the_question}}\n\n{{drill_how_to_practice_2}}"
+            "text": "{{drill_how_to_practice_2}}"
           }
         ],
         "correct_response": "b) {{soap_pumps_to_wash_hands}}"
       },
       {
-        "slug": "6 - Practice 3 (FIB_MCQ3)",
+        "slug": "3 -",
         "messages": [
           {
             "text": "{{drill_how_to_fact_3}}"
           },
           {
-            "text": "{{drill_practice_caps}} 3: {{drill_how_to_practice_3}}"
+            "text": "{{drill_how_to_practice_3}}"
           }
         ],
         "correct_response": "c) {{your_fingers_and_under_your_fingernails}}"
       },
       {
-        "slug": "7 - Practice 4 (FIB_MCQ5)",
+        "slug": "4 -",
         "messages": [
           {
             "text": "{{drill_how_to_fact_4}}"
           },
           {
-            "text": "{{drill_practice_caps}} 4: {{drill_how_to_practice_4}}"
+            "text": "{{drill_how_to_practice_4}}"
           }
         ],
         "correct_response": "b) {{for_twenty_seconds}}"
       },
       {
-        "slug": "8 - Practice 5 - (open_MCQ5)",
+        "slug": "5 -",
         "messages": [
-          {
-            "text": "{{almost_done}}"
-          },
           {
             "text": "{{drill_how_to_fact_5}}"
           },
           {
-            "text": "{{drill_practice_caps}} 5: {{answer_the_question}}\n\n{{drill_how_to_practice_5}}"
+            "text": "{{drill_how_to_practice_5}}"
           }
         ],
         "correct_response": "e) {{paper_towel_or_air_dryer}}"
       },
       {
-        "slug": "9 - 6 (congrats! + NPS)",
+        "slug": "6 -",
         "messages": [
           {
-            "text": "{{more}}"
+            "text": "{{covid_1_fact_3}}"
+          },
+          {
+            "text": "{{open_source_drill_end}}"
           }
         ]
       }
     ]
   },
-  "04-hand-sanitizer": {
-    "name": "04. Hand sanitizer best practices",
-    "slug": "04-hand-sanitizer",
+  "02-sample-drill": {
+    "name": "Sample Drill 2",
+    "slug": "02-sample-drill",
     "prompts": [
       {
-        "slug": "00 - GO",
+        "slug": "1 - ",
         "messages": [
           {
-            "text": "{{drill_intro_2}} {{covid_4_title}}. \n\n{{text_go}}"
-          }
-        ]
-      },
-      {
-        "slug": "01 - Self assessment",
-        "messages": [
-          {
-            "text": "{{drill_self_assess_1}}"
+            "text": "{{open_source_drill_1}}"
           },
           {
-            "text": "{{drill_self_assess_2}} {{covid_4_title}}. \n\n{{likert_1_10_knowledge}}"
-          },
-          {
-            "text": "{{drill_self_assess_3}}"
-          }
-        ],
-        "response_user_profile_key": "self_rating_4"
-      },
-      {
-        "slug": "02 - Q1",
-        "messages": [
-          {
-            "text": "{{thank_you}}"
-          },
-          {
-            "text": "{{drill_practice_caps}} 1: {{answer_the_question}}\n\n{{hand_sani_practice_1}}"
+            "text": "{{drill_how_to_practice_1}}"
           }
         ],
         "correct_response": "b) {{false}}"
       },
       {
-        "slug": "03 - Q2",
+        "slug": "2 -",
         "messages": [
           {
-            "text": "{{hand_sani_fact_1}}"
+            "text": "{{drill_how_to_fact_2}}"
           },
           {
-            "text": "{{drill_practice_caps}} 2: {{hand_sani_practice_2}}"
+            "text": "{{drill_how_to_practice_2}}"
           }
         ],
-        "correct_response": "c) {{alcohol_based_hand_sanitizer}}"
+        "correct_response": "b) {{soap_pumps_to_wash_hands}}"
       },
       {
-        "slug": "04 - Q3",
+        "slug": "3 -",
         "messages": [
           {
-            "text": "{{hand_sani_fact_2}}"
+            "text": "{{drill_how_to_fact_3}}"
           },
           {
-            "text": "{{drill_practice_caps}} 3: {{hand_sani_practice_3}}\n"
+            "text": "{{drill_how_to_practice_3}}"
           }
         ],
-        "correct_response": "b) {{at_least_sixty_percent}}"
+        "correct_response": "c) {{your_fingers_and_under_your_fingernails}}"
       },
       {
-        "slug": "05 - Q4",
+        "slug": "4 -",
         "messages": [
           {
-            "text": "{{hand_sani_fact_3}}"
+            "text": "{{drill_how_to_fact_4}}"
           },
           {
-            "text": "{{drill_practice_caps}} 4: \n\n{{hand_sani_practice_4}}"
+            "text": "{{drill_how_to_practice_4}}"
           }
         ],
-        "correct_response": "a) {{true}}"
+        "correct_response": "b) {{for_twenty_seconds}}"
       },
       {
-        "slug": "06 - Q5",
+        "slug": "5 -",
         "messages": [
           {
-            "text": "{{hand_sani_fact_4}}"
+            "text": "{{drill_how_to_fact_5}}"
           },
           {
-            "text": "{{drill_practice_caps}} 5: \n\n{{hand_sani_practice_5}}\n"
+            "text": "{{drill_how_to_practice_5}}"
           }
         ],
-        "correct_response": "d) {{are_sixty_to_ninety_percent_alcohol_based}}"
+        "correct_response": "e) {{paper_towel_or_air_dryer}}"
       },
       {
-        "slug": "07 - Celebration",
+        "slug": "6 -",
         "messages": [
           {
-            "text": "{{more}}"
+            "text": "{{covid_1_fact_3}}"
+          },
+          {
+            "text": "{{open_source_drill_end}}"
           }
         ]
       }
     ]
   },
-  "05-disinfect-phone": {
-    "name": "05. How to disinfect your phone",
-    "slug": "05-disinfect-phone",
+  "03-sample-drill": {
+    "name": "Sample Drill 3",
+    "slug": "03-sample-drill",
     "prompts": [
       {
-        "slug": "00 - GO",
+        "slug": "1 - ",
         "messages": [
           {
-            "text": "{{drill_intro_2}} {{covid_5_title}}. \n\n{{text_go}}"
-          }
-        ]
-      },
-      {
-        "slug": "01 - Self Assessment",
-        "messages": [
-          {
-            "text": "{{drill_self_assess_1}}"
+            "text": "{{open_source_drill_1}}"
           },
           {
-            "text": "{{drill_self_assess_2}} {{covid_5_title}}. \n\n{{likert_1_10_knowledge}}"
-          },
-          {
-            "text": "{{drill_self_assess_3}}"
-          }
-        ],
-        "response_user_profile_key": "self_rating_5"
-      },
-      {
-        "slug": "02 - Q1",
-        "messages": [
-          {
-            "text": "{{thank_you}}"
-          },
-          {
-            "text": "{{drill_practice_caps}} 1: \n\n{{disinfect_phone_practice_1}}"
-          }
-        ],
-        "correct_response": "a) {{hands}}"
-      },
-      {
-        "slug": "03 - Q2",
-        "messages": [
-          {
-            "text": "{{disinfect_phone_fact_1}}"
-          },
-          {
-            "text": "{{drill_practice_caps}} 2: \n\n{{disinfect_phone_practice_2}}"
-          }
-        ],
-        "correct_response": "a) {{true}}"
-      },
-      {
-        "slug": "04 - Q3",
-        "messages": [
-          {
-            "text": "{{disinfect_phone_fact_2}}"
-          },
-          {
-            "text": "{{drill_practice_caps}} 3: \n\n{{disinfect_phone_practice_3}}\n"
-          }
-        ],
-        "correct_response": "a) {{yes}}"
-      },
-      {
-        "slug": "05 - Q4",
-        "messages": [
-          {
-            "text": "{{disinfect_phone_fact_3}}"
-          },
-          {
-            "text": "{{drill_practice_caps}} 4: {{disinfect_phone_practice_4}}\n"
-          }
-        ],
-        "correct_response": "c) {{off_and_unplugged}}"
-      },
-      {
-        "slug": "06 - Q5",
-        "messages": [
-          {
-            "text": "{{disinfect_phone_fact_4}}"
-          },
-          {
-            "text": "{{drill_practice_caps}} 5: \n\n{{disinfect_phone_practice_5}}"
-          }
-        ],
-        "correct_response": "d) {{all_of_the_above}}"
-      },
-      {
-        "slug": "07 - Celebration",
-        "messages": [
-          {
-            "text": "{{disinfect_phone_fact_5}}"
-          },
-          {
-            "text": "{{more}}"
-          }
-        ]
-      }
-    ]
-  },
-  "06-hand-washing-when": {
-    "name": "06. When to wash your hands",
-    "slug": "06-hand-washing-when",
-    "prompts": [
-      {
-        "slug": "1 - requirements - READY",
-        "messages": [
-          {
-            "text": "{{drill_intro_2}} {{covid_6_title}}. \n\n{{text_go}}"
-          }
-        ]
-      },
-      {
-        "slug": "2 - self assessment - #",
-        "messages": [
-          {
-            "text": "{{drill_self_assess_1}}"
-          },
-          {
-            "text": "{{drill_self_assess_2}} {{covid_6_title}}.\n\n{{likert_1_10_knowledge}}"
-          },
-          {
-            "text": "{{drill_self_assess_3}}\n"
-          }
-        ],
-        "response_user_profile_key": "self_rating_6"
-      },
-      {
-        "slug": "3 - Practice 1 (MCQ2)",
-        "messages": [
-          {
-            "text": "{{drill_2_when_to_intro}}"
-          },
-          {
-            "text": "{{drill_practice_caps}} 1: {{answer_the_question}}\n\n{{drill_when_to_practice_1}}"
+            "text": "{{drill_how_to_practice_1}}"
           }
         ],
         "correct_response": "b) {{false}}"
       },
       {
-        "slug": "4 - Practice 2 (MCQ3)",
+        "slug": "2 -",
         "messages": [
           {
-            "text": "{{drill_when_to_fact_1}}\n"
+            "text": "{{drill_how_to_fact_2}}"
           },
           {
-            "text": "{{drill_practice_caps}} 2: {{drill_when_to_practice_2}}"
+            "text": "{{drill_how_to_practice_2}}"
           }
         ],
-        "correct_response": "c) {{never}}"
+        "correct_response": "b) {{soap_pumps_to_wash_hands}}"
       },
       {
-        "slug": "5 - Practice 3 (FIB_MCQ3)",
+        "slug": "3 -",
         "messages": [
           {
-            "text": "{{drill_when_to_fact_2}}"
+            "text": "{{drill_how_to_fact_3}}"
           },
           {
-            "text": "{{drill_practice_caps}} 3:\n\n{{drill_when_to_practice_3}}"
+            "text": "{{drill_how_to_practice_3}}"
           }
         ],
-        "correct_response": "e) {{all_of_the_above}}"
+        "correct_response": "c) {{your_fingers_and_under_your_fingernails}}"
       },
       {
-        "slug": "6 - Practice 4 (FIB_MCQ5)",
+        "slug": "4 -",
         "messages": [
           {
-            "text": "{{drill_when_to_fact_3}}"
+            "text": "{{drill_how_to_fact_4}}"
           },
           {
-            "text": null,
-            "media_url": "https://eslworks-api-production.herokuapp.com/rails/active_storage/blobs/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBbFZBIiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--34add7a64bc344d0d6b7cb174c11bcca099c4b85/man_coughing.jpg"
-          },
-          {
-            "text": "{{drill_practice_caps}} 4: {{drill_when_to_practice_4}}"
+            "text": "{{drill_how_to_practice_4}}"
           }
         ],
-        "correct_response": "a) {{he_coughed_into_them}}"
+        "correct_response": "b) {{for_twenty_seconds}}"
       },
       {
-        "slug": "7 - Practice 5",
+        "slug": "5 -",
         "messages": [
           {
-            "text": "{{drill_when_to_fact_4}}\n"
+            "text": "{{drill_how_to_fact_5}}"
           },
           {
-            "text": "{{drill_practice_caps}} 5: {{drill_when_to_practice_5}}\n"
+            "text": "{{drill_how_to_practice_5}}"
           }
         ],
-        "correct_response": "c) {{wash_her_hands_before_and_after}}"
+        "correct_response": "e) {{paper_towel_or_air_dryer}}"
       },
       {
-        "slug": "8 - (congrats! + NPS)",
+        "slug": "6 -",
         "messages": [
           {
-            "text": "{{more}}"
-          }
-        ]
-      }
-    ]
-  },
-  "07-sanitizing-surfaces": {
-    "name": "07. Sanitizing high-contact surfaces",
-    "slug": "07-sanitizing-surfaces",
-    "prompts": [
-      {
-        "slug": "00 - GO",
-        "messages": [
-          {
-            "text": "{{drill_intro_2}} {{covid_7_title}}. \n\n{{text_go}}"
-          }
-        ]
-      },
-      {
-        "slug": "01 - Self assessment",
-        "messages": [
-          {
-            "text": "{{drill_self_assess_1}}"
+            "text": "{{covid_1_fact_3}}"
           },
           {
-            "text": "{{drill_self_assess_2}}{{covid_7_title}}. \n\n{{likert_1_10_knowledge}}"
-          },
-          {
-            "text": "{{drill_self_assess_3}}"
-          }
-        ],
-        "response_user_profile_key": "self_rating_7"
-      },
-      {
-        "slug": "02 - Q1",
-        "messages": [
-          {
-            "text": "{{thank_you}}"
-          },
-          {
-            "text": "{{drill_practice_caps}} 1: {{answer_the_question}}\n\n{{high_contact_practice_1}}\n"
-          }
-        ],
-        "correct_response": "b) {{false}}"
-      },
-      {
-        "slug": "03 - Q2",
-        "messages": [
-          {
-            "text": "{{high_contact_fact_1}}"
-          },
-          {
-            "text": "{{drill_practice_caps}} 2: {{high_contact_practice_2}}"
-          }
-        ],
-        "correct_response": "b) {{high_contact_surfaces}}"
-      },
-      {
-        "slug": "04 - Q3",
-        "messages": [
-          {
-            "text": "{{high_contact_fact_2}}"
-          },
-          {
-            "text": "{{drill_practice_caps}} 3: {{high_contact_practice_3}}\n"
-          }
-        ],
-        "correct_response": "a) {{up_to_twenty_four_hours}}"
-      },
-      {
-        "slug": "05 - Q4",
-        "messages": [
-          {
-            "text": "{{high_contact_fact_3}}"
-          },
-          {
-            "text": "{{drill_practice_caps}} 4:\n\n{{high_contact_practice_4}}"
-          }
-        ],
-        "correct_response": "b) {{two_to_three_days}}"
-      },
-      {
-        "slug": "06 - Q5",
-        "messages": [
-          {
-            "text": "{{high_contact_fact_4}}"
-          },
-          {
-            "text": "{{drill_practice_caps}} 5:\n\n{{high_contact_practice_5}}"
-          }
-        ],
-        "correct_response": "a) {{clean_and_disinfect}}"
-      },
-      {
-        "slug": "07 - Celebration",
-        "messages": [
-          {
-            "text": "{{more}}"
-          }
-        ]
-      }
-    ]
-  },
-  "08-face-covering": {
-    "name": "08. Wearing a face covering",
-    "slug": "08-face-covering",
-    "prompts": [
-      {
-        "slug": "00 - GO",
-        "messages": [
-          {
-            "text": "{{drill_intro_2}} {{covid_8_title}}\n\n{{text_go}}"
-          }
-        ]
-      },
-      {
-        "slug": "01 - Self assessment",
-        "messages": [
-          {
-            "text": "{{drill_self_assess_1}}"
-          },
-          {
-            "text": "{{drill_self_assess_2}} {{covid_8_title}}.\n\n{{likert_1_10_knowledge}}"
-          }
-        ]
-      },
-      {
-        "slug": "02 - Q1",
-        "messages": [
-          {
-            "text": "{{thank_you}}"
-          },
-          {
-            "text": "{{drill_practice_caps}} 1: {{answer_the_question}}\n\n{{face_covering_practice_1}}"
-          }
-        ],
-        "correct_response": "a) true"
-      },
-      {
-        "slug": "03 - Q2",
-        "messages": [
-          {
-            "text": "{{face_covering_fact_1}}"
-          },
-          {
-            "text": "{{drill_practice_caps}} 2: \n\n{{face_covering_practice_2}}"
-          }
-        ],
-        "correct_response": "b) just as important as"
-      },
-      {
-        "slug": "04 - Q3",
-        "messages": [
-          {
-            "text": "{{face_covering_fact_2}}"
-          },
-          {
-            "text": "{{drill_practice_caps}} 3: \n\n{{face_covering_practice_3}}"
-          }
-        ],
-        "correct_response": "e) {{all_of_the_above}}"
-      },
-      {
-        "slug": "05 - Q4",
-        "messages": [
-          {
-            "text": "{{face_covering_fact_3}}"
-          },
-          {
-            "text": "{{drill_practice_caps}} 4: \n\n{{face_covering_practice_4}}"
-          }
-        ],
-        "correct_response": "a) carry"
-      },
-      {
-        "slug": "06 - Q5",
-        "messages": [
-          {
-            "text": "{{face_covering_fact_4}}"
-          },
-          {
-            "text": "{{drill_practice_caps}} 5: \n\n{{face_covering_practice_5}}"
-          }
-        ],
-        "correct_response": "e) {{all_of_the_above}}"
-      },
-      {
-        "slug": "07 - Celebration",
-        "messages": [
-          {
-            "text": "{{face_covering_fact_5}}"
-          },
-          {
-            "text": "{{drill_complete_congrats}}"
-          },
-          {
-            "text": "{{face_covering_bonus}}"
+            "text": "{{open_source_drill_end}}"
           }
         ]
       }

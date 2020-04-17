@@ -16,8 +16,8 @@ from stopcovid.drills.localize import localize
 
 class TestGetDrill(unittest.TestCase):
     def test_get_drill(self):
-        drill = drills.get_drill("01-basics")
-        self.assertEqual("01. COVID19: Basics", drill.name)
+        drill = drills.get_drill("01-sample-drill")
+        self.assertEqual("Sample Drill 1", drill.name)
 
 
 class TestDrillFileIntegrity(unittest.TestCase):

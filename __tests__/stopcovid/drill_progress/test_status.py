@@ -16,7 +16,7 @@ from stopcovid.drill_progress.status import initiates_first_drill, initiates_sub
 class TestStatus(unittest.TestCase):
     def setUp(self) -> None:
         logging.disable(logging.CRITICAL)
-        self.drill = get_drill("01-basics")
+        self.drill = get_drill("01-sample-drill")
 
     def test_initiates_first_drill(self):
         batch1 = DialogEventBatch(
